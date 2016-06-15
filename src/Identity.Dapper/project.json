@@ -1,0 +1,18 @@
+﻿{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "NETStandard.Library": "1.5.0-rc2-24027",
+    "Microsoft.AspNetCore.Identity": "1.0.0-rc2-final",
+    "System.Reflection": "4.1.0-rc2-*",
+    "System.Data.Common": "4.0.1-rc2-*",
+    "System.Security.Cryptography.Encryption": "4.0.0-*",
+    "Dapper": "1.50.0-*"
+  },
+
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": "dnxcore50"
+    }
+  }
+}

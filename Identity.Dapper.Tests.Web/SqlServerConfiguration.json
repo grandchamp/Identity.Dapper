@@ -1,0 +1,17 @@
+﻿{
+  "SqlConfiguration": {
+    "ParameterNotation": "@",
+    "SchemaName": "[dbo]",
+    "InsertRoleQuery": "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)",
+    "DeleteRoleQuery": "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%",
+    "UpdateRoleQuery": "UPDATE %SCHEMA%.%TABLENAME% SET %SETVALUES% WHERE Id = %ID%",
+    "SelectRoleByNameQuery": "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Name = %NAME%",
+    "SelectRoleByIdQuery": "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%",
+    "InsertUserQuery": "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)",
+    "DeleteUserQuery": "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%",
+    "UpdateUserQuery": "UPDATE %SCHEMA%.%TABLENAME% SET %SETVALUES% WHERE Id = %ID%",
+    "SelectUserByUserNameQuery": "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UserName = %USERNAME%",
+    "RoleTable": "IdentityRole",
+    "UserTable": "IdentityUser"
+  }
+}
