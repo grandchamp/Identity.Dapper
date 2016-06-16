@@ -13,7 +13,7 @@ using Identity.Dapper.Entities;
 
 namespace Identity.Dapper.Tests.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class ManageController : Controller
     {
         private readonly UserManager<DapperIdentityUser> _userManager;
