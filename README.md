@@ -29,7 +29,6 @@ The password can be encrypted with AES256 using the KEY and IV provided.
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
-services.Configure<SqlConfiguration>(Configuration.GetSection("SqlConfiguration"));
 services.ConfigureDapperXXXConnectionProvider(Configuration.GetSection("DapperIdentity"))
         .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
