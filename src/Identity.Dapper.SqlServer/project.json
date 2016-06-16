@@ -1,13 +1,14 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0-alpha",
   "description": "Identity package that uses Dapper with SQL Server instead EntityFramework for use with .NET Core.",
   "authors": [ "grandchamp" ],
   "packOptions": {
     "repository": { "url": "https://github.com/grandchamp/Identity.Dapper" },
-    "owners": [ "grandchamp" ]
+    "owners": [ "grandchamp" ],
+    "tags": [ "asp.net", "core", "dapper", "identity" ]
   },
   "dependencies": {
-    "Identity.Dapper": "0.1.0-*",
+    "Identity.Dapper": "0.2.0-*",
     "Microsoft.Extensions.Configuration": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc2-final",

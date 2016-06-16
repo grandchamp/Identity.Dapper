@@ -31,7 +31,7 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
-    "Identity.Dapper.SqlServer": "0.1.0-*"
+    "Identity.Dapper.SqlServer": "0.2.0-*"
   },
 
   "tools": {

@@ -1,10 +1,11 @@
 ﻿{
-  "version": "0.1.0",
+  "version": "0.2.0-alpha",
   "description": "Identity package that uses Dapper instead EntityFramework for use with .NET Core. This is the base package, alone it won't do nothing. Use the Identity.Dapper.SqlServer to use with SQL Server.",
   "authors": [ "grandchamp" ],
   "packOptions": {
     "repository": { "url": "https://github.com/grandchamp/Identity.Dapper" },
-    "owners": [ "grandchamp" ]
+    "owners": [ "grandchamp" ],
+    "tags": [ "asp.net", "core", "dapper", "identity" ]
   },
   "dependencies": {
     "NETStandard.Library": "1.5.0-rc2-24027",
