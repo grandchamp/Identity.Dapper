@@ -20,7 +20,6 @@ namespace Identity.Dapper.Samples.Web
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("SqlServerConfiguration.json")
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
@@ -39,7 +38,6 @@ namespace Identity.Dapper.Samples.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<SqlConfiguration>(Configuration.GetSection("SqlConfiguration"));
             services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 

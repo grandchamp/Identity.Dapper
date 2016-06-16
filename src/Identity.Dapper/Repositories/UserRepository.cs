@@ -28,10 +28,10 @@ namespace Identity.Dapper.Repositories
 
         private readonly IConnectionProvider _connectionProvider;
         private readonly ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim>> _log;
-        private readonly IOptions<SqlConfiguration> _sqlConfiguration;
+        private readonly SqlConfiguration _sqlConfiguration;
         private readonly IRoleRepository<DapperIdentityRole<TKey>, TKey, TUserRole, TRoleClaim> _roleRepository;
         public UserRepository(IConnectionProvider connProv, ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim>> log,
-                              IOptions<SqlConfiguration> sqlConf,
+                              SqlConfiguration sqlConf,
                               IRoleRepository<DapperIdentityRole<TKey>, TKey, TUserRole, TRoleClaim> roleRepo)
         {
             _connectionProvider = connProv;
@@ -56,12 +56,12 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Email", email);
 
-                    var query = _sqlConfiguration.Value.SelectUserByEmailQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] { "%EMAIL%" },
-                                                                               new string[] { "Email" });
+                    var query = _sqlConfiguration.SelectUserByEmailQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] { "%EMAIL%" },
+                                                                         new string[] { "Email" });
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: dynamicParameters);
                 }
@@ -85,12 +85,12 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
-                    var query = _sqlConfiguration.Value.SelectUserByIdQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] { "%ID%" },
-                                                                               new string[] { "Id" });
+                    var query = _sqlConfiguration.SelectUserByIdQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] { "%ID%" },
+                                                                         new string[] { "Id" });
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: dynamicParameters);
                 }
@@ -114,12 +114,12 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("User", userName);
 
-                    var query = _sqlConfiguration.Value.SelectUserByUserNameQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] { "%USERNAME%" },
-                                                                               new string[] { "User" });
+                    var query = _sqlConfiguration.SelectUserByUserNameQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] { "%USERNAME%" },
+                                                                         new string[] { "User" });
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: dynamicParameters);
                 }
@@ -152,17 +152,18 @@ namespace Identity.Dapper.Repositories
                         if (!user.Id.Equals(default(TKey)))
                         {
                             columnsBuilder.Append("Id, ");
-                            valuesArray.Add($"{_sqlConfiguration.Value.ParameterNotation}Id");
+                            valuesArray.Add($"{_sqlConfiguration.ParameterNotation}Id");
                         }
 
                         columnsBuilder.Append(string.Join(",", userProperties));
 
-                        valuesArray = valuesArray.InsertQueryValuesFragment(_sqlConfiguration.Value.ParameterNotation, userProperties);
+                        valuesArray = valuesArray.InsertQueryValuesFragment(_sqlConfiguration.ParameterNotation, userProperties);
 
-                        var query = _sqlConfiguration.Value.InsertUserQuery.ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                         _sqlConfiguration.Value.UserTable,
-                                                                                                         columnsBuilder.ToString(),
-                                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.InsertUserQuery
+                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
+                                                                                   _sqlConfiguration.UserTable,
+                                                                                   columnsBuilder.ToString(),
+                                                                                   string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
 
@@ -207,16 +208,16 @@ namespace Identity.Dapper.Repositories
                     try
                     {
                         var valuesArray = new string[] {
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}UserId",
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}ClaimType",
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}ClaimValue"
+                                                         $"{_sqlConfiguration.ParameterNotation}UserId",
+                                                         $"{_sqlConfiguration.ParameterNotation}ClaimType",
+                                                         $"{_sqlConfiguration.ParameterNotation}ClaimValue"
                                                        };
 
-                        var query = _sqlConfiguration.Value.InsertUserClaimQuery
-                                                           .ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                         _sqlConfiguration.Value.UserClaimTable,
-                                                                                         "UserId, ClaimType, ClaimValue",
-                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.InsertUserClaimQuery
+                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
+                                                                                   _sqlConfiguration.UserClaimTable,
+                                                                                   "UserId, ClaimType, ClaimValue",
+                                                                                   string.Join(", ", valuesArray));
 
                         var resultList = new List<bool>(claims.Count());
                         foreach (var claim in claims)
@@ -271,16 +272,16 @@ namespace Identity.Dapper.Repositories
                     try
                     {
                         var valuesArray = new string[] {
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}UserId",
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}LoginProvider",
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}ProviderKey"
+                                                         $"{_sqlConfiguration.ParameterNotation}UserId",
+                                                         $"{_sqlConfiguration.ParameterNotation}LoginProvider",
+                                                         $"{_sqlConfiguration.ParameterNotation}ProviderKey"
                                                        };
 
-                        var query = _sqlConfiguration.Value.InsertUserLoginQuery
-                                                           .ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                         _sqlConfiguration.Value.UserLoginTable,
-                                                                                         "UserId, LoginProvider, ProviderKey",
-                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.InsertUserLoginQuery
+                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
+                                                                                   _sqlConfiguration.UserLoginTable,
+                                                                                   "UserId, LoginProvider, ProviderKey",
+                                                                                   string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -334,15 +335,15 @@ namespace Identity.Dapper.Repositories
                             return false;
 
                         var valuesArray = new string[] {
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}UserId",
-                                                         $"{_sqlConfiguration.Value.ParameterNotation}RoleId"
+                                                         $"{_sqlConfiguration.ParameterNotation}UserId",
+                                                         $"{_sqlConfiguration.ParameterNotation}RoleId"
                                                        };
 
-                        var query = _sqlConfiguration.Value.InsertUserRoleQuery
-                                                           .ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                         _sqlConfiguration.Value.UserRoleTable,
-                                                                                         "UserId, RoleId",
-                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.InsertUserRoleQuery
+                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
+                                                                                   _sqlConfiguration.UserRoleTable,
+                                                                                   "UserId, RoleId",
+                                                                                   string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -395,10 +396,10 @@ namespace Identity.Dapper.Repositories
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("Id", id);
 
-                        var query = _sqlConfiguration.Value.DeleteUserQuery
-                                                           .ReplaceDeleteQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                         _sqlConfiguration.Value.UserTable,
-                                                                                         $"{_sqlConfiguration.Value.ParameterNotation}Id");
+                        var query = _sqlConfiguration.DeleteUserQuery
+                                                     .ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
+                                                                                   _sqlConfiguration.UserTable,
+                                                                                   $"{_sqlConfiguration.ParameterNotation}Id");
 
                         var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
 
@@ -448,13 +449,13 @@ namespace Identity.Dapper.Repositories
                                                  .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                 && !y.Name.Equals("Id"));
 
-                        var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.Value.ParameterNotation);
+                        var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
-                        var query = _sqlConfiguration.Value.UpdateUserQuery
-                                                           .ReplaceUpdateQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                         _sqlConfiguration.Value.UserTable,
-                                                                                         setFragment,
-                                                                                         $"{_sqlConfiguration.Value.ParameterNotation}Id");
+                        var query = _sqlConfiguration.UpdateUserQuery
+                                                     .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
+                                                                                   _sqlConfiguration.UserTable,
+                                                                                   setFragment,
+                                                                                   $"{_sqlConfiguration.ParameterNotation}Id");
 
                         var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
 
@@ -502,28 +503,30 @@ namespace Identity.Dapper.Repositories
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"));
 
-                    var query = _sqlConfiguration.Value.GetUserLoginByLoginProviderAndProviderKey
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] {
-                                                                                                "%LOGINPROVIDER%",
-                                                                                                "%PROVIDERKEY%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "LoginProvider",
-                                                                                                "ProviderKey"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "%USERFILTER%",
-                                                                                                "%USERTABLE%",
-                                                                                                "%USERLOGINTABLE%",
-                                                                                            },
-                                                                               new string[] {
-                                                                                                userProperties.SelectFilterWithTableName(_sqlConfiguration.Value.UserTable),
-                                                                                                _sqlConfiguration.Value.UserTable,
-                                                                                                _sqlConfiguration.Value.UserLoginTable,
-                                                                                            });
+                    var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         string.Empty,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] {
+                                                                                        "%LOGINPROVIDER%",
+                                                                                        "%PROVIDERKEY%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "LoginProvider",
+                                                                                        "ProviderKey"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "%USERFILTER%",
+                                                                                        "%USERTABLE%",
+                                                                                        "%USERLOGINTABLE%",
+                                                                                      },
+                                                                         new string[] {
+                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
+                                                                                        _sqlConfiguration.UserTable,
+                                                                                        _sqlConfiguration.UserLoginTable,
+                                                                                      }              
+                                                                         );
+
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: new
                                                               {
@@ -548,12 +551,12 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var query = _sqlConfiguration.Value.GetClaimsByUserIdQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserClaimTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] { "%ID%" },
-                                                                               new string[] { "UserId" });
+                    var query = _sqlConfiguration.GetClaimsByUserIdQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserClaimTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] { "%ID%" },
+                                                                         new string[] { "UserId" });
 
                     var result = await conn.QueryAsync(query, new { UserId = id });
                     return result?.Select(x => new Claim(x.ClaimType, x.ClaimValue))
@@ -576,24 +579,25 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var query = _sqlConfiguration.Value.GetRolesByUserIdQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserRoleTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] {
-                                                                                                "%ID%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "UserId"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "%ROLETABLE%",
-                                                                                                "%USERROLETABLE%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                _sqlConfiguration.Value.RoleTable,
-                                                                                                _sqlConfiguration.Value.UserRoleTable
-                                                                                            });
+                    var query = _sqlConfiguration.GetRolesByUserIdQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         string.Empty,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] {
+                                                                                        "%ID%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "UserId"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "%ROLETABLE%",
+                                                                                        "%USERROLETABLE%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        _sqlConfiguration.RoleTable,
+                                                                                        _sqlConfiguration.UserRoleTable
+                                                                                      }
+                                                                        );
 
                     var result = await conn.QueryAsync<string>(query, new { UserId = id });
 
@@ -616,14 +620,15 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var query = _sqlConfiguration.Value.GetUserLoginInfoByIdQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserLoginTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] { "%ID%" },
-                                                                               new string[] { "UserId" });
+                    var query = _sqlConfiguration.GetUserLoginInfoByIdQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserLoginTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] { "%ID%" },
+                                                                         new string[] { "UserId" });
 
                     var result = await conn.QueryAsync(query, new { UserId = id });
+
                     return result?.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey, x.Name))
                                   .ToList();
                 }
@@ -649,28 +654,30 @@ namespace Identity.Dapper.Repositories
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"));
 
-                    var query = _sqlConfiguration.Value.GetUsersByClaimQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] {
-                                                                                                "%CLAIMVALUE%",
-                                                                                                "%CLAIMTYPE%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "ClaimValue",
-                                                                                                "ClaimType"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "%USERFILTER%",
-                                                                                                "%USERTABLE%",
-                                                                                                "%USERCLAIMTABLE%",
-                                                                                            },
-                                                                               new string[] {
-                                                                                                userProperties.SelectFilterWithTableName(_sqlConfiguration.Value.UserTable),
-                                                                                                _sqlConfiguration.Value.UserTable,
-                                                                                                _sqlConfiguration.Value.UserClaimTable,
-                                                                                            });
+                    var query = _sqlConfiguration.GetUsersByClaimQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] {
+                                                                                        "%CLAIMVALUE%",
+                                                                                        "%CLAIMTYPE%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "ClaimValue",
+                                                                                        "ClaimType"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "%USERFILTER%",
+                                                                                        "%USERTABLE%",
+                                                                                        "%USERCLAIMTABLE%",
+                                                                                      },
+                                                                         new string[] {
+                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
+                                                                                        _sqlConfiguration.UserTable,
+                                                                                        _sqlConfiguration.UserClaimTable,
+                                                                                      }
+                                                                         );
+
                     var result = await conn.QueryAsync<TUser>(sql: query,
                                                               param: new
                                                               {
@@ -702,28 +709,30 @@ namespace Identity.Dapper.Repositories
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"));
 
-                    var query = _sqlConfiguration.Value.GetUsersInRoleQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] {
-                                                                                                "%ROLENAME%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "RoleName"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "%USERFILTER%",
-                                                                                                "%USERTABLE%",
-                                                                                                "%USERROLETABLE%",
-                                                                                                "%ROLETABLE%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                userProperties.SelectFilterWithTableName(_sqlConfiguration.Value.UserTable),
-                                                                                                _sqlConfiguration.Value.UserTable,
-                                                                                                _sqlConfiguration.Value.UserRoleTable,
-                                                                                                _sqlConfiguration.Value.RoleTable
-                                                                                            });
+                    var query = _sqlConfiguration.GetUsersInRoleQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         string.Empty,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] {
+                                                                                        "%ROLENAME%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "RoleName"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "%USERFILTER%",
+                                                                                        "%USERTABLE%",
+                                                                                        "%USERROLETABLE%",
+                                                                                        "%ROLETABLE%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
+                                                                                        _sqlConfiguration.UserTable,
+                                                                                        _sqlConfiguration.UserRoleTable,
+                                                                                        _sqlConfiguration.RoleTable
+                                                                                      }
+                                                                         );
+
                     var result = await conn.QueryAsync<TUser>(sql: query,
                                                               param: new
                                                               {
@@ -754,28 +763,30 @@ namespace Identity.Dapper.Repositories
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"));
 
-                    var query = _sqlConfiguration.Value.IsInRoleQuery
-                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                               _sqlConfiguration.Value.UserTable,
-                                                                               _sqlConfiguration.Value.ParameterNotation,
-                                                                               new string[] {
-                                                                                                "%ROLENAME%",
-                                                                                                "%USERID%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "RoleName",
-                                                                                                "UserId"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                "%USERTABLE%",
-                                                                                                "%USERROLETABLE%",
-                                                                                                "%ROLETABLE%"
-                                                                                            },
-                                                                               new string[] {
-                                                                                                _sqlConfiguration.Value.UserTable,
-                                                                                                _sqlConfiguration.Value.UserRoleTable,
-                                                                                                _sqlConfiguration.Value.RoleTable
-                                                                                            });
+                    var query = _sqlConfiguration.IsInRoleQuery
+                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                         _sqlConfiguration.UserTable,
+                                                                         _sqlConfiguration.ParameterNotation,
+                                                                         new string[] {
+                                                                                        "%ROLENAME%",
+                                                                                        "%USERID%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "RoleName",
+                                                                                        "UserId"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        "%USERTABLE%",
+                                                                                        "%USERROLETABLE%",
+                                                                                        "%ROLETABLE%"
+                                                                                      },
+                                                                         new string[] {
+                                                                                        _sqlConfiguration.UserTable,
+                                                                                        _sqlConfiguration.UserRoleTable,
+                                                                                        _sqlConfiguration.RoleTable
+                                                                                      }
+                                                                         );
+
                     var result = await conn.QueryAsync(sql: query,
                                                        param: new
                                                        {
@@ -804,20 +815,21 @@ namespace Identity.Dapper.Repositories
                     {
                         await x.OpenAsync(cancellationToken);
 
-                        var query = _sqlConfiguration.Value.RemoveClaimsQuery
-                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                   _sqlConfiguration.Value.UserClaimTable,
-                                                                                   _sqlConfiguration.Value.ParameterNotation,
-                                                                                   new string[] {
-                                                                                                    "%ID%",
-                                                                                                    "%CLAIMVALUE%",
-                                                                                                    "%CLAIMTYPE"
-                                                                                                },
-                                                                                   new string[] {
-                                                                                                    "Id",
-                                                                                                    "ClaimValue",
-                                                                                                    "ClaimType"
-                                                                                                });
+                        var query = _sqlConfiguration.RemoveClaimsQuery
+                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                             _sqlConfiguration.UserClaimTable,
+                                                                             _sqlConfiguration.ParameterNotation,
+                                                                             new string[] {
+                                                                                            "%ID%",
+                                                                                            "%CLAIMVALUE%",
+                                                                                            "%CLAIMTYPE"
+                                                                                          },
+                                                                             new string[] {
+                                                                                            "Id",
+                                                                                            "ClaimValue",
+                                                                                            "ClaimType"
+                                                                                          }
+                                                                             );
 
                         var resultList = new List<bool>(claims.Count());
                         foreach (var claim in claims)
@@ -872,26 +884,27 @@ namespace Identity.Dapper.Repositories
                     {
                         await x.OpenAsync(cancellationToken);
 
-                        var query = _sqlConfiguration.Value.RemoveUserFromRoleQuery
-                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                   _sqlConfiguration.Value.UserClaimTable,
-                                                                                   _sqlConfiguration.Value.ParameterNotation,
-                                                                                   new string[] {
-                                                                                                    "%ID%",
-                                                                                                    "%ROLENAME%"
-                                                                                                },
-                                                                                   new string[] {
-                                                                                                    "Id",
-                                                                                                    "RoleName"
-                                                                                                },
-                                                                                   new string[] {
-                                                                                                    "%USERROLETABLE",
-                                                                                                    "%ROLETABLE%"
-                                                                                                },
-                                                                                   new string[] {
-                                                                                                    _sqlConfiguration.Value.UserRoleTable,
-                                                                                                    _sqlConfiguration.Value.RoleTable
-                                                                                                });
+                        var query = _sqlConfiguration.RemoveUserFromRoleQuery
+                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                             _sqlConfiguration.UserClaimTable,
+                                                                             _sqlConfiguration.ParameterNotation,
+                                                                             new string[] {
+                                                                                            "%ID%",
+                                                                                            "%ROLENAME%"
+                                                                                          },
+                                                                             new string[] {
+                                                                                            "Id",
+                                                                                            "RoleName"
+                                                                                          },
+                                                                             new string[] {
+                                                                                            "%USERROLETABLE",
+                                                                                            "%ROLETABLE%"
+                                                                                          },
+                                                                             new string[] {
+                                                                                            _sqlConfiguration.UserRoleTable,
+                                                                                            _sqlConfiguration.RoleTable
+                                                                                          }
+                                                                             );
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -941,20 +954,21 @@ namespace Identity.Dapper.Repositories
                     {
                         await x.OpenAsync(cancellationToken);
 
-                        var query = _sqlConfiguration.Value.RemoveLoginForUserQuery
-                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                   _sqlConfiguration.Value.UserLoginTable,
-                                                                                   _sqlConfiguration.Value.ParameterNotation,
-                                                                                   new string[] {
-                                                                                                    "%ID%",
-                                                                                                    "%LOGINPROVIDER%",
-                                                                                                    "%PROVIDERKEY%"
-                                                                                                },
-                                                                                   new string[] {
-                                                                                                    "Id",
-                                                                                                    "LoginProvider",
-                                                                                                    "ProviderKey"
-                                                                                                });
+                        var query = _sqlConfiguration.RemoveLoginForUserQuery
+                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                             _sqlConfiguration.UserLoginTable,
+                                                                             _sqlConfiguration.ParameterNotation,
+                                                                             new string[] {
+                                                                                            "%ID%",
+                                                                                            "%LOGINPROVIDER%",
+                                                                                            "%PROVIDERKEY%"
+                                                                                          },
+                                                                             new string[] {
+                                                                                            "Id",
+                                                                                            "LoginProvider",
+                                                                                            "ProviderKey"
+                                                                                          }
+                                                                             );
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -1005,24 +1019,25 @@ namespace Identity.Dapper.Repositories
                     {
                         await x.OpenAsync(cancellationToken);
 
-                        var query = _sqlConfiguration.Value.UpdateClaimForUserQuery
-                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                   _sqlConfiguration.Value.UserClaimTable,
-                                                                                   _sqlConfiguration.Value.ParameterNotation,
-                                                                                   new string[] {
-                                                                                                    "%NEWCLAIMTYPE%",
-                                                                                                    "%NEWCLAIMVALUE%",
-                                                                                                    "%USERID%",
-                                                                                                    "%CLAIMTYPE%",
-                                                                                                    "%CLAIMVALUE%"
-                                                                                                },
-                                                                                   new string[] {
-                                                                                                    "NewClaimType",
-                                                                                                    "NewClaimValue",
-                                                                                                    "UserId",
-                                                                                                    "ClaimType",
-                                                                                                    "ClaimValue"
-                                                                                                });
+                        var query = _sqlConfiguration.UpdateClaimForUserQuery
+                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                             _sqlConfiguration.UserClaimTable,
+                                                                             _sqlConfiguration.ParameterNotation,
+                                                                             new string[] {
+                                                                                            "%NEWCLAIMTYPE%",
+                                                                                            "%NEWCLAIMVALUE%",
+                                                                                            "%USERID%",
+                                                                                            "%CLAIMTYPE%",
+                                                                                            "%CLAIMVALUE%"
+                                                                                          },
+                                                                             new string[] {
+                                                                                            "NewClaimType",
+                                                                                            "NewClaimValue",
+                                                                                            "UserId",
+                                                                                            "ClaimType",
+                                                                                            "ClaimValue"
+                                                                                          }
+                                                                             );
 
                         var result = await x.ExecuteAsync(query, new
                         {

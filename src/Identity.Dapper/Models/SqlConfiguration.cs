@@ -5,14 +5,9 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Models
 {
-    public class SqlConfiguration
+    public abstract class SqlConfiguration
     {
-        public SqlConfiguration()
-        {
-            ParameterNotation = "@";
-            RoleTable = "IdentityRole";
-            SchemaName = "[dbo]";
-        }
+        public SqlConfiguration() { }
 
         public string SchemaName { get; set; }
         public string ParameterNotation { get; set; }
@@ -43,7 +38,7 @@ namespace Identity.Dapper.Models
         public string InsertUserClaimQuery { get; set; }
         public string InsertUserLoginQuery { get; set; }
         public string InsertUserRoleQuery { get; set; }
-        public string GetUserLoginByLoginProviderAndProviderKey { get; set; }
+        public string GetUserLoginByLoginProviderAndProviderKeyQuery { get; set; }
         public string GetClaimsByUserIdQuery { get; set; }
         public string GetUserLoginInfoByIdQuery { get; set; }
         public string GetUsersByClaimQuery { get; set; }

@@ -13,6 +13,7 @@ using Identity.Dapper.Stores;
 using Identity.Dapper.SqlServer.Connections;
 using Identity.Dapper.Connections;
 using Identity.Dapper.Cryptography;
+using Identity.Dapper.SqlServer.Models;
 
 namespace Identity.Dapper.SqlServer
 {
@@ -20,6 +21,8 @@ namespace Identity.Dapper.SqlServer
     {
         public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder)
         {
+            builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+
             #region Repositories Configuration
 
             builder.Services.AddScoped<IRoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
