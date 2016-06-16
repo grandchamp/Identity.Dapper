@@ -23,27 +23,41 @@ namespace Identity.Dapper.SqlServer
         {
             builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
 
+            AddRepositoriesAndStores(builder.Services);
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
+        {
+            builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            
+            AddRepositoriesAndStores(builder.Services);
+
+            return builder;
+        }
+
+        private static void AddRepositoriesAndStores(IServiceCollection services)
+        {
             #region Repositories Configuration
 
-            builder.Services.AddScoped<IRoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
+            services.AddScoped<IRoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
                                        RoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>>();
 
-            builder.Services.AddScoped<IUserRepository<DapperIdentityUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
+            services.AddScoped<IUserRepository<DapperIdentityUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
                                        UserRepository<DapperIdentityUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>>();
 
             #endregion
 
             #region Identity Stores Configuration
 
-            builder.Services.AddScoped<IRoleStore<DapperIdentityRole<int>>,
+            services.AddScoped<IRoleStore<DapperIdentityRole<int>>,
                                        DapperRoleStore<DapperIdentityRole<int>, int>>();
 
-            builder.Services.AddScoped<IUserStore<DapperIdentityUser>,
+            services.AddScoped<IUserStore<DapperIdentityUser>,
                                        DapperUserStore<DapperIdentityUser, int>>();
 
             #endregion
-
-            return builder;
         }
 
         public static IServiceCollection ConfigureDapperSqlServerConnectionProvider(this IServiceCollection services, IConfigurationSection configuration)

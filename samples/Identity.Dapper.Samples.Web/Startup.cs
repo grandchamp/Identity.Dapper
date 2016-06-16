@@ -42,13 +42,13 @@ namespace Identity.Dapper.Samples.Web
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
             services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>(x =>
-            {
-                x.Password.RequireDigit = false;
-                x.Password.RequiredLength = 1;
-                x.Password.RequireLowercase = false;
-                x.Password.RequireNonAlphanumeric = false;
-                x.Password.RequireUppercase = false;
-            })
+                                                                                    {
+                                                                                        x.Password.RequireDigit = false;
+                                                                                        x.Password.RequiredLength = 1;
+                                                                                        x.Password.RequireLowercase = false;
+                                                                                        x.Password.RequireNonAlphanumeric = false;
+                                                                                        x.Password.RequireUppercase = false;
+                                                                                    })
                     .AddDapperIdentityForSqlServer()
                     .AddDefaultTokenProviders();
 
