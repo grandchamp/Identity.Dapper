@@ -2,7 +2,7 @@
   "version": "0.1.0",
 
   "dependencies": {
-    "Identity.Dapper": "1.0.0-*",
+    "Identity.Dapper": "0.1.0-*",
     "Microsoft.Extensions.Configuration": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc2-final",
