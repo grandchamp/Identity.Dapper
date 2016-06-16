@@ -8,6 +8,8 @@ using System.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using Identity.Dapper.Models;
 using Identity.Dapper.Cryptography;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Identity.Dapper.SqlServer.Connections
 {
