@@ -12,7 +12,7 @@ Add a reference on your **project.json** file to the corresponding DBMS (Eg: SQL
   }
 ```
 
-On your configuration file add a section named **DapperIdentity** and **DapperIdentityCryptography**
+To configure the DBMS connection, you can add a **DapperIdentity** and a **DapperIdentityCryptography** section to your configuration file like this:
 ```
 "DapperIdentity": {
     "ConnectionString": "Connection string of your database",
@@ -20,12 +20,22 @@ On your configuration file add a section named **DapperIdentity** and **DapperId
     "Password": "123"
 },
 "DapperIdentityCryptography": {
-  "Key": "base64 32 bits key",
-  "IV": "base64 16 bits key"
+    "Key": "base64 32 bits key",
+    "IV": "base64 16 bits key"
 }
 ```
 
-The password can be encrypted with AES256 using the KEY and IV provided.
+Or you can use the User Secrets commands:
+```
+dotnet user-secrets set DapperIdentity:ConnectionString "Connection string of your database"
+dotnet user-secrets set DapperIdentity:Password "123"
+dotnet user-secrets set DapperIdentity:Username "user"
+
+dotnet user-secrets set DapperIdentityCryptography:Key "base64 32 bits key"
+dotnet user-secrets set DapperIdentityCryptography:IV "base64 16 bits key"
+```
+
+The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and IV provided.
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
