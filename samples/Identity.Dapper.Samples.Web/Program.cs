@@ -11,7 +11,9 @@ namespace Identity.Dapper.Samples.Web
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
+            try
+            {
+  var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
@@ -19,6 +21,13 @@ namespace Identity.Dapper.Samples.Web
                 .Build();
 
             host.Run();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+          
         }
     }
 }

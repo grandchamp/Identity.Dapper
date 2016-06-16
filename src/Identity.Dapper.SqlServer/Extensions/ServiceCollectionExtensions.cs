@@ -14,6 +14,7 @@ using Identity.Dapper.SqlServer.Connections;
 using Identity.Dapper.Connections;
 using Identity.Dapper.Cryptography;
 using Identity.Dapper.SqlServer.Models;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Identity.Dapper.SqlServer
 {
@@ -23,7 +24,8 @@ namespace Identity.Dapper.SqlServer
         {
             builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
 
-            AddRepositoriesAndStores(builder.Services);
+            AddRepositories(builder.Services);
+            AddStores(builder.Services, builder.UserType, builder.RoleType);
 
             return builder;
         }
@@ -31,13 +33,77 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
-            
-            AddRepositoriesAndStores(builder.Services);
+
+            AddRepositories(builder.Services);
+            AddStores(builder.Services, builder.UserType, builder.RoleType);
 
             return builder;
         }
 
-        private static void AddRepositoriesAndStores(IServiceCollection services)
+        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey>(this IdentityBuilder builder)
+        {
+            builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+
+            AddRepositories(builder.Services);
+            AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey>(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
+        {
+            builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+
+            AddRepositories(builder.Services);
+            AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
+        {
+            builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+
+            AddRepositories(builder.Services);
+            AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
+        {
+            builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+
+            AddRepositories(builder.Services);
+            AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
+
+            return builder;
+        }
+
+        //WHY THIS GIVES EXCEPTION???
+
+        private static void AddStores(IServiceCollection services, Type userType, Type roleType, Type keyType = null, Type userRoleType = null, Type roleClaimType = null)
+        {
+            //    Type userStoreType;
+            //    Type roleStoreType;
+            //    keyType = keyType ?? typeof(int);
+            //    userRoleType = userRoleType ?? typeof(DapperIdentityUserRole<>).MakeGenericType(keyType);
+            //    roleClaimType = roleClaimType ?? typeof(DapperIdentityRoleClaim<>).MakeGenericType(keyType);
+
+            //    userStoreType = typeof(DapperUserStore<,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType);
+            //    roleStoreType = typeof(DapperRoleStore<,,,>).MakeGenericType(roleType, keyType, userRoleType, roleClaimType);
+
+            //    services.AddScoped(typeof(IRoleRepository<,,,>).MakeGenericType(roleType, keyType, userRoleType, roleClaimType),
+            //                       typeof(RoleRepository<,,,>).MakeGenericType(roleType, keyType, userRoleType, roleClaimType));
+
+            //    services.AddScoped(typeof(IUserRepository<,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType),
+            //                       typeof(UserRepository<,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType));
+
+            //    services.AddScoped(typeof(IUserStore<>).MakeGenericType(userType), userStoreType);
+            //    services.AddScoped(typeof(IRoleStore<>).MakeGenericType(roleType), roleStoreType);
+        }
+
+        private static void AddRepositories(IServiceCollection services)
         {
             #region Repositories Configuration
 
