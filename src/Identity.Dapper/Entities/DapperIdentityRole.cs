@@ -8,7 +8,7 @@ namespace Identity.Dapper.Entities
     public class DapperIdentityRole : DapperIdentityRole<int>
     {
         public DapperIdentityRole() { }
-        public DapperIdentityRole(string roleName)
+        public DapperIdentityRole(string roleName) : this()
         {
             Name = roleName;
         }
@@ -16,12 +16,18 @@ namespace Identity.Dapper.Entities
 
     public class DapperIdentityRole<TKey> : DapperIdentityRole<TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>
         where TKey : IEquatable<TKey>
-    { }
+    {
+        public DapperIdentityRole() { }
+        public DapperIdentityRole(string roleName) : this()
+        {
+            Name = roleName;
+        }
+    }
 
     public class DapperIdentityRole<TKey, TUserRole, TRoleClaim>
-       where TKey : IEquatable<TKey>
-       where TUserRole : DapperIdentityUserRole<TKey>
-       where TRoleClaim : DapperIdentityRoleClaim<TKey>
+        where TKey : IEquatable<TKey>
+        where TUserRole : DapperIdentityUserRole<TKey>
+        where TRoleClaim : DapperIdentityRoleClaim<TKey>
     {
         #region Properties 
 
