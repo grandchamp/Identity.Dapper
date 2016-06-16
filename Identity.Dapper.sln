@@ -16,7 +16,9 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.SqlServer",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A1014397-D42D-4C4F-A391-95DEC2BAF318}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.Tests.Web", "test\Identity.Dapper.Tests.Web\Identity.Dapper.Tests.Web.xproj", "{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{82D0F07A-4CED-4A50-8BF4-57273D913494}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.Samples.Web", "samples\Identity.Dapper.Samples.Web\Identity.Dapper.Samples.Web.xproj", "{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7DEAA5D0-0920-4C6E-BA10-C5DB65E0EA42} = {EC299BD0-3BB6-484B-BCAE-358131F45D4D}
 		{582560BA-DB0D-49F5-9E25-2514CB43C079} = {EC299BD0-3BB6-484B-BCAE-358131F45D4D}
-		{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2} = {A1014397-D42D-4C4F-A391-95DEC2BAF318}
+		{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2} = {82D0F07A-4CED-4A50-8BF4-57273D913494}
 	EndGlobalSection
 EndGlobal
