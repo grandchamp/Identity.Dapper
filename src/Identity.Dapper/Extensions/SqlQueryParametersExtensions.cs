@@ -28,7 +28,7 @@ namespace Identity.Dapper
                 if (i == 0)
                     setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName} ");
                 else
-                    setBuilder.Append($"AND {propertyName} = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName} ");
             }
 
             return setBuilder.ToString();

@@ -38,14 +38,22 @@ namespace Identity.Dapper.Models
         public string DeleteUserQuery { get; set; }
         public string UpdateUserQuery { get; set; }
         public string SelectUserByUserNameQuery { get; set; }
+        public string SelectUserByEmailQuery { get; set; }
+        public string SelectUserByIdQuery { get; set; }
         public string InsertUserClaimQuery { get; set; }
         public string InsertUserLoginQuery { get; set; }
+        public string InsertUserRoleQuery { get; set; }
         public string GetUserLoginByLoginProviderAndProviderKey { get; set; }
         public string GetClaimsByUserIdQuery { get; set; }
         public string GetUserLoginInfoByIdQuery { get; set; }
         public string GetUsersByClaimQuery { get; set; }
         public string GetUsersInRoleQuery { get; set; }
+        public string GetRolesByUserIdQuery { get; set; }
         public string IsInRoleQuery { get; set; }
+        public string RemoveClaimsQuery { get; set; }
+        public string RemoveUserFromRoleQuery { get; set; }
+        public string RemoveLoginForUserQuery { get; set; }
+        public string UpdateClaimForUserQuery { get; set; }
         #endregion
     }
 }

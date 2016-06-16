@@ -35,7 +35,7 @@ namespace Identity.Dapper
         {
             var queryBuilder = new StringBuilder(query);
             for (int i = 0; i < parameterPlaceholders.Length; i++)
-                queryBuilder.Replace($"%{parameterPlaceholders[i]}%", $"{parameterNotation}{sqlParameterValues[i]}");
+                queryBuilder.Replace($"{parameterPlaceholders[i]}", $"{parameterNotation}{sqlParameterValues[i]}");
 
             queryBuilder.Replace("%SCHEMA%", schemaName)
                         .Replace("%TABLENAME%", tableName);

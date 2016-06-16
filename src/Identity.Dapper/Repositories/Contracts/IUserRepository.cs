@@ -26,7 +26,7 @@ namespace Identity.Dapper.Repositories.Contracts
 
         Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null);
         Task<bool> InsertLoginInfo(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> InsertUserToRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null);
 
         Task<IList<Claim>> GetClaimsByUserId(TKey id);
         Task<IList<string>> GetRolesByUserId(TKey id);
@@ -34,5 +34,10 @@ namespace Identity.Dapper.Repositories.Contracts
         Task<IList<TUser>> GetUsersByClaim(Claim claim);
         Task<IList<TUser>> GetUsersInRole(string roleName);
         Task<bool> IsInRole(TKey id, string roleName);
+
+        Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, DbTransaction transaction = null);
     }
 }

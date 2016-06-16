@@ -43,7 +43,7 @@ namespace Identity.Dapper.Tests.Web
             services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
-            services.AddIdentity<DapperIdentityUser, DapperIdentityRole>(x =>
+            services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>(x =>
             {
                 x.Password.RequireDigit = false;
                 x.Password.RequiredLength = 1;

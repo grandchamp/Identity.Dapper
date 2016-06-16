@@ -22,8 +22,8 @@ namespace Identity.Dapper.SqlServer
         {
             #region Repositories Configuration
 
-            builder.Services.AddScoped<IRoleRepository<DapperIdentityRole, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
-                                       RoleRepository<DapperIdentityRole, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>>();
+            builder.Services.AddScoped<IRoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
+                                       RoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>>();
 
             builder.Services.AddScoped<IUserRepository<DapperIdentityUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>,
                                        UserRepository<DapperIdentityUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>>();
@@ -32,8 +32,8 @@ namespace Identity.Dapper.SqlServer
 
             #region Identity Stores Configuration
 
-            builder.Services.AddScoped<IRoleStore<DapperIdentityRole>,
-                                       DapperRoleStore<DapperIdentityRole, int>>();
+            builder.Services.AddScoped<IRoleStore<DapperIdentityRole<int>>,
+                                       DapperRoleStore<DapperIdentityRole<int>, int>>();
 
             builder.Services.AddScoped<IUserStore<DapperIdentityUser>,
                                        DapperUserStore<DapperIdentityUser, int>>();

@@ -56,18 +56,19 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Email", email);
 
-                    var query = _sqlConfiguration.Value.SelectRoleByIdQuery.ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                   _sqlConfiguration.Value.RoleTable,
-                                                                                                   _sqlConfiguration.Value.ParameterNotation,
-                                                                                                   new string[] { "%EMAIL%" },
-                                                                                                   new string[] { "Email" });
+                    var query = _sqlConfiguration.Value.SelectUserByEmailQuery
+                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                               _sqlConfiguration.Value.UserTable,
+                                                                               _sqlConfiguration.Value.ParameterNotation,
+                                                                               new string[] { "%EMAIL%" },
+                                                                               new string[] { "Email" });
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: dynamicParameters);
                 }
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(1), ex.Message, ex);
 
                 return null;
             }
@@ -84,18 +85,19 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
-                    var query = _sqlConfiguration.Value.SelectRoleByIdQuery.ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                   _sqlConfiguration.Value.RoleTable,
-                                                                                                   _sqlConfiguration.Value.ParameterNotation,
-                                                                                                   new string[] { "%ID%" },
-                                                                                                   new string[] { "Id" });
+                    var query = _sqlConfiguration.Value.SelectUserByIdQuery
+                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                               _sqlConfiguration.Value.UserTable,
+                                                                               _sqlConfiguration.Value.ParameterNotation,
+                                                                               new string[] { "%ID%" },
+                                                                               new string[] { "Id" });
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: dynamicParameters);
                 }
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(2), ex.Message, ex);
 
                 return null;
             }
@@ -112,18 +114,19 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("User", userName);
 
-                    var query = _sqlConfiguration.Value.SelectRoleByNameQuery.ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                     _sqlConfiguration.Value.RoleTable,
-                                                                                                     _sqlConfiguration.Value.ParameterNotation,
-                                                                                                     new string[] { "%USERNAME%" },
-                                                                                                     new string[] { "User" });
+                    var query = _sqlConfiguration.Value.SelectUserByUserNameQuery
+                                                       .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                               _sqlConfiguration.Value.UserTable,
+                                                                               _sqlConfiguration.Value.ParameterNotation,
+                                                                               new string[] { "%USERNAME%" },
+                                                                               new string[] { "User" });
                     return await conn.QuerySingleAsync<TUser>(sql: query,
                                                               param: dynamicParameters);
                 }
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(3), ex.Message, ex);
 
                 return null;
             }
@@ -161,13 +164,13 @@ namespace Identity.Dapper.Repositories
                                                                                                          columnsBuilder.ToString(),
                                                                                                          string.Join(", ", valuesArray));
 
-                        var result = await x.ExecuteAsync(query, dynamicParameters);
+                        var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(new EventId(4), ex.Message, ex);
                         return false;
                     }
                 });
@@ -177,7 +180,7 @@ namespace Identity.Dapper.Repositories
                 {
                     using (conn = _connectionProvider.Create())
                     {
-                        await conn.OpenAsync();
+                        await conn.OpenAsync(cancellationToken);
 
                         return await insertFunction(conn);
                     }
@@ -190,7 +193,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(4), ex.Message, ex);
                 return false;
             }
         }
@@ -209,10 +212,11 @@ namespace Identity.Dapper.Repositories
                                                          $"{_sqlConfiguration.Value.ParameterNotation}ClaimValue"
                                                        };
 
-                        var query = _sqlConfiguration.Value.InsertUserQuery.ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                         _sqlConfiguration.Value.UserClaimTable,
-                                                                                                         "UserId, ClaimType, ClaimValue",
-                                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.Value.InsertUserClaimQuery
+                                                           .ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                         _sqlConfiguration.Value.UserClaimTable,
+                                                                                         "UserId, ClaimType, ClaimValue",
+                                                                                         string.Join(", ", valuesArray));
 
                         var resultList = new List<bool>(claims.Count());
                         foreach (var claim in claims)
@@ -223,14 +227,14 @@ namespace Identity.Dapper.Repositories
                                                                     UserId = id,
                                                                     ClaimType = claim.Type,
                                                                     ClaimValue = claim.Value
-                                                                }) > 0);
+                                                                }, transaction) > 0);
                         }
 
                         return resultList.TrueForAll(y => y);
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(new EventId(5), ex.Message, ex);
                         return false;
                     }
                 });
@@ -240,7 +244,7 @@ namespace Identity.Dapper.Repositories
                 {
                     using (conn = _connectionProvider.Create())
                     {
-                        await conn.OpenAsync();
+                        await conn.OpenAsync(cancellationToken);
 
                         return await insertFunction(conn);
                     }
@@ -253,7 +257,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(5), ex.Message, ex);
                 return false;
             }
         }
@@ -272,23 +276,24 @@ namespace Identity.Dapper.Repositories
                                                          $"{_sqlConfiguration.Value.ParameterNotation}ProviderKey"
                                                        };
 
-                        var query = _sqlConfiguration.Value.InsertUserQuery.ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                         _sqlConfiguration.Value.UserLoginTable,
-                                                                                                         "UserId, LoginProvider, ProviderKey",
-                                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.Value.InsertUserLoginQuery
+                                                           .ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                         _sqlConfiguration.Value.UserLoginTable,
+                                                                                         "UserId, LoginProvider, ProviderKey",
+                                                                                         string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
                         {
                             UserId = id,
                             LoginProvider = loginInfo.LoginProvider,
                             ProviderKey = loginInfo.ProviderKey
-                        });
+                        }, transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(new EventId(6), ex.Message, ex);
                         return false;
                     }
                 });
@@ -298,7 +303,7 @@ namespace Identity.Dapper.Repositories
                 {
                     using (conn = _connectionProvider.Create())
                     {
-                        await conn.OpenAsync();
+                        await conn.OpenAsync(cancellationToken);
 
                         return await insertFunction(conn);
                     }
@@ -311,12 +316,12 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(6), ex.Message, ex);
                 return false;
             }
         }
 
-        public async Task<bool> InsertUserToRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null)
         {
             try
             {
@@ -333,22 +338,23 @@ namespace Identity.Dapper.Repositories
                                                          $"{_sqlConfiguration.Value.ParameterNotation}RoleId"
                                                        };
 
-                        var query = _sqlConfiguration.Value.InsertUserQuery.ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                         _sqlConfiguration.Value.UserLoginTable,
-                                                                                                         "UserId, RoleId",
-                                                                                                         string.Join(", ", valuesArray));
+                        var query = _sqlConfiguration.Value.InsertUserRoleQuery
+                                                           .ReplaceInsertQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                         _sqlConfiguration.Value.UserRoleTable,
+                                                                                         "UserId, RoleId",
+                                                                                         string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
                         {
                             UserId = id,
                             RoleId = role.Id
-                        });
+                        }, transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(new EventId(7), ex.Message, ex);
                         return false;
                     }
                 });
@@ -358,7 +364,7 @@ namespace Identity.Dapper.Repositories
                 {
                     using (conn = _connectionProvider.Create())
                     {
-                        await conn.OpenAsync();
+                        await conn.OpenAsync(cancellationToken);
 
                         return await insertFunction(conn);
                     }
@@ -371,7 +377,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(7), ex.Message, ex);
                 return false;
             }
         }
@@ -384,22 +390,23 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync();
+                        await x.OpenAsync(cancellationToken);
 
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("Id", id);
 
-                        var query = _sqlConfiguration.Value.DeleteUserQuery.ReplaceDeleteQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                         _sqlConfiguration.Value.UserTable,
-                                                                                                         $"{_sqlConfiguration.Value.ParameterNotation}Id");
+                        var query = _sqlConfiguration.Value.DeleteUserQuery
+                                                           .ReplaceDeleteQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                         _sqlConfiguration.Value.UserTable,
+                                                                                         $"{_sqlConfiguration.Value.ParameterNotation}Id");
 
-                        var result = await x.ExecuteAsync(query, dynamicParameters);
+                        var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(new EventId(8), ex.Message, ex);
                         return false;
                     }
                 });
@@ -409,7 +416,7 @@ namespace Identity.Dapper.Repositories
                 {
                     using (conn = _connectionProvider.Create())
                     {
-                        await conn.OpenAsync();
+                        await conn.OpenAsync(cancellationToken);
 
                         return await removeFunction(conn);
                     }
@@ -422,7 +429,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(8), ex.Message, ex);
                 return false;
             }
         }
@@ -443,18 +450,19 @@ namespace Identity.Dapper.Repositories
 
                         var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.Value.ParameterNotation);
 
-                        var query = _sqlConfiguration.Value.UpdateUserQuery.ReplaceUpdateQueryParameters(_sqlConfiguration.Value.SchemaName,
-                                                                                                         _sqlConfiguration.Value.UserTable,
-                                                                                                         setFragment,
-                                                                                                         $"{_sqlConfiguration.Value.ParameterNotation}Id");
+                        var query = _sqlConfiguration.Value.UpdateUserQuery
+                                                           .ReplaceUpdateQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                         _sqlConfiguration.Value.UserTable,
+                                                                                         setFragment,
+                                                                                         $"{_sqlConfiguration.Value.ParameterNotation}Id");
 
-                        var result = await x.ExecuteAsync(query, dynamicParameters);
+                        var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(new EventId(9), ex.Message, ex);
                         return false;
                     }
                 });
@@ -464,7 +472,7 @@ namespace Identity.Dapper.Repositories
                 {
                     using (conn = _connectionProvider.Create())
                     {
-                        await conn.OpenAsync();
+                        await conn.OpenAsync(cancellationToken);
                         return await updateFunction(conn);
                     }
                 }
@@ -476,7 +484,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(9), ex.Message, ex);
                 return false;
             }
         }
@@ -526,7 +534,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(10), ex.Message, ex);
 
                 return null;
             }
@@ -554,7 +562,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(11), ex.Message, ex);
 
                 return null;
             }
@@ -568,7 +576,7 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var query = _sqlConfiguration.Value.GetClaimsByUserIdQuery
+                    var query = _sqlConfiguration.Value.GetRolesByUserIdQuery
                                                        .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
                                                                                _sqlConfiguration.Value.UserRoleTable,
                                                                                _sqlConfiguration.Value.ParameterNotation,
@@ -594,7 +602,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(12), ex.Message, ex);
 
                 return null;
             }
@@ -622,7 +630,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(13), ex.Message, ex);
 
                 return null;
             }
@@ -675,7 +683,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(14), ex.Message, ex);
 
                 return null;
             }
@@ -694,7 +702,7 @@ namespace Identity.Dapper.Repositories
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"));
 
-                    var query = _sqlConfiguration.Value.GetUsersByClaimQuery
+                    var query = _sqlConfiguration.Value.GetUsersInRoleQuery
                                                        .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
                                                                                _sqlConfiguration.Value.UserTable,
                                                                                _sqlConfiguration.Value.ParameterNotation,
@@ -727,7 +735,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(15), ex.Message, ex);
 
                 return null;
             }
@@ -746,7 +754,7 @@ namespace Identity.Dapper.Repositories
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"));
 
-                    var query = _sqlConfiguration.Value.GetUsersByClaimQuery
+                    var query = _sqlConfiguration.Value.IsInRoleQuery
                                                        .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
                                                                                _sqlConfiguration.Value.UserTable,
                                                                                _sqlConfiguration.Value.ParameterNotation,
@@ -780,8 +788,279 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(new EventId(16), ex.Message, ex);
 
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null)
+        {
+            try
+            {
+                var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+                {
+                    try
+                    {
+                        await x.OpenAsync(cancellationToken);
+
+                        var query = _sqlConfiguration.Value.RemoveClaimsQuery
+                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                   _sqlConfiguration.Value.UserClaimTable,
+                                                                                   _sqlConfiguration.Value.ParameterNotation,
+                                                                                   new string[] {
+                                                                                                    "%ID%",
+                                                                                                    "%CLAIMVALUE%",
+                                                                                                    "%CLAIMTYPE"
+                                                                                                },
+                                                                                   new string[] {
+                                                                                                    "Id",
+                                                                                                    "ClaimValue",
+                                                                                                    "ClaimType"
+                                                                                                });
+
+                        var resultList = new List<bool>(claims.Count());
+                        foreach (var claim in claims)
+                        {
+                            resultList.Add(await x.ExecuteAsync(query, new
+                            {
+                                Id = id,
+                                ClaimValue = claim.Value,
+                                ClaimType = claim.Type
+                            }, transaction) > 0);
+                        }
+
+                        return resultList.TrueForAll(y => y);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(new EventId(17), ex.Message, ex);
+                        return false;
+                    }
+                });
+
+                DbConnection conn = null;
+                if (transaction == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await removeFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = transaction.Connection;
+                    return await removeFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(new EventId(17), ex.Message, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null)
+        {
+            try
+            {
+                var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+                {
+                    try
+                    {
+                        await x.OpenAsync(cancellationToken);
+
+                        var query = _sqlConfiguration.Value.RemoveUserFromRoleQuery
+                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                   _sqlConfiguration.Value.UserClaimTable,
+                                                                                   _sqlConfiguration.Value.ParameterNotation,
+                                                                                   new string[] {
+                                                                                                    "%ID%",
+                                                                                                    "%ROLENAME%"
+                                                                                                },
+                                                                                   new string[] {
+                                                                                                    "Id",
+                                                                                                    "RoleName"
+                                                                                                },
+                                                                                   new string[] {
+                                                                                                    "%USERROLETABLE",
+                                                                                                    "%ROLETABLE%"
+                                                                                                },
+                                                                                   new string[] {
+                                                                                                    _sqlConfiguration.Value.UserRoleTable,
+                                                                                                    _sqlConfiguration.Value.RoleTable
+                                                                                                });
+
+                        var result = await x.ExecuteAsync(query, new
+                        {
+                            Id = id,
+                            RoleName = roleName
+                        }, transaction);
+
+                        return result > 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(new EventId(18), ex.Message, ex);
+                        return false;
+                    }
+                });
+
+                DbConnection conn = null;
+                if (transaction == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await removeFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = transaction.Connection;
+                    return await removeFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(new EventId(18), ex.Message, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, DbTransaction transaction = null)
+        {
+            try
+            {
+                var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+                {
+                    try
+                    {
+                        await x.OpenAsync(cancellationToken);
+
+                        var query = _sqlConfiguration.Value.RemoveLoginForUserQuery
+                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                   _sqlConfiguration.Value.UserLoginTable,
+                                                                                   _sqlConfiguration.Value.ParameterNotation,
+                                                                                   new string[] {
+                                                                                                    "%ID%",
+                                                                                                    "%LOGINPROVIDER%",
+                                                                                                    "%PROVIDERKEY%"
+                                                                                                },
+                                                                                   new string[] {
+                                                                                                    "Id",
+                                                                                                    "LoginProvider",
+                                                                                                    "ProviderKey"
+                                                                                                });
+
+                        var result = await x.ExecuteAsync(query, new
+                        {
+                            Id = id,
+                            LoginProvider = loginProvider,
+                            ProviderKey = providerKey
+                        }, transaction);
+
+                        return result > 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(new EventId(19), ex.Message, ex);
+                        return false;
+                    }
+                });
+
+                DbConnection conn = null;
+                if (transaction == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await removeFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = transaction.Connection;
+                    return await removeFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(new EventId(19), ex.Message, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, DbTransaction transaction = null)
+        {
+            try
+            {
+                var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+                {
+                    try
+                    {
+                        await x.OpenAsync(cancellationToken);
+
+                        var query = _sqlConfiguration.Value.UpdateClaimForUserQuery
+                                                           .ReplaceQueryParameters(_sqlConfiguration.Value.SchemaName,
+                                                                                   _sqlConfiguration.Value.UserClaimTable,
+                                                                                   _sqlConfiguration.Value.ParameterNotation,
+                                                                                   new string[] {
+                                                                                                    "%NEWCLAIMTYPE%",
+                                                                                                    "%NEWCLAIMVALUE%",
+                                                                                                    "%USERID%",
+                                                                                                    "%CLAIMTYPE%",
+                                                                                                    "%CLAIMVALUE%"
+                                                                                                },
+                                                                                   new string[] {
+                                                                                                    "NewClaimType",
+                                                                                                    "NewClaimValue",
+                                                                                                    "UserId",
+                                                                                                    "ClaimType",
+                                                                                                    "ClaimValue"
+                                                                                                });
+
+                        var result = await x.ExecuteAsync(query, new
+                        {
+                            NewClaimType = newClaim.Type,
+                            NewClaimValue = newClaim.Value,
+                            UserId = id,
+                            ClaimType = oldClaim.Type,
+                            ClaimValue = oldClaim.Value
+                        }, transaction);
+
+                        return result > 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(new EventId(20), ex.Message, ex);
+                        return false;
+                    }
+                });
+
+                DbConnection conn = null;
+                if (transaction == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await removeFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = transaction.Connection;
+                    return await removeFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(new EventId(20), ex.Message, ex);
                 return false;
             }
         }
