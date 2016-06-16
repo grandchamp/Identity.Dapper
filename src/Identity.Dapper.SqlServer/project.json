@@ -4,7 +4,10 @@
   "description": "Identity package that uses Dapper with SQL Server instead EntityFramework for use with .NET Core.",
   "authors": [ "grandchamp" ],
   "packOptions": {
-    "repository": { "url": "https://github.com/grandchamp/Identity.Dapper" },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/grandchamp/Identity.Dapper.git"
+    },
     "owners": [ "grandchamp" ],
     "tags": [ "asp.net", "core", "dapper", "identity" ],
     "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
