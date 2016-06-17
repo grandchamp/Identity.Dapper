@@ -49,4 +49,4 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
 
 All **XXX** are replaced by your DBMS.
 
-Currently, only SQL Server is supported. We plan support for Oracle and PostgreSQL.
+Currently, only SQL Server is supported. We plan support for Oracle, PostgreSQL and MySQL.
