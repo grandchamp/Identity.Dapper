@@ -13,36 +13,6 @@ using System.Data.Common;
 
 namespace Identity.Dapper.Stores
 {
-    //public class DapperUserStore : DapperUserStore<DapperIdentityUser<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>
-    //{
-    //    public DapperUserStore(IConnectionProvider connProv,
-    //                           ILogger<DapperUserStore<DapperIdentityUser<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>> log,
-    //                           IUserRepository<DapperIdentityUser<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>> roleRepo)
-    //        : base(connProv, log, roleRepo)
-    //    { }
-    //}
-
-    //public class DapperUserStore<TUser> : DapperUserStore<TUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>
-    //  where TUser : DapperIdentityUser
-    //{
-    //    public DapperUserStore(IConnectionProvider connProv,
-    //                           ILogger<DapperUserStore<TUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>> log,
-    //                           IUserRepository<TUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>> roleRepo)
-    //        : base(connProv, log, roleRepo)
-    //    { }
-    //}
-
-    //public class DapperUserStore<TUser, TKey> : DapperUserStore<TUser, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>
-    //    where TUser : DapperIdentityUser<TKey>
-    //    where TKey : IEquatable<TKey>
-    //{
-    //    public DapperUserStore(IConnectionProvider connProv,
-    //                           ILogger<DapperUserStore<TUser, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>> log,
-    //                           IUserRepository<TUser, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>> roleRepo)
-    //        : base(connProv, log, roleRepo)
-    //    { }
-    //}
-
     public class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim> :
         IUserStore<TUser>,
         IUserLoginStore<TUser>,
