@@ -13,7 +13,7 @@
     "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
   },
   "dependencies": {
-    "Identity.Dapper": "0.2.1-*",
+    "Identity.Dapper": "0.2.2-alpha",
     "NETStandard.Library": "1.5.0-rc2-24027",
     "Microsoft.Extensions.Configuration": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
