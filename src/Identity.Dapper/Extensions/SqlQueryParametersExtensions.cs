@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Identity.Dapper
 {
@@ -26,9 +24,9 @@ namespace Identity.Dapper
                 var propertyName = propertyNamesArray[i];
 
                 if (i == 0)
-                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($"SET \"{propertyName}\" = {parameterNotation}{propertyName} ");
                 else
-                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($", \"{propertyName}\" = {parameterNotation}{propertyName} ");
             }
 
             return setBuilder.ToString();
@@ -40,7 +38,7 @@ namespace Identity.Dapper
             var filterBuilderArray = new List<string>(propertyNamesArray.Length);
 
             for (int i = 0; i < propertyNamesArray.Length; i++)
-                filterBuilderArray.Add($"{tableName}.{propertyNamesArray[i]}");
+                filterBuilderArray.Add($"\"{tableName}\".\"{propertyNamesArray[i]}\"");
 
             return string.Join(", ", filterBuilderArray);
         }

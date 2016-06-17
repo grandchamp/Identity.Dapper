@@ -1,15 +1,15 @@
-﻿using Identity.Dapper.Entities;
+﻿using Identity.Dapper.Connections;
+using Identity.Dapper.Entities;
+using Identity.Dapper.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using Identity.Dapper.Connections;
-using Microsoft.Extensions.Logging;
-using Identity.Dapper.Repositories.Contracts;
-using System.Security.Claims;
 using System.Data.Common;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Identity.Dapper.Stores
 {
