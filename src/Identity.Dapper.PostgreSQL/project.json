@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.2.0-alpha",
+  "version": "0.2.1-alpha",
   "title": "Identity.Dapper.PostgreSql",
   "description": "Identity package that uses Dapper with PostgreSQL instead EntityFramework for use with .NET Core.",
   "authors": [ "grandchamp" ],
@@ -13,7 +13,7 @@
     "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
   },
   "dependencies": {
-    "Identity.Dapper": "0.2.0-alpha",
+    "Identity.Dapper": "0.2.1-*",
     "NETStandard.Library": "1.5.0-rc2-24027",
     "Microsoft.Extensions.Configuration": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
