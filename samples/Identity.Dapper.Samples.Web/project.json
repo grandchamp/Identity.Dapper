@@ -31,8 +31,8 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
-    "Identity.Dapper.PostgreSQL": "0.2.0-*",
-    "Identity.Dapper.SqlServer": "0.2.1-*"
+    "Identity.Dapper.PostgreSQL": "0.2.2-*",
+    "Identity.Dapper.SqlServer": "0.2.2-*"
   },
 
   "tools": {
