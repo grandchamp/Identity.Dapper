@@ -59,8 +59,8 @@ namespace Identity.Dapper.Repositories
                                                                          _sqlConfiguration.ParameterNotation,
                                                                          new string[] { "%EMAIL%" },
                                                                          new string[] { "Email" });
-                    return await conn.QuerySingleAsync<TUser>(sql: query,
-                                                              param: dynamicParameters);
+                    return await conn.QueryFirstOrDefaultAsync<TUser>(sql: query,
+                                                                      param: dynamicParameters);
                 }
             }
             catch (Exception ex)
@@ -88,8 +88,9 @@ namespace Identity.Dapper.Repositories
                                                                          _sqlConfiguration.ParameterNotation,
                                                                          new string[] { "%ID%" },
                                                                          new string[] { "Id" });
-                    return await conn.QuerySingleAsync<TUser>(sql: query,
-                                                              param: dynamicParameters);
+
+                    return await conn.QueryFirstOrDefaultAsync<TUser>(sql: query,
+                                                                      param: dynamicParameters);
                 }
             }
             catch (Exception ex)
@@ -117,8 +118,9 @@ namespace Identity.Dapper.Repositories
                                                                          _sqlConfiguration.ParameterNotation,
                                                                          new string[] { "%USERNAME%" },
                                                                          new string[] { "User" });
-                    return await conn.QuerySingleAsync<TUser>(sql: query,
-                                                              param: dynamicParameters);
+
+                    return await conn.QuerySingleOrDefaultAsync<TUser>(sql: query,
+                                                                       param: dynamicParameters);
                 }
             }
             catch (Exception ex)
@@ -129,11 +131,11 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Insert(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<TKey> Insert(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null)
         {
             try
             {
-                var insertFunction = new Func<DbConnection, Task<bool>>(async x =>
+                var insertFunction = new Func<DbConnection, Task<TKey>>(async x =>
                 {
                     try
                     {
@@ -163,14 +165,14 @@ namespace Identity.Dapper.Repositories
                                                                                    columnsBuilder.ToString(),
                                                                                    string.Join(", ", valuesArray));
 
-                        var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
+                        var result = await x.ExecuteScalarAsync<TKey>(query, dynamicParameters, transaction);
 
-                        return result > 0;
+                        return result;
                     }
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(4), ex.Message, ex);
-                        return false;
+                        return default(TKey);
                     }
                 });
 
@@ -193,7 +195,7 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(new EventId(4), ex.Message, ex);
-                return false;
+                return default(TKey);
             }
         }
 
@@ -524,15 +526,15 @@ namespace Identity.Dapper.Repositories
                                                                                         userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
                                                                                         _sqlConfiguration.UserTable,
                                                                                         _sqlConfiguration.UserLoginTable,
-                                                                                      }              
+                                                                                      }
                                                                          );
 
-                    return await conn.QuerySingleAsync<TUser>(sql: query,
-                                                              param: new
-                                                              {
-                                                                  LoginProvider = loginProvider,
-                                                                  ProviderKey = providerKey
-                                                              });
+                    return await conn.QueryFirstOrDefaultAsync<TUser>(sql: query,
+                                                                      param: new
+                                                                      {
+                                                                          LoginProvider = loginProvider,
+                                                                          ProviderKey = providerKey
+                                                                      });
                 }
             }
             catch (Exception ex)

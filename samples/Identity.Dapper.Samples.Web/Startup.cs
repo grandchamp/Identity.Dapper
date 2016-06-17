@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Identity.Dapper.Entities;
+using Identity.Dapper.PostgreSQL;
+using Identity.Dapper.Samples.Web.Services;
+using Identity.Dapper.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Identity.Dapper.Samples.Web.Services;
-using Identity.Dapper.SqlServer;
-using Identity.Dapper.Entities;
-using Identity.Dapper.Models;
 
 namespace Identity.Dapper.Samples.Web
 {
@@ -41,6 +37,9 @@ namespace Identity.Dapper.Samples.Web
             services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
+            //services.ConfigureDapperPostgreSqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
+            //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
+
             services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>(x =>
                                                                                     {
                                                                                         x.Password.RequireDigit = false;
@@ -49,6 +48,7 @@ namespace Identity.Dapper.Samples.Web
                                                                                         x.Password.RequireNonAlphanumeric = false;
                                                                                         x.Password.RequireUppercase = false;
                                                                                     })
+                    //.AddDapperIdentityForPostgreSql()
                     .AddDapperIdentityForSqlServer()
                     .AddDefaultTokenProviders();
 

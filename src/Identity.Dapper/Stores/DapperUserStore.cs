@@ -156,9 +156,11 @@ namespace Identity.Dapper.Stores
             {
                 var result = await _userRepository.Insert(user, cancellationToken, _transaction);
 
-                if (result)
+                if (!result.Equals(default(TKey)))
                 {
                     CommitTransaction();
+                    user.Id = result;
+
                     return IdentityResult.Success;
                 }
                 else

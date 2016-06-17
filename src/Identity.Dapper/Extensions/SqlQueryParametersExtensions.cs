@@ -9,7 +9,7 @@ namespace Identity.Dapper
         public static List<string> InsertQueryValuesFragment(this List<string> valuesArray, string parameterNotation, IEnumerable<string> propertyNames)
         {
             foreach (var property in propertyNames)
-                valuesArray.Add($"{parameterNotation}{property}");
+                valuesArray.Add($"{parameterNotation}{property.Replace("\"", "")}");
 
             return valuesArray;
         }
@@ -24,9 +24,9 @@ namespace Identity.Dapper
                 var propertyName = propertyNamesArray[i];
 
                 if (i == 0)
-                    setBuilder.Append($"SET \"{propertyName}\" = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")} ");
                 else
-                    setBuilder.Append($", \"{propertyName}\" = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")} ");
             }
 
             return setBuilder.ToString();

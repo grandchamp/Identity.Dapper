@@ -48,8 +48,8 @@ namespace Identity.Dapper.Repositories
                                                                          new string[] { "%ID%" },
                                                                          new string[] { "Id" });
 
-                    return await conn.QuerySingleAsync<TRole>(sql: query,
-                                                              param: dynamicParameters);
+                    return await conn.QueryFirstOrDefaultAsync<TRole>(sql: query,
+                                                                      param: dynamicParameters);
                 }
             }
             catch (Exception ex)
@@ -78,8 +78,8 @@ namespace Identity.Dapper.Repositories
                                                                          new string[] { "%NAME%" },
                                                                          new string[] { "Name" });
 
-                    return await conn.QuerySingleAsync<TRole>(sql: query,
-                                                              param: dynamicParameters);
+                    return await conn.QueryFirstOrDefaultAsync<TRole>(sql: query,
+                                                                      param: dynamicParameters);
                 }
             }
             catch (Exception ex)

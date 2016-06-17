@@ -2,30 +2,30 @@
 using Identity.Dapper.Cryptography;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
+using Identity.Dapper.PostgreSQL.Connections;
+using Identity.Dapper.PostgreSQL.Models;
 using Identity.Dapper.Repositories;
 using Identity.Dapper.Repositories.Contracts;
-using Identity.Dapper.SqlServer.Connections;
-using Identity.Dapper.SqlServer.Models;
 using Identity.Dapper.Stores;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Identity.Dapper.SqlServer
+namespace Identity.Dapper.PostgreSQL
 {
     public static class ServiceCollectionExtensions
     {
-        public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder)
+        public static IdentityBuilder AddDapperIdentityForPostgreSql(this IdentityBuilder builder)
         {
-            builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+            builder.Services.AddSingleton<SqlConfiguration, PostgreSqlConfiguration>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
+        public static IdentityBuilder AddDapperIdentityForPostgreSql(this IdentityBuilder builder, PostgreSqlConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
 
@@ -34,16 +34,16 @@ namespace Identity.Dapper.SqlServer
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey>(this IdentityBuilder builder)
+        public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey>(this IdentityBuilder builder)
         {
-            builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+            builder.Services.AddSingleton<SqlConfiguration, PostgreSqlConfiguration>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey>(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
+        public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey>(this IdentityBuilder builder, PostgreSqlConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
 
@@ -52,16 +52,16 @@ namespace Identity.Dapper.SqlServer
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
+        public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
         {
-            builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+            builder.Services.AddSingleton<SqlConfiguration, PostgreSqlConfiguration>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentityForSqlServer<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
+        public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder, PostgreSqlConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
 
@@ -90,12 +90,12 @@ namespace Identity.Dapper.SqlServer
             services.AddScoped(typeof(IUserStore<>).MakeGenericType(userType), userStoreType);
             services.AddScoped(typeof(IRoleStore<>).MakeGenericType(roleType), roleStoreType);
         }
-        
-        public static IServiceCollection ConfigureDapperSqlServerConnectionProvider(this IServiceCollection services, IConfigurationSection configuration)
+
+        public static IServiceCollection ConfigureDapperPostgreSqlConnectionProvider(this IServiceCollection services, IConfigurationSection configuration)
         {
             services.Configure<ConnectionProviderOptions>(configuration);
 
-            services.AddSingleton<IConnectionProvider, SqlServerConnectionProvider>();
+            services.AddSingleton<IConnectionProvider, PostgreSqlConnectionProvider>();
 
             return services;
         }

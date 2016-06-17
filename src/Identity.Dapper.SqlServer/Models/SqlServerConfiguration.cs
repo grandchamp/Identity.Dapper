@@ -17,7 +17,7 @@ namespace Identity.Dapper.SqlServer.Models
             UpdateRoleQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
             SelectRoleByNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Name = %NAME%";
             SelectRoleByIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
-            InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
+            InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% OUTPUT INSERTED.Id VALUES(%VALUES%)";
             DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
             UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
             SelectUserByUserNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UserName = %USERNAME%";
