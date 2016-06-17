@@ -35,6 +35,9 @@ namespace Identity.Dapper.Cryptography
         {
             try
             {
+                if (string.IsNullOrEmpty(_aesKeys.Value.Key) || string.IsNullOrEmpty(_aesKeys.Value.IV))
+                    return input;
+
                 using (var aes = Aes.Create())
                 {
                     ICryptoTransform cryptoTransform;

@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.2.1-alpha",
+  "version": "0.2.2-alpha",
   "title": "Identity.Dapper",
   "description": "Identity package that uses Dapper instead EntityFramework for use with .NET Core. This is the base package, alone it won't do nothing. Use the Identity.Dapper.SqlServer to use with SQL Server.",
   "authors": [ "grandchamp" ],
