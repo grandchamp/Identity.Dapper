@@ -37,6 +37,11 @@ dotnet user-secrets set DapperIdentityCryptography:IV "base64 16 bits key"
 
 The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and IV provided.
 
+Insert a using directive for the package you're using:
+```
+using Identity.Dapper.XXX
+```
+
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
 services.ConfigureDapperXXXConnectionProvider(Configuration.GetSection("DapperIdentity"))
