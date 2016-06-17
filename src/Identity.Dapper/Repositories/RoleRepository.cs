@@ -4,7 +4,6 @@ using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.Repositories.Contracts;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -49,8 +48,8 @@ namespace Identity.Dapper.Repositories
                                                                          new string[] { "%ID%" },
                                                                          new string[] { "Id" });
 
-                    return await conn.QuerySingleAsync<TRole>(sql: query,
-                                                              param: dynamicParameters);
+                    return await conn.QueryFirstOrDefaultAsync<TRole>(sql: query,
+                                                                      param: dynamicParameters);
                 }
             }
             catch (Exception ex)
@@ -79,8 +78,8 @@ namespace Identity.Dapper.Repositories
                                                                          new string[] { "%NAME%" },
                                                                          new string[] { "Name" });
 
-                    return await conn.QuerySingleAsync<TRole>(sql: query,
-                                                              param: dynamicParameters);
+                    return await conn.QueryFirstOrDefaultAsync<TRole>(sql: query,
+                                                                      param: dynamicParameters);
                 }
             }
             catch (Exception ex)
@@ -103,13 +102,14 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters(role);
 
                     var roleProperties = role.GetType()
-                                           .GetPublicPropertiesNames(x => !x.Name.Equals("Id"));
+                                           .GetPublicPropertiesNames(x => !x.Name.Equals("Id"))
+                                           .Select(x => string.Concat("\"", x, "\""));
 
                     var valuesArray = new List<string>(roleProperties.Count());
 
                     if (!role.Id.Equals(default(TKey)))
                     {
-                        columnsBuilder.Append("Id, ");
+                        columnsBuilder.Append("\"Id\", ");
                         valuesArray.Add($"{_sqlConfiguration.ParameterNotation}Id, ");
                     }
 
@@ -173,7 +173,8 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters(role);
 
                     var roleProperties = role.GetType()
-                                             .GetPublicPropertiesNames(x => !x.Name.Equals("Id"));
+                                             .GetPublicPropertiesNames(x => !x.Name.Equals("Id"))
+                                             .Select(x => string.Concat("\"", x, "\""));
 
                     var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 

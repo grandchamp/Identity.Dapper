@@ -1,0 +1,30 @@
+﻿{
+  "version": "0.2.0-alpha",
+  "title": "Identity.Dapper.SqlServer",
+  "description": "Identity package that uses Dapper with PostgreSQL instead EntityFramework for use with .NET Core.",
+  "authors": [ "grandchamp" ],
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/grandchamp/Identity.Dapper.git"
+    },
+    "owners": [ "grandchamp" ],
+    "tags": [ "asp.net", "core", "dapper", "identity" ],
+    "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
+  },
+  "dependencies": {
+    "Identity.Dapper": "0.2.0-alpha",
+    "NETStandard.Library": "1.5.0-rc2-24027",
+    "Microsoft.Extensions.Configuration": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc2-final",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-final",
+    "Npgsql": "3.1.4"
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": "dnxcore50"
+    }
+  }
+}

@@ -19,7 +19,8 @@
     "System.Data.Common": "4.0.1-rc2-24027",
     "System.Security.Cryptography.Encryption": "4.0.0-*",
     "Dapper": "1.50.0-*",
-    "Microsoft.CSharp": "4.0.1-rc2-24027"
+    "Microsoft.CSharp": "4.0.1-rc2-24027",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-final"
   },
   "frameworks": {
     "netstandard1.5": {
