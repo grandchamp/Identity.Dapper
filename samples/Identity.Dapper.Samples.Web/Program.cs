@@ -11,23 +11,14 @@ namespace Identity.Dapper.Samples.Web
     {
         public static void Main(string[] args)
         {
-            try
-            {
-  var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+            var host = new WebHostBuilder()
+                          .UseKestrel()
+                          .UseContentRoot(Directory.GetCurrentDirectory())
+                          .UseIISIntegration()
+                          .UseStartup<Startup>()
+                          .Build();
 
             host.Run();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-          
         }
     }
 }
