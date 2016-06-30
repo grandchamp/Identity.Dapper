@@ -5,10 +5,10 @@ Add a reference on your **project.json** file to the corresponding DBMS (Eg: SQL
 ```
 "dependencies": {
     "Microsoft.NETCore.App": {
-      "version": "1.0.0-rc2-3002702",
+      "version": "1.0.0",
       "type": "platform"
     },
-    "Identity.Dapper.XXX": "0.1.0-*"
+    "Identity.Dapper.XXX": "0.3.0-*"
   }
 ```
 
@@ -36,11 +36,6 @@ dotnet user-secrets set DapperIdentityCryptography:IV "base64 16 bits key"
 ```
 
 The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and IV provided.
-
-Insert a using directive for the package you're using:
-```
-using Identity.Dapper.XXX
-```
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
