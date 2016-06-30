@@ -5,10 +5,10 @@ Add a reference on your **project.json** file to the corresponding DBMS (Eg: SQL
 ```
 "dependencies": {
     "Microsoft.NETCore.App": {
-      "version": "1.0.0-rc2-3002702",
+      "version": "1.0.0",
       "type": "platform"
     },
-    "Identity.Dapper.XXX": "0.1.0-*"
+    "Identity.Dapper.XXX": "0.3.0-*"
   }
 ```
 
