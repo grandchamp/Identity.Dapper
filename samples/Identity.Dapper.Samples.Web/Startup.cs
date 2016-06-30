@@ -68,7 +68,6 @@ namespace Identity.Dapper.Samples.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
