@@ -4,20 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Common;
-using System.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using Identity.Dapper.Models;
 using Identity.Dapper.Cryptography;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
+using Identity.Dapper.Models;
+using Npgsql;
 
-namespace Identity.Dapper.SqlServer.Connections
+namespace Identity.Dapper.PostgreSQL.Connections
 {
-    public class SqlServerConnectionProvider : IConnectionProvider
+    public class PostgreSqlConnectionProvider : IConnectionProvider
     {
         private readonly IOptions<ConnectionProviderOptions> _connectionProviderOptions;
         private readonly EncryptionHelper _encryptionHelper;
-        public SqlServerConnectionProvider(IOptions<ConnectionProviderOptions> connProvOpts, EncryptionHelper encHelper)
+        public PostgreSqlConnectionProvider(IOptions<ConnectionProviderOptions> connProvOpts, EncryptionHelper encHelper)
         {
             _connectionProviderOptions = connProvOpts;
             _encryptionHelper = encHelper;
@@ -37,11 +35,11 @@ namespace Identity.Dapper.SqlServer.Connections
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username))
                 throw new ArgumentNullException("There's no DapperIdentity:Username configured. Please, register the value.");
 
-            var sqlConnectionBuilder = new SqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString);
-            sqlConnectionBuilder.Password = _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password);
-            sqlConnectionBuilder.UserID = _connectionProviderOptions.Value.Username;
+            var pSqlConnectionBuilder = new NpgsqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString);
+            pSqlConnectionBuilder.Password = _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password);
+            pSqlConnectionBuilder.Username = _connectionProviderOptions.Value.Username;
 
-            return new SqlConnection(sqlConnectionBuilder.ToString());
+            return new NpgsqlConnection(pSqlConnectionBuilder.ToString());
         }
     }
 }

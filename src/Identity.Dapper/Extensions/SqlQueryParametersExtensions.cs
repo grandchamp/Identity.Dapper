@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Identity.Dapper
 {
@@ -11,7 +9,7 @@ namespace Identity.Dapper
         public static List<string> InsertQueryValuesFragment(this List<string> valuesArray, string parameterNotation, IEnumerable<string> propertyNames)
         {
             foreach (var property in propertyNames)
-                valuesArray.Add($"{parameterNotation}{property}");
+                valuesArray.Add($"{parameterNotation}{property.Replace("\"", "")}");
 
             return valuesArray;
         }
@@ -26,9 +24,9 @@ namespace Identity.Dapper
                 var propertyName = propertyNamesArray[i];
 
                 if (i == 0)
-                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($"SET {propertyName.Replace("\"", "")} = {parameterNotation}{propertyName.Replace("\"", "")}");
                 else
-                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName} ");
+                    setBuilder.Append($", {propertyName.Replace("\"", "")} = {parameterNotation}{propertyName.Replace("\"", "")}");
             }
 
             return setBuilder.ToString();
@@ -40,7 +38,7 @@ namespace Identity.Dapper
             var filterBuilderArray = new List<string>(propertyNamesArray.Length);
 
             for (int i = 0; i < propertyNamesArray.Length; i++)
-                filterBuilderArray.Add($"{tableName}.{propertyNamesArray[i]}");
+                filterBuilderArray.Add($"\"{tableName}\".\"{propertyNamesArray[i]}\"");
 
             return string.Join(", ", filterBuilderArray);
         }

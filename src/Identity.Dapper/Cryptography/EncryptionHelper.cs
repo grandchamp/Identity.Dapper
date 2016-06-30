@@ -2,10 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace Identity.Dapper.Cryptography
 {
@@ -38,6 +35,9 @@ namespace Identity.Dapper.Cryptography
         {
             try
             {
+                if (string.IsNullOrEmpty(_aesKeys.Value.Key) || string.IsNullOrEmpty(_aesKeys.Value.IV))
+                    return input;
+
                 using (var aes = Aes.Create())
                 {
                     ICryptoTransform cryptoTransform;

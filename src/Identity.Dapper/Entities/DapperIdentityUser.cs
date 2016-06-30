@@ -7,7 +7,7 @@ namespace Identity.Dapper.Entities
     {
         public DapperIdentityUser() { }
 
-        public DapperIdentityUser(string userName)
+        public DapperIdentityUser(string userName) : this()
         {
             UserName = userName;
         }
@@ -15,7 +15,14 @@ namespace Identity.Dapper.Entities
 
     public class DapperIdentityUser<TKey> : DapperIdentityUser<TKey, DapperIdentityUserClaim<TKey>, DapperIdentityUserRole<TKey>, DapperIdentityUserLogin<TKey>>
        where TKey : IEquatable<TKey>
-    { }
+    {
+        public DapperIdentityUser() { }
+
+        public DapperIdentityUser(string userName) : this()
+        {
+            UserName = userName;
+        }
+    }
 
     public class DapperIdentityUser<TKey, TUserClaim, TUserRole, TUserLogin> where TKey : IEquatable<TKey>
     {

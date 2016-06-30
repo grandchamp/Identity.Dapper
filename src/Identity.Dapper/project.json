@@ -1,19 +1,26 @@
 ﻿{
-  "version": "0.1.0",
-  "description": "Identity package that uses Dapper instead EntityFramework for use with .NET Core. This is the base package, alone it won't do nothing. Use the Identity.Dapper.SqlServer to use with SQL Server.",
+  "version": "0.3.0-alpha",
+  "title": "Identity.Dapper",
+  "description": "Identity package that uses Dapper instead EntityFramework for use with .NET Core. This is the base package, alone it won't do nothing. Use the Identity.Dapper.SqlServer to use with SQL Server or Identity.Dapper.PostgreSQL to use with PostgreSQL.",
   "authors": [ "grandchamp" ],
   "packOptions": {
-    "repository": { "url": "https://github.com/grandchamp/Identity.Dapper" },
-    "owners": [ "grandchamp" ]
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/grandchamp/Identity.Dapper.git"
+    },
+    "owners": [ "grandchamp" ],
+    "tags": [ "asp.net", "core", "dapper", "identity" ],
+    "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
   },
   "dependencies": {
-    "NETStandard.Library": "1.5.0-rc2-24027",
-    "Microsoft.AspNetCore.Identity": "1.0.0-rc2-final",
-    "System.Reflection": "4.1.0-rc2-24027",
-    "System.Data.Common": "4.0.1-rc2-24027",
-    "System.Security.Cryptography.Encryption": "4.0.0-*",
+    "NETStandard.Library": "1.6.0",
+    "Microsoft.AspNetCore.Identity": "1.0.0",
+    "System.Reflection": "4.1.0",
+    "System.Data.Common": "4.1.0",
+    "System.Security.Cryptography.Algorithms": "4.2.0",
     "Dapper": "1.50.0-*",
-    "Microsoft.CSharp": "4.0.1-rc2-24027"
+    "Microsoft.CSharp": "4.0.1",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0"
   },
   "frameworks": {
     "netstandard1.5": {

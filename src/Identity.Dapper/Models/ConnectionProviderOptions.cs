@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Identity.Dapper.Models
+﻿namespace Identity.Dapper.Models
 {
     public class ConnectionProviderOptions
     {

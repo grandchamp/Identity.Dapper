@@ -9,52 +9,21 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Stores
 {
-    public class DapperRoleStore : DapperRoleStore<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>
-    {
-        public DapperRoleStore(IConnectionProvider connProv, ILogger<DapperRoleStore<DapperIdentityRole<int>, int,
-                               DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>> log,
-                               IRoleRepository<DapperIdentityRole<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>> roleRepo)
-            : base(connProv, log, roleRepo)
-        { }
-    }
-
-    public class DapperRoleStore<TRole> : DapperRoleStore<TRole, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>
-        where TRole : DapperIdentityRole
-    {
-        public DapperRoleStore(IConnectionProvider connProv, ILogger<DapperRoleStore<TRole, int,
-                               DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>> log,
-                               IRoleRepository<TRole, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>> roleRepo)
-            : base(connProv, log, roleRepo)
-        { }
-    }
-
-    public class DapperRoleStore<TRole, TKey> : DapperRoleStore<TRole, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>
-        where TRole : DapperIdentityRole<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        public DapperRoleStore(IConnectionProvider connProv,
-                               ILogger<DapperRoleStore<TRole, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>> log,
-                               IRoleRepository<TRole, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>> roleRepo)
-            : base(connProv, log, roleRepo)
-        { }
-    }
-
-    public abstract class DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>
+    public class DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>
         : IRoleStore<TRole>
         where TRole : DapperIdentityRole<TKey>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
     {
-        private readonly IConnectionProvider _connectionProvider;
         private readonly ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> _log;
-
         private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
         public DapperRoleStore(IConnectionProvider connProv,
                                ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> log, 
                                IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo)
         {
             _roleRepository = roleRepo;
+            _log = log;
         }
 
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)

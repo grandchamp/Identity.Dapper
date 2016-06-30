@@ -1,7 +1,7 @@
-{
+﻿{
   "version": "0.3.0-alpha",
-  "title": "Identity.Dapper.SqlServer",
-  "description": "Identity package that uses Dapper with SQL Server instead EntityFramework for use with .NET Core.",
+  "title": "Identity.Dapper.PostgreSql",
+  "description": "Identity package that uses Dapper with PostgreSQL instead EntityFramework for use with .NET Core.",
   "authors": [ "grandchamp" ],
   "packOptions": {
     "repository": {
@@ -14,15 +14,14 @@
   },
   "dependencies": {
     "Identity.Dapper": "0.3.0-alpha",
+    "NETStandard.Library": "1.6.0",
     "Microsoft.Extensions.Configuration": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "Microsoft.Extensions.DependencyInjection": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "NETStandard.Library": "1.6.0",
-    "System.Data.SqlClient": "4.1.0"
+    "Npgsql": "3.1.5"
   },
-
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50"

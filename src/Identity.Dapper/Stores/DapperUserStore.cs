@@ -1,49 +1,19 @@
-﻿using Identity.Dapper.Entities;
+﻿using Identity.Dapper.Connections;
+using Identity.Dapper.Entities;
+using Identity.Dapper.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using Identity.Dapper.Connections;
-using Microsoft.Extensions.Logging;
-using Identity.Dapper.Repositories.Contracts;
-using System.Security.Claims;
 using System.Data.Common;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Identity.Dapper.Stores
 {
-    public class DapperUserStore : DapperUserStore<DapperIdentityUser<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>
-    {
-        public DapperUserStore(IConnectionProvider connProv,
-                               ILogger<DapperUserStore<DapperIdentityUser<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>> log,
-                               IUserRepository<DapperIdentityUser<int>, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>> roleRepo)
-            : base(connProv, log, roleRepo)
-        { }
-    }
-
-    public class DapperUserStore<TUser> : DapperUserStore<TUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>
-      where TUser : DapperIdentityUser
-    {
-        public DapperUserStore(IConnectionProvider connProv,
-                               ILogger<DapperUserStore<TUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>>> log,
-                               IUserRepository<TUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>> roleRepo)
-            : base(connProv, log, roleRepo)
-        { }
-    }
-
-    public class DapperUserStore<TUser, TKey> : DapperUserStore<TUser, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>
-        where TUser : DapperIdentityUser<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        public DapperUserStore(IConnectionProvider connProv,
-                               ILogger<DapperUserStore<TUser, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>>> log,
-                               IUserRepository<TUser, TKey, DapperIdentityUserRole<TKey>, DapperIdentityRoleClaim<TKey>> roleRepo)
-            : base(connProv, log, roleRepo)
-        { }
-    }
-
-    public abstract class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim> :
+    public class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim> :
         IUserStore<TUser>,
         IUserLoginStore<TUser>,
         IUserRoleStore<TUser>,
@@ -186,9 +156,11 @@ namespace Identity.Dapper.Stores
             {
                 var result = await _userRepository.Insert(user, cancellationToken, _transaction);
 
-                if (result)
+                if (!result.Equals(default(TKey)))
                 {
                     CommitTransaction();
+                    user.Id = result;
+
                     return IdentityResult.Success;
                 }
                 else
