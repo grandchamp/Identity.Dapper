@@ -136,7 +136,15 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                await _userRepository.AddToRole(user.Id, roleName, cancellationToken, _transaction);
+                var result = await _userRepository.AddToRole(user.Id, roleName, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
