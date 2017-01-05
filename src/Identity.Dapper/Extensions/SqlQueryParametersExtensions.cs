@@ -24,9 +24,9 @@ namespace Identity.Dapper
                 var propertyName = propertyNamesArray[i];
 
                 if (i == 0)
-                    setBuilder.Append($"SET {propertyName.Replace("\"", "")} = {parameterNotation}{propertyName.Replace("\"", "")}");
+                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")}");
                 else
-                    setBuilder.Append($", {propertyName.Replace("\"", "")} = {parameterNotation}{propertyName.Replace("\"", "")}");
+                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")}");
             }
 
             return setBuilder.ToString();
