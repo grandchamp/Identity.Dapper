@@ -499,7 +499,7 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"))
@@ -651,7 +651,7 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"))
@@ -707,7 +707,7 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"))
@@ -762,7 +762,7 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                    && !y.Name.Equals("Id"))
@@ -887,22 +887,20 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync(cancellationToken);
-
                         var query = _sqlConfiguration.RemoveUserFromRoleQuery
                                                      .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserClaimTable,
+                                                                             _sqlConfiguration.UserRoleTable,
                                                                              _sqlConfiguration.ParameterNotation,
                                                                              new string[] {
-                                                                                            "%ID%",
+                                                                                            "%USERID%",
                                                                                             "%ROLENAME%"
                                                                                           },
                                                                              new string[] {
-                                                                                            "Id",
+                                                                                            "UserId",
                                                                                             "RoleName"
                                                                                           },
                                                                              new string[] {
-                                                                                            "%USERROLETABLE",
+                                                                                            "%USERROLETABLE%",
                                                                                             "%ROLETABLE%"
                                                                                           },
                                                                              new string[] {
@@ -913,7 +911,7 @@ namespace Identity.Dapper.Repositories
 
                         var result = await x.ExecuteAsync(query, new
                         {
-                            Id = id,
+                            UserId = id,
                             RoleName = roleName
                         }, transaction);
 
