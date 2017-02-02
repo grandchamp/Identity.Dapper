@@ -15,6 +15,9 @@ namespace Identity.Dapper
         }
 
         public static string UpdateQuerySetFragment(this IEnumerable<string> propertyNames, string parameterNotation)
+            => UpdateQuerySetFragment(propertyNames.ToArray(), parameterNotation);
+
+        public static string UpdateQuerySetFragment(this string[] propertyNames, string parameterNotation)
         {
             var setBuilder = new StringBuilder();
 
