@@ -15,6 +15,9 @@ namespace Identity.Dapper
         }
 
         public static string UpdateQuerySetFragment(this IEnumerable<string> propertyNames, string parameterNotation)
+            => UpdateQuerySetFragment(propertyNames.ToArray(), parameterNotation);
+
+        public static string UpdateQuerySetFragment(this string[] propertyNames, string parameterNotation)
         {
             var setBuilder = new StringBuilder();
 
@@ -24,9 +27,9 @@ namespace Identity.Dapper
                 var propertyName = propertyNamesArray[i];
 
                 if (i == 0)
-                    setBuilder.Append($"SET {propertyName.Replace("\"", "")} = {parameterNotation}{propertyName.Replace("\"", "")}");
+                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")}");
                 else
-                    setBuilder.Append($", {propertyName.Replace("\"", "")} = {parameterNotation}{propertyName.Replace("\"", "")}");
+                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")}");
             }
 
             return setBuilder.ToString();

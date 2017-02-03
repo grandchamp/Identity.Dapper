@@ -1,4 +1,5 @@
 ﻿using Identity.Dapper.Entities;
+using Identity.Dapper.MySQL;
 using Identity.Dapper.PostgreSQL;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.SqlServer;
@@ -34,11 +35,14 @@ namespace Identity.Dapper.Samples.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
-                    .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
+            //services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
+            //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
             //services.ConfigureDapperPostgreSqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
             //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
+
+            services.ConfigureDapperMySqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
+                    .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
             services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>(x =>
                                                                                     {
@@ -49,7 +53,8 @@ namespace Identity.Dapper.Samples.Web
                                                                                         x.Password.RequireUppercase = false;
                                                                                     })
                     //.AddDapperIdentityForPostgreSql()
-                    .AddDapperIdentityForSqlServer()
+                    //.AddDapperIdentityForSqlServer()
+                    .AddDapperIdentityForMySql()
                     .AddDefaultTokenProviders();
 
             services.AddMvc();

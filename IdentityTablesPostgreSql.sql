@@ -1,11 +1,11 @@
 ﻿-- Table: dbo."IdentityUser"
 CREATE TABLE dbo."IdentityUser"
 (
-  "Username" character varying(256) NOT NULL,
+  "UserName" character varying(256) NOT NULL,
   "Email" character varying(256) NOT NULL,
   "EmailConfirmed" boolean NOT NULL,
   "PasswordHash" text,
-  "SecurityStamp" uuid,
+  "SecurityStamp" character varying(38),
   "PhoneNumber" character varying(50),
   "PhoneNumberConfirmed" boolean,
   "TwoFactorEnabled" boolean NOT NULL,

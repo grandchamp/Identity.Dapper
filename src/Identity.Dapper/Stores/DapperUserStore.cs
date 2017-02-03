@@ -100,7 +100,15 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                await _userRepository.InsertClaims(user.Id, claims, cancellationToken, _transaction);
+                var result = await _userRepository.InsertClaims(user.Id, claims, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
@@ -118,7 +126,15 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                await _userRepository.InsertLoginInfo(user.Id, login, cancellationToken, _transaction);
+                var result = await _userRepository.InsertLoginInfo(user.Id, login, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
@@ -136,7 +152,15 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                await _userRepository.AddToRole(user.Id, roleName, cancellationToken, _transaction);
+                var result = await _userRepository.AddToRole(user.Id, roleName, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
@@ -605,6 +629,14 @@ namespace Identity.Dapper.Stores
             try
             {
                 var result = await _userRepository.RemoveClaims(user.Id, claims, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
@@ -626,6 +658,14 @@ namespace Identity.Dapper.Stores
             try
             {
                 var result = await _userRepository.RemoveFromRole(user.Id, roleName, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
@@ -650,6 +690,14 @@ namespace Identity.Dapper.Stores
             try
             {
                 var result = await _userRepository.RemoveLogin(user.Id, loginProvider, providerKey, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {
@@ -679,6 +727,14 @@ namespace Identity.Dapper.Stores
             try
             {
                 var result = await _userRepository.UpdateClaim(user.Id, claim, newClaim, cancellationToken, _transaction);
+                if (result)
+                {
+                    CommitTransaction();
+                }
+                else
+                {
+                    RollbackTransaction();
+                }
             }
             catch (Exception ex)
             {

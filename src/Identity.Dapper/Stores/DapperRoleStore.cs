@@ -145,9 +145,6 @@ namespace Identity.Dapper.Stores
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
-            if (role.Id.Equals(default(TKey)))
-                return null;
-
             return Task.FromResult(role.Name);
         }
 

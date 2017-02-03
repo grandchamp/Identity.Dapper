@@ -1,5 +1,5 @@
-﻿{
-  "version": "0.3.0-alpha",
+{
+  "version": "0.4.0-alpha",
   "title": "Identity.Dapper.PostgreSql",
   "description": "Identity package that uses Dapper with PostgreSQL instead EntityFramework for use with .NET Core.",
   "authors": [ "grandchamp" ],
@@ -9,21 +9,20 @@
       "url": "https://github.com/grandchamp/Identity.Dapper.git"
     },
     "owners": [ "grandchamp" ],
-    "tags": [ "asp.net", "core", "dapper", "identity" ],
+    "tags": [ "asp.net", "core", "dapper", "identity", "psql", "postgresql" ],
     "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
   },
   "dependencies": {
-    "Identity.Dapper": "0.3.0-alpha",
-    "NETStandard.Library": "1.6.0",
-    "Microsoft.Extensions.Configuration": "1.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "Npgsql": "3.1.5"
+    "Identity.Dapper": "0.4.0-alpha",
+    "Npgsql": "3.2.0",
+    "Microsoft.Extensions.Configuration": "1.1.0",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0",
+    "Microsoft.Extensions.DependencyInjection": "1.1.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
+    "NETStandard.Library": "1.6.1"
   },
   "frameworks": {
-    "netstandard1.5": {
+    "netstandard1.6": {
       "imports": "dnxcore50"
     }
   }

@@ -144,8 +144,10 @@ namespace Identity.Dapper.Repositories
 
                         var userProperties = user.GetType()
                                                  .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                && !y.Name.Equals("Id"))
-                                                 .Select(y => string.Concat("\"", y, "\""));
+                                                                                && !y.Name.Equals("Id"));
+
+                        if (_sqlConfiguration.UseQuotationMarks)
+                            userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
 
                         var valuesArray = new List<string>(userProperties.Count());
 
@@ -447,8 +449,10 @@ namespace Identity.Dapper.Repositories
 
                         var roleProperties = user.GetType()
                                                  .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                && !y.Name.Equals("Id"))
-                                                 .Select(y => string.Concat("\"", y, "\""));
+                                                                                && !y.Name.Equals("Id"));
+
+                        if (_sqlConfiguration.UseQuotationMarks)
+                            roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
 
                         var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
@@ -499,11 +503,13 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"))
-                                                    .Select(x => string.Concat("\"", x, "\""));
+                                                                                   && !y.Name.Equals("Id"));
+
+                    if (_sqlConfiguration.UseQuotationMarks)
+                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
 
                     var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
                                                  .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
@@ -651,11 +657,13 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"))
-                                                    .Select(x => string.Concat("\"", x, "\""));
+                                                                                   && !y.Name.Equals("Id"));
+
+                    if (_sqlConfiguration.UseQuotationMarks)
+                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
 
                     var query = _sqlConfiguration.GetUsersByClaimQuery
                                                  .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
@@ -707,11 +715,13 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"))
-                                                    .Select(x => string.Concat("\"", x, "\""));
+                                                                                   && !y.Name.Equals("Id"));
+
+                    if (_sqlConfiguration.UseQuotationMarks)
+                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
 
                     var query = _sqlConfiguration.GetUsersInRoleQuery
                                                  .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
@@ -762,11 +772,13 @@ namespace Identity.Dapper.Repositories
                 {
                     await conn.OpenAsync();
 
-                    var defaultUser = default(TUser);
+                    var defaultUser = Activator.CreateInstance<TUser>();
                     var userProperties = defaultUser.GetType()
                                                     .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"))
-                                                    .Select(x => string.Concat("\"", x, "\""));
+                                                                                   && !y.Name.Equals("Id"));
+
+                    if (_sqlConfiguration.UseQuotationMarks)
+                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
 
                     var query = _sqlConfiguration.IsInRoleQuery
                                                  .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
@@ -887,22 +899,20 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync(cancellationToken);
-
                         var query = _sqlConfiguration.RemoveUserFromRoleQuery
                                                      .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserClaimTable,
+                                                                             _sqlConfiguration.UserRoleTable,
                                                                              _sqlConfiguration.ParameterNotation,
                                                                              new string[] {
-                                                                                            "%ID%",
+                                                                                            "%USERID%",
                                                                                             "%ROLENAME%"
                                                                                           },
                                                                              new string[] {
-                                                                                            "Id",
+                                                                                            "UserId",
                                                                                             "RoleName"
                                                                                           },
                                                                              new string[] {
-                                                                                            "%USERROLETABLE",
+                                                                                            "%USERROLETABLE%",
                                                                                             "%ROLETABLE%"
                                                                                           },
                                                                              new string[] {
@@ -913,7 +923,7 @@ namespace Identity.Dapper.Repositories
 
                         var result = await x.ExecuteAsync(query, new
                         {
-                            Id = id,
+                            UserId = id,
                             RoleName = roleName
                         }, transaction);
 
