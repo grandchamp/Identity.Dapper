@@ -1,8 +1,8 @@
 {
-  "version": "0.3.0-alpha",
+  "version": "0.4.0-alpha",
 
   "dependencies": {
-    "Identity.Dapper.SqlServer": "0.3.0-alpha",
+    "Identity.Dapper.SqlServer": "0.4.0-alpha",
     "xunit": "2.2.0-beta2-build3300",
     "dotnet-test-xunit": "1.0.0-rc3-000000-00",
     "moq.netcore": "4.4.0-beta8",
@@ -13,7 +13,7 @@
   },
   "testRunner": "xunit",
   "frameworks": {
-    "netcoreapp1.0": {
+    "netcoreapp1.1": {
       "imports": [
         "dnxcore50",
         "portable-net45+win8"

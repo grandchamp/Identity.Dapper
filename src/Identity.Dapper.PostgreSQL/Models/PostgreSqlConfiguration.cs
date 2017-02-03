@@ -12,6 +12,7 @@ namespace Identity.Dapper.PostgreSQL.Models
         {
             ParameterNotation = "@";
             SchemaName = "dbo";
+            UseQuotationMarks = true;
             InsertRoleQuery = "INSERT INTO %SCHEMA%.\"%TABLENAME%\" %COLUMNS% VALUES(%VALUES%)";
             DeleteRoleQuery = "DELETE FROM %SCHEMA%.\"%TABLENAME%\" WHERE \"Id\" = %ID%";
             UpdateRoleQuery = "UPDATE %SCHEMA%.\"%TABLENAME%\" %SETVALUES% WHERE \"Id\" = %ID%";

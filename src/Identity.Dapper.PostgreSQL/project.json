@@ -9,7 +9,7 @@
       "url": "https://github.com/grandchamp/Identity.Dapper.git"
     },
     "owners": [ "grandchamp" ],
-    "tags": [ "asp.net", "core", "dapper", "identity" ],
+    "tags": [ "asp.net", "core", "dapper", "identity", "psql", "postgresql" ],
     "projectUrl": "https://github.com/grandchamp/Identity.Dapper"
   },
   "dependencies": {

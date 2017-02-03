@@ -26,6 +26,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.PostgreSQL"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.Tests", "test\Identity.Dapper.Tests\Identity.Dapper.Tests.xproj", "{676D4919-98F7-4B35-BAF0-76DF84F77448}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.MySQL", "src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.xproj", "{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{676D4919-98F7-4B35-BAF0-76DF84F77448}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{676D4919-98F7-4B35-BAF0-76DF84F77448}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{676D4919-98F7-4B35-BAF0-76DF84F77448}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,5 +68,6 @@ Global
 		{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2} = {82D0F07A-4CED-4A50-8BF4-57273D913494}
 		{8EFCA99C-32A1-4436-B8C7-95B1EE562BB3} = {EC299BD0-3BB6-484B-BCAE-358131F45D4D}
 		{676D4919-98F7-4B35-BAF0-76DF84F77448} = {A1014397-D42D-4C4F-A391-95DEC2BAF318}
+		{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063} = {EC299BD0-3BB6-484B-BCAE-358131F45D4D}
 	EndGlobalSection
 EndGlobal
