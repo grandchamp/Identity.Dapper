@@ -11,7 +11,7 @@ namespace Identity.Dapper.Stores
 {
     public class DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>
         : IRoleStore<TRole>
-        where TRole : DapperIdentityRole<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
@@ -19,12 +19,14 @@ namespace Identity.Dapper.Stores
         private readonly ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> _log;
         private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
         public DapperRoleStore(IConnectionProvider connProv,
-                               ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> log, 
+                               ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> log,
                                IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo)
         {
             _roleRepository = roleRepo;
             _log = log;
         }
+
+
 
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
         {

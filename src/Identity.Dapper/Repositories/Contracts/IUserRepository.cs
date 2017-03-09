@@ -9,10 +9,22 @@ using System.Threading.Tasks;
 namespace Identity.Dapper.Repositories.Contracts
 {
     public interface IUserRepository<TUser, TKey, TUserRole, TRoleClaim>
+            : IUserRepository<TUser, TKey, TUserRole, TRoleClaim, DapperIdentityUserClaim<TKey>, DapperidentityUserLogin<TKey>, DapperIdentityRole<TKey>>
         where TUser : DapperIdentityUser<TKey>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
+    {
+    }
+
+    public interface IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>
+        where TUser : DapperIdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
+        where TKey : IEquatable<TKey>
+        where TUserRole : DapperIdentityUserRole<TKey>
+        where TRoleClaim : DapperIdentityRoleClaim<TKey>
+        where TUserClaim : DapperIdentityUserClaim<TKey>
+        where TUserLogin : DapperIdentityUserLogin<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
         Task<TKey> Insert(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null);
         Task<bool> Remove(TKey id, CancellationToken cancellationToken, DbTransaction transaction = null);

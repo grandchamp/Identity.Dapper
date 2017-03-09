@@ -16,7 +16,8 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Repositories
 {
-    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim> : IUserRepository<TUser, TKey, TUserRole, TRoleClaim>
+    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim> 
+                        : IUserRepository<TUser, TKey, TUserRole, TRoleClaim, DapperUserClaim<TKey>, DapperUserLogin<TKey>, DapperRole<TKey>>
         where TUser : DapperIdentityUser<TKey>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
@@ -37,6 +38,34 @@ namespace Identity.Dapper.Repositories
             _roleRepository = roleRepo;
         }
 
+    }
+
+    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>
+                                : IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>
+        where TUser : DapperIdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
+        where TKey : IEquatable<TKey>
+        where TUserRole : DapperIdentityUserRole<TKey>
+        where TRoleClaim : DapperIdentityRoleClaim<TKey>
+        where TUserClaim : DapperIdentityUserClaim<TKey>
+        where TUserLogin : DapperIdentityUserLogin<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
+    {
+
+        private readonly IConnectionProvider _connectionProvider;
+        private readonly ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> _log;
+        private readonly SqlConfiguration _sqlConfiguration;
+        private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
+
+        public UserRepository(IConnectionProvider connProv,
+                              ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> log,
+                              SqlConfiguration sqlConf,
+                              IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo)
+        {
+            _connectionProvider = connProv;
+            _log = log;
+            _sqlConfiguration = sqlConf;
+            _roleRepository = roleRepo;
+        }
         public Task<IEnumerable<TUser>> GetAll()
         {
             throw new NotImplementedException();
