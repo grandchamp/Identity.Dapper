@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Stores
 {
-    public class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim> :
+    public class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin> :
         IUserStore<TUser>,
         IUserLoginStore<TUser>,
         IUserRoleStore<TUser>,
@@ -26,20 +26,22 @@ namespace Identity.Dapper.Stores
         IQueryableUserStore<TUser>,
         IUserTwoFactorStore<TUser>,
         IUserAuthenticationTokenStore<TUser>
-        where TUser : DapperIdentityUser<TKey>
+        where TUser : DapperIdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
+        where TUserClaim : DapperIdentityUserClaim<TKey>
+        where TUserLogin : DapperIdentityUserLogin<TKey>
     {
         private DbTransaction _transaction;
         private DbConnection _connection;
 
         private readonly IConnectionProvider _connectionProvider;
-        private readonly ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim>> _log;
-        private readonly IUserRepository<TUser, TKey, TUserRole, TRoleClaim> _userRepository;
+        private readonly ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> _log;
+        private readonly IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin> _userRepository;
         public DapperUserStore(IConnectionProvider connProv,
-                               ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim>> log,
-                               IUserRepository<TUser, TKey, TUserRole, TRoleClaim> roleRepo)
+                               ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> log,
+                               IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin> roleRepo)
         {
             _userRepository = roleRepo;
             _connectionProvider = connProv;

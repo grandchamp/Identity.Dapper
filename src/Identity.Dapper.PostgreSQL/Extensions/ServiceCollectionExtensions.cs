@@ -70,22 +70,29 @@ namespace Identity.Dapper.PostgreSQL
             return builder;
         }
 
-        private static void AddStores(IServiceCollection services, Type userType, Type roleType, Type keyType = null, Type userRoleType = null, Type roleClaimType = null)
+        private static void AddStores(IServiceCollection services, Type userType, Type roleType, Type keyType = null, Type userRoleType = null, Type roleClaimType = null, Type userClaimType = null, Type userLoginType = null)
         {
             Type userStoreType;
             Type roleStoreType;
             keyType = keyType ?? typeof(int);
             userRoleType = userRoleType ?? typeof(DapperIdentityUserRole<>).MakeGenericType(keyType);
             roleClaimType = roleClaimType ?? typeof(DapperIdentityRoleClaim<>).MakeGenericType(keyType);
+            userClaimType = userClaimType ?? typeof(DapperIdentityUserClaim<>).MakeGenericType(keyType);
+            userLoginType = userLoginType ?? typeof(DapperIdentityUserLogin<>).MakeGenericType(keyType);
 
-            userStoreType = typeof(DapperUserStore<,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType);
+            userStoreType = typeof(DapperUserStore<,,,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType,
+                                                                           userClaimType, userLoginType);
             roleStoreType = typeof(DapperRoleStore<,,,>).MakeGenericType(roleType, keyType, userRoleType, roleClaimType);
 
             services.AddScoped(typeof(IRoleRepository<,,,>).MakeGenericType(roleType, keyType, userRoleType, roleClaimType),
                                typeof(RoleRepository<,,,>).MakeGenericType(roleType, keyType, userRoleType, roleClaimType));
 
-            services.AddScoped(typeof(IUserRepository<,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType),
-                               typeof(UserRepository<,,,>).MakeGenericType(userType, keyType, userRoleType, roleClaimType));
+            services.AddScoped(typeof(IUserRepository<,,,,,>).MakeGenericType(userType, keyType, userRoleType,
+                                                                              roleClaimType, userClaimType,
+                                                                              userLoginType),
+                               typeof(UserRepository<,,,,,>).MakeGenericType(userType, keyType, userRoleType,
+                                                                             roleClaimType, userClaimType,
+                                                                             userLoginType));
 
             services.AddScoped(typeof(IUserStore<>).MakeGenericType(userType), userStoreType);
             services.AddScoped(typeof(IRoleStore<>).MakeGenericType(roleType), roleStoreType);

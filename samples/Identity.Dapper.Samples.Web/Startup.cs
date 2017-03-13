@@ -1,6 +1,7 @@
 ﻿using Identity.Dapper.Entities;
 using Identity.Dapper.MySQL;
 using Identity.Dapper.PostgreSQL;
+using Identity.Dapper.Samples.Web.Entities;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.SqlServer;
 using Microsoft.AspNetCore.Builder;
@@ -44,17 +45,17 @@ namespace Identity.Dapper.Samples.Web
             services.ConfigureDapperMySqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
-            services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>(x =>
-                                                                                    {
-                                                                                        x.Password.RequireDigit = false;
-                                                                                        x.Password.RequiredLength = 1;
-                                                                                        x.Password.RequireLowercase = false;
-                                                                                        x.Password.RequireNonAlphanumeric = false;
-                                                                                        x.Password.RequireUppercase = false;
-                                                                                    })
+            services.AddIdentity<CustomUser, CustomRole>(x =>
+                                                         {
+                                                             x.Password.RequireDigit = false;
+                                                             x.Password.RequiredLength = 1;
+                                                             x.Password.RequireLowercase = false;
+                                                             x.Password.RequireNonAlphanumeric = false;
+                                                             x.Password.RequireUppercase = false;
+                                                         })
                     //.AddDapperIdentityForPostgreSql()
-                    //.AddDapperIdentityForSqlServer()
-                    .AddDapperIdentityForMySql()
+                    .AddDapperIdentityForSqlServer()
+                    //.AddDapperIdentityForMySql()
                     .AddDefaultTokenProviders();
 
             services.AddMvc();

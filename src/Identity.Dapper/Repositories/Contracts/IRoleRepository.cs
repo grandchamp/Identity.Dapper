@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Identity.Dapper.Repositories.Contracts
 {
     public interface IRoleRepository<TRole, TKey, TUserRole, TRoleClaim>
-        where TRole : DapperIdentityRole<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>

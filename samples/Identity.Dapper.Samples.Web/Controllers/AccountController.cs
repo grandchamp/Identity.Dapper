@@ -12,21 +12,22 @@ using Identity.Dapper.Samples.Web.Models;
 using Identity.Dapper.Samples.Web.Models.AccountViewModels;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Samples.Web.Entities;
 
 namespace Identity.Dapper.Samples.Web.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly UserManager<DapperIdentityUser> _userManager;
-        private readonly SignInManager<DapperIdentityUser> _signInManager;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly SignInManager<CustomUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
 
         public AccountController(
-            UserManager<DapperIdentityUser> userManager,
-            SignInManager<DapperIdentityUser> signInManager,
+            UserManager<CustomUser> userManager,
+            SignInManager<CustomUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
             ILoggerFactory loggerFactory)
@@ -106,7 +107,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new DapperIdentityUser { UserName = model.Email, Email = model.Email };
+                var user = new CustomUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -208,7 +209,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new DapperIdentityUser { UserName = model.Email, Email = model.Email };
+                var user = new CustomUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -447,7 +448,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
             }
         }
 
-        private Task<DapperIdentityUser> GetCurrentUserAsync()
+        private Task<CustomUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }

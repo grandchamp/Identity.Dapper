@@ -16,20 +16,24 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Repositories
 {
-    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim> : IUserRepository<TUser, TKey, TUserRole, TRoleClaim>
-        where TUser : DapperIdentityUser<TKey>
+    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>
+        : IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>
+        where TUser : DapperIdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
+        where TUserClaim : DapperIdentityUserClaim<TKey>
+        where TUserLogin : DapperIdentityUserLogin<TKey>
     {
 
         private readonly IConnectionProvider _connectionProvider;
-        private readonly ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim>> _log;
+        private readonly ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> _log;
         private readonly SqlConfiguration _sqlConfiguration;
-        private readonly IRoleRepository<DapperIdentityRole<TKey>, TKey, TUserRole, TRoleClaim> _roleRepository;
-        public UserRepository(IConnectionProvider connProv, ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim>> log,
+        private readonly IRoleRepository<DapperIdentityRole<TKey, TUserRole, TRoleClaim>, TKey, TUserRole, TRoleClaim> _roleRepository;
+        public UserRepository(IConnectionProvider connProv,
+                              ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> log,
                               SqlConfiguration sqlConf,
-                              IRoleRepository<DapperIdentityRole<TKey>, TKey, TUserRole, TRoleClaim> roleRepo)
+                              IRoleRepository<DapperIdentityRole<TKey, TUserRole, TRoleClaim>, TKey, TUserRole, TRoleClaim> roleRepo)
         {
             _connectionProvider = connProv;
             _log = log;

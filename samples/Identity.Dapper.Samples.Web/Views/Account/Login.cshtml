@@ -2,8 +2,10 @@
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Http.Authentication
 @using Identity.Dapper.Entities
+@using Identity.Dapper.Samples.Web.Entities
+
 @model LoginViewModel
-@inject SignInManager<DapperIdentityUser> SignInManager
+@inject SignInManager<CustomUser> SignInManager
 
 @{
     ViewData["Title"] = "Log in";
