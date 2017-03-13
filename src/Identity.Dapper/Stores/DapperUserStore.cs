@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Stores
 {
-    public class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin> :
+    public class DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole> :
         IUserStore<TUser>,
         IUserLoginStore<TUser>,
         IUserRoleStore<TUser>,
@@ -32,16 +32,17 @@ namespace Identity.Dapper.Stores
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
         where TUserClaim : DapperIdentityUserClaim<TKey>
         where TUserLogin : DapperIdentityUserLogin<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
         private DbTransaction _transaction;
         private DbConnection _connection;
 
         private readonly IConnectionProvider _connectionProvider;
-        private readonly ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> _log;
-        private readonly IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin> _userRepository;
+        private readonly ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> _log;
+        private readonly IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole> _userRepository;
         public DapperUserStore(IConnectionProvider connProv,
-                               ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> log,
-                               IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin> roleRepo)
+                               ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> log,
+                               IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole> roleRepo)
         {
             _userRepository = roleRepo;
             _connectionProvider = connProv;

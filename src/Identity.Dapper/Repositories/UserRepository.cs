@@ -16,24 +16,25 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Repositories
 {
-    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>
-        : IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>
+    public class UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>
+        : IUserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>
         where TUser : DapperIdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
         where TUserClaim : DapperIdentityUserClaim<TKey>
         where TUserLogin : DapperIdentityUserLogin<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
 
         private readonly IConnectionProvider _connectionProvider;
-        private readonly ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> _log;
+        private readonly ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> _log;
         private readonly SqlConfiguration _sqlConfiguration;
-        private readonly IRoleRepository<DapperIdentityRole<TKey, TUserRole, TRoleClaim>, TKey, TUserRole, TRoleClaim> _roleRepository;
+        private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
         public UserRepository(IConnectionProvider connProv,
-                              ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin>> log,
+                              ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> log,
                               SqlConfiguration sqlConf,
-                              IRoleRepository<DapperIdentityRole<TKey, TUserRole, TRoleClaim>, TKey, TUserRole, TRoleClaim> roleRepo)
+                              IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo)
         {
             _connectionProvider = connProv;
             _log = log;
