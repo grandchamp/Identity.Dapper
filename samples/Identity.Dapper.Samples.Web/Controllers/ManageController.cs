@@ -10,21 +10,22 @@ using Identity.Dapper.Samples.Web.Models;
 using Identity.Dapper.Samples.Web.Models.ManageViewModels;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Samples.Web.Entities;
 
 namespace Identity.Dapper.Samples.Web.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        private readonly UserManager<DapperIdentityUser> _userManager;
-        private readonly SignInManager<DapperIdentityUser> _signInManager;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly SignInManager<CustomUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
 
         public ManageController(
-        UserManager<DapperIdentityUser> userManager,
-        SignInManager<DapperIdentityUser> signInManager,
+        UserManager<CustomUser> userManager,
+        SignInManager<CustomUser> signInManager,
         IEmailSender emailSender,
         ISmsSender smsSender,
         ILoggerFactory loggerFactory)
@@ -338,7 +339,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
             Error
         }
 
-        private Task<DapperIdentityUser> GetCurrentUserAsync()
+        private Task<CustomUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }
