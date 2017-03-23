@@ -1,9 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Identity.Dapper.Samples.Web.Models
 @using Identity.Dapper.Entities
+@using Identity.Dapper.Samples.Web.Entities
 
-@inject SignInManager<DapperIdentityUser> SignInManager
-@inject UserManager<DapperIdentityUser> UserManager
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {

@@ -11,7 +11,7 @@ namespace Identity.Dapper.Stores
 {
     public class DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>
         : IRoleStore<TRole>
-        where TRole : DapperIdentityRole<TKey>
+        where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
