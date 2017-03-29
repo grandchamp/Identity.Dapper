@@ -1,4 +1,5 @@
 ﻿using Identity.Dapper.Entities;
+using Identity.Dapper.UnitOfWork.Contracts;
 using System;
 using System.Data.Common;
 using System.Threading;
@@ -12,9 +13,9 @@ namespace Identity.Dapper.Repositories.Contracts
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
     {
-        Task<bool> Insert(TRole role, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> Remove(TKey id, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> Update(TRole role, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> Insert(TRole role, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> Remove(TKey id, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> Update(TRole role, CancellationToken cancellationToken, IUnitOfWork uow = null);
         Task<TRole> GetById(TKey id);
         Task<TRole> GetByName(string roleName);
     }

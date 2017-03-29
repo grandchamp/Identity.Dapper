@@ -3,6 +3,7 @@ using Identity.Dapper.Connections;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.Repositories.Contracts;
+using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -136,7 +137,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<TKey> Insert(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<TKey> Insert(TUser user, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -172,7 +173,7 @@ namespace Identity.Dapper.Repositories
                                                                                    columnsBuilder.ToString(),
                                                                                    string.Join(", ", valuesArray));
 
-                        var result = await x.ExecuteScalarAsync<TKey>(query, dynamicParameters, transaction);
+                        var result = await x.ExecuteScalarAsync<TKey>(query, dynamicParameters, uow.Transaction);
 
                         return result;
                     }
@@ -184,7 +185,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -195,7 +196,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await insertFunction(conn);
                 }
             }
@@ -206,7 +207,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -235,7 +236,8 @@ namespace Identity.Dapper.Repositories
                                                                     UserId = id,
                                                                     ClaimType = claim.Type,
                                                                     ClaimValue = claim.Value
-                                                                }, transaction) > 0);
+                                                                },
+                                                                uow.Transaction) > 0);
                         }
 
                         return resultList.TrueForAll(y => y);
@@ -248,7 +250,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -259,7 +261,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await insertFunction(conn);
                 }
             }
@@ -270,7 +272,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> InsertLoginInfo(TKey id, UserLoginInfo loginInfo, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> InsertLoginInfo(TKey id, UserLoginInfo loginInfo, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -295,7 +297,7 @@ namespace Identity.Dapper.Repositories
                             UserId = id,
                             LoginProvider = loginInfo.LoginProvider,
                             ProviderKey = loginInfo.ProviderKey
-                        }, transaction);
+                        }, uow.Transaction);
 
                         return result > 0;
                     }
@@ -307,7 +309,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -318,7 +320,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await insertFunction(conn);
                 }
             }
@@ -329,7 +331,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -356,7 +358,7 @@ namespace Identity.Dapper.Repositories
                         {
                             UserId = id,
                             RoleId = role.Id
-                        }, transaction);
+                        }, uow.Transaction);
 
                         return result > 0;
                     }
@@ -368,7 +370,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -379,7 +381,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await insertFunction(conn);
                 }
             }
@@ -390,7 +392,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -408,7 +410,7 @@ namespace Identity.Dapper.Repositories
                                                                                    _sqlConfiguration.UserTable,
                                                                                    $"{_sqlConfiguration.ParameterNotation}Id");
 
-                        var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
+                        var result = await x.ExecuteAsync(query, dynamicParameters, uow.Transaction);
 
                         return result > 0;
                     }
@@ -420,7 +422,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -431,7 +433,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await removeFunction(conn);
                 }
             }
@@ -442,7 +444,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Update(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> Update(TUser user, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -467,7 +469,7 @@ namespace Identity.Dapper.Repositories
                                                                                    setFragment,
                                                                                    $"{_sqlConfiguration.ParameterNotation}Id");
 
-                        var result = await x.ExecuteAsync(query, dynamicParameters, transaction);
+                        var result = await x.ExecuteAsync(query, dynamicParameters, uow.Transaction);
 
                         return result > 0;
                     }
@@ -479,7 +481,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -489,7 +491,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await updateFunction(conn);
                 }
             }
@@ -827,7 +829,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -861,7 +863,7 @@ namespace Identity.Dapper.Repositories
                                 Id = id,
                                 ClaimValue = claim.Value,
                                 ClaimType = claim.Type
-                            }, transaction) > 0);
+                            }, uow.Transaction) > 0);
                         }
 
                         return resultList.TrueForAll(y => y);
@@ -874,7 +876,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -885,7 +887,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await removeFunction(conn);
                 }
             }
@@ -896,7 +898,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -930,7 +932,7 @@ namespace Identity.Dapper.Repositories
                         {
                             UserId = id,
                             RoleName = roleName
-                        }, transaction);
+                        }, uow.Transaction);
 
                         return result > 0;
                     }
@@ -942,7 +944,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -953,7 +955,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await removeFunction(conn);
                 }
             }
@@ -964,7 +966,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -995,7 +997,7 @@ namespace Identity.Dapper.Repositories
                             Id = id,
                             LoginProvider = loginProvider,
                             ProviderKey = providerKey
-                        }, transaction);
+                        }, uow.Transaction);
 
                         return result > 0;
                     }
@@ -1007,7 +1009,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -1018,7 +1020,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await removeFunction(conn);
                 }
             }
@@ -1029,7 +1031,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, IUnitOfWork uow = null)
         {
             try
             {
@@ -1066,7 +1068,7 @@ namespace Identity.Dapper.Repositories
                             UserId = id,
                             ClaimType = oldClaim.Type,
                             ClaimValue = oldClaim.Value
-                        }, transaction);
+                        }, uow.Transaction);
 
                         return result > 0;
                     }
@@ -1078,7 +1080,7 @@ namespace Identity.Dapper.Repositories
                 });
 
                 DbConnection conn = null;
-                if (transaction == null)
+                if (uow?.Connection == null)
                 {
                     using (conn = _connectionProvider.Create())
                     {
@@ -1089,7 +1091,7 @@ namespace Identity.Dapper.Repositories
                 }
                 else
                 {
-                    conn = transaction.Connection;
+                    conn = uow.CreateOrGetConnection();
                     return await removeFunction(conn);
                 }
             }

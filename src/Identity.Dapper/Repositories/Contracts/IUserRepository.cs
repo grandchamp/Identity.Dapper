@@ -1,4 +1,5 @@
 ﻿using Identity.Dapper.Entities;
+using Identity.Dapper.UnitOfWork.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,18 +18,18 @@ namespace Identity.Dapper.Repositories.Contracts
         where TUserLogin : DapperIdentityUserLogin<TKey>
         where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
-        Task<TKey> Insert(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> Remove(TKey id, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> Update(TUser user, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<TKey> Insert(TUser user, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> Remove(TKey id, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> Update(TUser user, CancellationToken cancellationToken, IUnitOfWork uow = null);
         Task<TUser> GetById(TKey id);
         Task<TUser> GetByUserName(string userName);
         Task<TUser> GetByEmail(string email);
         Task<IEnumerable<TUser>> GetAll();
         Task<TUser> GetByUserLogin(string loginProvider, string providerKey);
 
-        Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> InsertLoginInfo(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> InsertLoginInfo(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, IUnitOfWork uow = null);
 
         Task<IList<Claim>> GetClaimsByUserId(TKey id);
         Task<IList<string>> GetRolesByUserId(TKey id);
@@ -37,9 +38,9 @@ namespace Identity.Dapper.Repositories.Contracts
         Task<IList<TUser>> GetUsersInRole(string roleName);
         Task<bool> IsInRole(TKey id, string roleName);
 
-        Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, DbTransaction transaction = null);
-        Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, DbTransaction transaction = null);
+        Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, IUnitOfWork uow = null);
     }
 }

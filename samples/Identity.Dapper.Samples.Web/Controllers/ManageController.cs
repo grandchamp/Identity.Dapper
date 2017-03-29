@@ -11,6 +11,7 @@ using Identity.Dapper.Samples.Web.Models.ManageViewModels;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Samples.Web.Entities;
+using Identity.Dapper.Stores;
 
 namespace Identity.Dapper.Samples.Web.Controllers
 {
@@ -18,6 +19,8 @@ namespace Identity.Dapper.Samples.Web.Controllers
     public class ManageController : Controller
     {
         private readonly UserManager<CustomUser> _userManager;
+        private readonly RoleManager<CustomRole> _roleManager;
+        private readonly DapperUserStore<CustomUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>, DapperIdentityUserClaim<int>, DapperIdentityUserLogin<int>, CustomRole> _dapperStore;
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
@@ -25,12 +28,16 @@ namespace Identity.Dapper.Samples.Web.Controllers
 
         public ManageController(
         UserManager<CustomUser> userManager,
+        RoleManager<CustomRole> roleManager,
         SignInManager<CustomUser> signInManager,
         IEmailSender emailSender,
         ISmsSender smsSender,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        IUserStore<CustomUser> dapperStore)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
+            _dapperStore = dapperStore as DapperUserStore<CustomUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>, DapperIdentityUserClaim<int>, DapperIdentityUserLogin<int>, CustomRole>;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
@@ -317,6 +324,48 @@ namespace Identity.Dapper.Samples.Web.Controllers
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
+        //
+        // GET: /Manage/AddRole
+        [HttpGet]
+        public ActionResult AddRole(ManageMessageId? message = null)
+        {
+            ViewData["StatusMessage"] =
+               message == ManageMessageId.AddRoleSucess ? "Role created successfully."
+               : message == ManageMessageId.Error ? "An error has occurred."
+               : "";
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddRole(AddRoleViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return View(model);
+
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+
+                var currRoles = await _userManager.GetRolesAsync(user);
+
+                var a = await Task.WhenAll(currRoles.Select(r => _userManager.RemoveFromRoleAsync(user, r)));
+
+                var result1 = await _roleManager.CreateAsync(new CustomRole { Name = model.RoleName });
+                var result2 = await _userManager.AddToRoleAsync(user, model.RoleName);
+
+                if (result1.Succeeded && result2.Succeeded)
+                    await _dapperStore.SaveChanges();
+
+                return RedirectToAction(nameof(AddRole), new { Message = result1.Succeeded && result2.Succeeded ? ManageMessageId.AddRoleSucess : ManageMessageId.Error });
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -336,6 +385,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
+            AddRoleSucess,
             Error
         }
 
