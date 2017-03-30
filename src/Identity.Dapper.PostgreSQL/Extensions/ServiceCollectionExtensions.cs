@@ -7,6 +7,7 @@ using Identity.Dapper.PostgreSQL.Models;
 using Identity.Dapper.Repositories;
 using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.Stores;
+using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ namespace Identity.Dapper.PostgreSQL
         public static IdentityBuilder AddDapperIdentityForPostgreSql(this IdentityBuilder builder)
         {
             builder.Services.AddSingleton<SqlConfiguration, PostgreSqlConfiguration>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
@@ -28,6 +30,7 @@ namespace Identity.Dapper.PostgreSQL
         public static IdentityBuilder AddDapperIdentityForPostgreSql(this IdentityBuilder builder, PostgreSqlConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
@@ -37,6 +40,7 @@ namespace Identity.Dapper.PostgreSQL
         public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey>(this IdentityBuilder builder)
         {
             builder.Services.AddSingleton<SqlConfiguration, PostgreSqlConfiguration>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
@@ -46,6 +50,7 @@ namespace Identity.Dapper.PostgreSQL
         public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey>(this IdentityBuilder builder, PostgreSqlConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
@@ -55,6 +60,7 @@ namespace Identity.Dapper.PostgreSQL
         public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
         {
             builder.Services.AddSingleton<SqlConfiguration, PostgreSqlConfiguration>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
@@ -64,6 +70,7 @@ namespace Identity.Dapper.PostgreSQL
         public static IdentityBuilder AddDapperIdentityForPostgreSql<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder, PostgreSqlConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
@@ -102,7 +109,7 @@ namespace Identity.Dapper.PostgreSQL
         {
             services.Configure<ConnectionProviderOptions>(configuration);
 
-            services.AddSingleton<IConnectionProvider, PostgreSqlConnectionProvider>();
+            services.AddScoped<IConnectionProvider, PostgreSqlConnectionProvider>();
 
             return services;
         }
