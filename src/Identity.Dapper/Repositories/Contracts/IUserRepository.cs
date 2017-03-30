@@ -18,18 +18,18 @@ namespace Identity.Dapper.Repositories.Contracts
         where TUserLogin : DapperIdentityUserLogin<TKey>
         where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
-        Task<TKey> Insert(TUser user, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> Remove(TKey id, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> Update(TUser user, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<TKey> Insert(TUser user, CancellationToken cancellationToken);
+        Task<bool> Remove(TKey id, CancellationToken cancellationToken);
+        Task<bool> Update(TUser user, CancellationToken cancellationToken);
         Task<TUser> GetById(TKey id);
         Task<TUser> GetByUserName(string userName);
         Task<TUser> GetByEmail(string email);
         Task<IEnumerable<TUser>> GetAll();
         Task<TUser> GetByUserLogin(string loginProvider, string providerKey);
 
-        Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> InsertLoginInfo(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken);
+        Task<bool> InsertLoginInfo(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken);
+        Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken);
 
         Task<IList<Claim>> GetClaimsByUserId(TKey id);
         Task<IList<string>> GetRolesByUserId(TKey id);
@@ -38,9 +38,9 @@ namespace Identity.Dapper.Repositories.Contracts
         Task<IList<TUser>> GetUsersInRole(string roleName);
         Task<bool> IsInRole(TKey id, string roleName);
 
-        Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken);
+        Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken);
+        Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken);
+        Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken);
     }
 }

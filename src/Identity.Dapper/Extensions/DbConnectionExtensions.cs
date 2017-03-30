@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Identity.Dapper
+{
+    public static class DbConnectionExtensions
+    {
+        public static Task WaitForConnectionOpen(this DbConnection conn, string connString)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    while (conn.State != System.Data.ConnectionState.Open)
+                    {
+                        if (conn.State != System.Data.ConnectionState.Connecting || conn.State != System.Data.ConnectionState.Executing || conn.State != System.Data.ConnectionState.Fetching)
+                        {
+                            conn.ConnectionString = connString;
+
+                            await conn.OpenAsync();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
+                tcs.SetResult(true);
+            });
+
+            return tcs.Task;
+        }
+    }
+}

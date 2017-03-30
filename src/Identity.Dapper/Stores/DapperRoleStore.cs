@@ -94,7 +94,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _roleRepository.Insert(role, cancellationToken, _unitOfWork);
+                var result = await _roleRepository.Insert(role, cancellationToken);
 
                 return result ? IdentityResult.Success : IdentityResult.Failed();
             }
@@ -115,7 +115,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _roleRepository.Remove(role.Id, cancellationToken, _unitOfWork);
+                var result = await _roleRepository.Remove(role.Id, cancellationToken);
 
                 return result ? IdentityResult.Success : IdentityResult.Failed();
             }

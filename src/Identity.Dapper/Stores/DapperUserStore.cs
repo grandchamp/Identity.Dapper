@@ -66,7 +66,7 @@ namespace Identity.Dapper.Stores
             else
             {
                 _connection = _unitOfWork.CreateOrGetConnection();
-                
+
                 if (_connection.State == System.Data.ConnectionState.Closed)
                     await _connection.OpenAsync(cancellationToken);
             }
@@ -121,7 +121,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.InsertClaims(user.Id, claims, cancellationToken, _unitOfWork);
+                var result = await _userRepository.InsertClaims(user.Id, claims, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -139,7 +139,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.InsertLoginInfo(user.Id, login, cancellationToken, _unitOfWork);
+                var result = await _userRepository.InsertLoginInfo(user.Id, login, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -157,7 +157,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.AddToRole(user.Id, roleName, cancellationToken, _unitOfWork);
+                var result = await _userRepository.AddToRole(user.Id, roleName, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -175,7 +175,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.Insert(user, cancellationToken, _unitOfWork);
+                var result = await _userRepository.Insert(user, cancellationToken);
 
                 if (!result.Equals(default(TKey)))
                 {
@@ -206,7 +206,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.Remove(user.Id, cancellationToken, _unitOfWork);
+                var result = await _userRepository.Remove(user.Id, cancellationToken);
 
                 if (result)
                     return IdentityResult.Success;
@@ -607,7 +607,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.RemoveClaims(user.Id, claims, cancellationToken, _unitOfWork);
+                var result = await _userRepository.RemoveClaims(user.Id, claims, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -628,7 +628,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.RemoveFromRole(user.Id, roleName, cancellationToken, _unitOfWork);
+                var result = await _userRepository.RemoveFromRole(user.Id, roleName, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -652,7 +652,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.RemoveLogin(user.Id, loginProvider, providerKey, cancellationToken, _unitOfWork);
+                var result = await _userRepository.RemoveLogin(user.Id, loginProvider, providerKey, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -681,7 +681,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.UpdateClaim(user.Id, claim, newClaim, cancellationToken, _unitOfWork);
+                var result = await _userRepository.UpdateClaim(user.Id, claim, newClaim, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -856,7 +856,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.Update(user, cancellationToken, _unitOfWork);
+                var result = await _userRepository.Update(user, cancellationToken);
                 if (result)
                     return IdentityResult.Success;
                 else

@@ -39,7 +39,7 @@ namespace Identity.Dapper.Samples.Web
         {
             services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
-                    .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false });
+                    .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
             //services.ConfigureDapperPostgreSqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
             //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));

@@ -13,9 +13,9 @@ namespace Identity.Dapper.Repositories.Contracts
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
     {
-        Task<bool> Insert(TRole role, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> Remove(TKey id, CancellationToken cancellationToken, IUnitOfWork uow = null);
-        Task<bool> Update(TRole role, CancellationToken cancellationToken, IUnitOfWork uow = null);
+        Task<bool> Insert(TRole role, CancellationToken cancellationToken);
+        Task<bool> Remove(TKey id, CancellationToken cancellationToken);
+        Task<bool> Update(TRole role, CancellationToken cancellationToken);
         Task<TRole> GetById(TKey id);
         Task<TRole> GetByName(string roleName);
     }
