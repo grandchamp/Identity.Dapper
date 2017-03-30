@@ -63,6 +63,6 @@ private readonly DapperUserStore<CustomUser, int, DapperIdentityUserRole<int>, D
         }
 ```
 
-And after all operations, you'll have to call `
+And after all operations, you'll have to call `DapperUserStore.SaveChanges()` method, otherwise your changes will be rollbacked.
 
 Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support for Oracle when the company release the .NET Core version for their System.Data implementation.
