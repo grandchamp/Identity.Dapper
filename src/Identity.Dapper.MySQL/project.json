@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.4.1-alpha",
+  "version": "0.5.0-alpha",
   "title": "Identity.Dapper.MySQL",
   "description": "Identity package that uses Dapper with MySQL instead EntityFramework for use with .NET Core.",
   "authors": [ "grandchamp" ],
@@ -15,7 +15,7 @@
   "dependencies": {
     "NETStandard.Library": "1.6.1",
     "MySql.Data.Core": "7.0.4-IR-191",
-    "Identity.Dapper": "0.4.1-alpha"
+    "Identity.Dapper": "0.5.0-alpha"
   },
 
   "frameworks": {
