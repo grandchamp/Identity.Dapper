@@ -50,3 +50,26 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
 All **XXX** are replaced by your DBMS.
 
 Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support for Oracle when the company release the .NET Core version for their System.Data implementation.
+
+## Using Guid as Entity key
+Specify the <TKey>
+```
+services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
+        .AddDapperIdentityForXXX<Guid>();
+```
+
+## Changing the default schema (SqlServer)
+Pass a SqlServerConfiguration()
+```
+services.AddDapperIdentityForSqlServer(new CustomSqlServerConfiguration())
+```
+Extend the Identity.Dapper.SqlServer.Models.SqlServerConfiguration
+```
+public class CustomSqlServerConfiguration : SqlServerConfiguration
+{
+    public ApplicationSqlServerConfiguration()
+    {
+        base.SchemaName = "[customSchema]";
+    }
+}
+```
