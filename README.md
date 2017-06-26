@@ -67,7 +67,7 @@ Extend the Identity.Dapper.SqlServer.Models.SqlServerConfiguration
 ```
 public class CustomSqlServerConfiguration : SqlServerConfiguration
 {
-    public ApplicationSqlServerConfiguration()
+    public CustomSqlServerConfiguration()
     {
         base.SchemaName = "[customSchema]";
     }
