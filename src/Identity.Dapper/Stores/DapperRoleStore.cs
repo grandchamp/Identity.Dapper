@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Identity.Dapper.Stores
 {
@@ -73,6 +74,15 @@ namespace Identity.Dapper.Stores
 
         }
 
+		public virtual TKey ConvertIdFromString(string id)
+		{
+			if (id == null)
+			{
+				return default(TKey);
+			}
+			return (TKey)TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
+		}
+
         public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -82,8 +92,8 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _roleRepository.GetById((TKey)Convert.ChangeType(roleId, typeof(TKey)));
-
+                var result = await _roleRepository.GetById(ConvertIdFromString(roleId));
+				
                 return result;
             }
             catch (Exception ex)
