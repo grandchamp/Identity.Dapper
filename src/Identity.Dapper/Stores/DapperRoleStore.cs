@@ -74,14 +74,14 @@ namespace Identity.Dapper.Stores
 
         }
 
-		public virtual TKey ConvertIdFromString(string id)
-		{
-			if (id == null)
-			{
-				return default(TKey);
-			}
-			return (TKey)TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
-		}
+        public virtual TKey ConvertIdFromString(string id)
+        {
+            if (id == null)
+            {
+                return default(TKey);
+            }
+            return (TKey)TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
+        }
 
         public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
@@ -93,7 +93,7 @@ namespace Identity.Dapper.Stores
             try
             {
                 var result = await _roleRepository.GetById(ConvertIdFromString(roleId));
-				
+
                 return result;
             }
             catch (Exception ex)
