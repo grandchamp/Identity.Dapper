@@ -11,6 +11,7 @@ using Identity.Dapper.Samples.Web.Models.ManageViewModels;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Samples.Web.Entities;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Identity.Dapper.Samples.Web.Controllers
 {
@@ -22,18 +23,21 @@ namespace Identity.Dapper.Samples.Web.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
         public ManageController(
         UserManager<CustomUser> userManager,
         SignInManager<CustomUser> signInManager,
         IEmailSender emailSender,
         ISmsSender smsSender,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        IAuthenticationSchemeProvider authenticationSchemeProvider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
+            _authenticationSchemeProvider = authenticationSchemeProvider;
             _logger = loggerFactory.CreateLogger<ManageController>();
         }
 
@@ -276,7 +280,8 @@ namespace Identity.Dapper.Samples.Web.Controllers
                 return View("Error");
             }
             var userLogins = await _userManager.GetLoginsAsync(user);
-            var otherLogins = _signInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
+            var schemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
+            var otherLogins = schemes.Where(auth => userLogins.All(ul => auth.Name != ul.LoginProvider)).ToList();
             ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
             return View(new ManageLoginsViewModel
             {
@@ -294,7 +299,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
-            return Challenge(properties, provider);
+            return new ChallengeResult(provider, properties);
         }
 
         //

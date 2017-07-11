@@ -106,7 +106,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
-           { 
+            {
                 var user = new CustomUser { UserName = model.Email, Email = model.Email, Address = model.Address };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -149,7 +149,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider);
+            return new ChallengeResult(provider, properties);
         }
 
         //

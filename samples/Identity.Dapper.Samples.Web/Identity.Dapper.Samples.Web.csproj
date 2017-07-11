@@ -7,8 +7,6 @@
     <OutputType>Exe</OutputType>
     <PackageId>Identity.Dapper.Samples.Web</PackageId>
     <UserSecretsId>aspnet-Identity.Dapper.Samples.Web-3f490e5c-6ec3-4d10-bfcb-8193cef5df85</UserSecretsId>
-    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Description>Identity package that uses Dapper with MySQL instead EntityFramework for use with .NET Core.</Description>
     <AssemblyTitle>Identity.Dapper.MySQL</AssemblyTitle>
-    <VersionPrefix>0.4.1-alpha</VersionPrefix>
     <Authors>grandchamp</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Identity.Dapper.MySQL</AssemblyName>
