@@ -29,7 +29,7 @@ namespace Identity.Dapper.SqlServer.Models
             InsertUserRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             GetUserLoginByLoginProviderAndProviderKeyQuery = "SELECT TOP 1 %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERLOGINTABLE% WHERE LoginProvider = %LOGINPROVIDER% AND ProviderKey = %PROVIDERKEY%";
             GetClaimsByUserIdQuery = "SELECT ClaimType, ClaimValue FROM %SCHEMA%.%TABLENAME% WHERE UserId = %ID%";
-            GetRolesByUserIdQuery = "SELECT Name FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE UserId = %ID%";
+            GetRolesByUserIdQuery = "SELECT Name FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.Id = %SCHEMA%.%USERROLETABLE%.RoleId AND %SCHEMA%.%USERROLETABLE%.UserId = %ID%";
             GetUserLoginInfoByIdQuery = "SELECT LoginProvider, ProviderKey Name FROM %SCHEMA%.%TABLENAME% WHERE UserId = %ID%";
             GetUsersByClaimQuery = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERCLAIMTABLE% WHERE ClaimValue = %CLAIMVALUE% AND ClaimType = %CLAIMTYPE%";
             GetUsersInRoleQuery = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.Name = %ROLENAME% AND %SCHEMA%.%USERROLETABLE%.RoleId = %SCHEMA%.%ROLETABLE%.Id AND %SCHEMA%.%USERROLETABLE%.UserId = %SCHEMA%.%USERTABLE%.Id";
