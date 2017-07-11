@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Identity package that uses Dapper with MySQL instead EntityFramework for use with .NET Core.</Description>
+    <AssemblyTitle>Identity.Dapper.MySQL</AssemblyTitle>
+    <VersionPrefix>0.4.1-alpha</VersionPrefix>
+    <Authors>grandchamp</Authors>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Identity.Dapper.MySQL</AssemblyName>
+    <PackageId>Identity.Dapper.MySQL</PackageId>
+    <PackageTags>asp.net;core;dapper;identity;mysql</PackageTags>
+    <PackageProjectUrl>https://github.com/grandchamp/Identity.Dapper</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/grandchamp/Identity.Dapper.git</RepositoryUrl>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Version>0.5.0-alpha</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.8-dmr" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Identity.Dapper\Identity.Dapper.csproj" />
+  </ItemGroup>
+
+</Project>

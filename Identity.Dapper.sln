@@ -1,32 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26621.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EC299BD0-3BB6-484B-BCAE-358131F45D4D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67C5090D-CE9E-4022-A9C0-B719604073A1}"
 	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
 		IdentityTables.sql = IdentityTables.sql
 		TODO.txt = TODO.txt
 	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper", "src\Identity.Dapper\Identity.Dapper.xproj", "{7DEAA5D0-0920-4C6E-BA10-C5DB65E0EA42}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.SqlServer", "src\Identity.Dapper.SqlServer\Identity.Dapper.SqlServer.xproj", "{582560BA-DB0D-49F5-9E25-2514CB43C079}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A1014397-D42D-4C4F-A391-95DEC2BAF318}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{82D0F07A-4CED-4A50-8BF4-57273D913494}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.Samples.Web", "samples\Identity.Dapper.Samples.Web\Identity.Dapper.Samples.Web.xproj", "{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper", "src\Identity.Dapper\Identity.Dapper.csproj", "{7DEAA5D0-0920-4C6E-BA10-C5DB65E0EA42}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.PostgreSQL", "src\Identity.Dapper.PostgreSQL\Identity.Dapper.PostgreSQL.xproj", "{8EFCA99C-32A1-4436-B8C7-95B1EE562BB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.SqlServer", "src\Identity.Dapper.SqlServer\Identity.Dapper.SqlServer.csproj", "{582560BA-DB0D-49F5-9E25-2514CB43C079}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.Tests", "test\Identity.Dapper.Tests\Identity.Dapper.Tests.xproj", "{676D4919-98F7-4B35-BAF0-76DF84F77448}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.Samples.Web", "samples\Identity.Dapper.Samples.Web\Identity.Dapper.Samples.Web.csproj", "{D659F9FE-A8F4-40C3-8E93-02ABBBFE03C2}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Identity.Dapper.MySQL", "src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.xproj", "{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.PostgreSQL", "src\Identity.Dapper.PostgreSQL\Identity.Dapper.PostgreSQL.csproj", "{8EFCA99C-32A1-4436-B8C7-95B1EE562BB3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.Tests", "test\Identity.Dapper.Tests\Identity.Dapper.Tests.csproj", "{676D4919-98F7-4B35-BAF0-76DF84F77448}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.MySQL", "src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.csproj", "{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,5 +68,8 @@ Global
 		{8EFCA99C-32A1-4436-B8C7-95B1EE562BB3} = {EC299BD0-3BB6-484B-BCAE-358131F45D4D}
 		{676D4919-98F7-4B35-BAF0-76DF84F77448} = {A1014397-D42D-4C4F-A391-95DEC2BAF318}
 		{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063} = {EC299BD0-3BB6-484B-BCAE-358131F45D4D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A0E955D-E771-4402-A971-9C07E9926F63}
 	EndGlobalSection
 EndGlobal
