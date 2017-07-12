@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Dapper.MySQL", "src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.csproj", "{9731F2B7-DFF0-4DBC-A25E-AB9FBFF2E063}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Dapper.Tests.Integration", "Identity.Dapper.Tests.Integration\Identity.Dapper.Tests.Integration.csproj", "{DA771514-4B3B-437A-A118-DC275E16B831}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Dapper.Tests.Integration", "test\Identity.Dapper.Tests.Integration\Identity.Dapper.Tests.Integration.csproj", "{DA771514-4B3B-437A-A118-DC275E16B831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
