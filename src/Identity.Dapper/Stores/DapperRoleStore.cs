@@ -131,9 +131,8 @@ namespace Identity.Dapper.Stores
         public virtual TKey ConvertIdFromString(string id)
         {
             if (id == null)
-            {
                 return default(TKey);
-            }
+
             return (TKey)TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
         }
 

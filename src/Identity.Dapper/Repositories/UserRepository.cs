@@ -448,8 +448,6 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync(cancellationToken);
-
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("Id", id);
 
@@ -987,8 +985,6 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync(cancellationToken);
-
                         var query = _sqlConfiguration.RemoveClaimsQuery
                                                      .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
                                                                              _sqlConfiguration.UserClaimTable,
@@ -1124,8 +1120,6 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync(cancellationToken);
-
                         var query = _sqlConfiguration.RemoveLoginForUserQuery
                                                      .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
                                                                              _sqlConfiguration.UserLoginTable,
@@ -1189,8 +1183,6 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        await x.OpenAsync(cancellationToken);
-
                         var query = _sqlConfiguration.UpdateClaimForUserQuery
                                                      .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
                                                                              _sqlConfiguration.UserClaimTable,
