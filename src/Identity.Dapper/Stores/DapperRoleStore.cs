@@ -128,11 +128,6 @@ namespace Identity.Dapper.Stores
             }
         }
 
-        public void Dispose()
-        {
-
-        }
-
         public virtual TKey ConvertIdFromString(string id)
         {
             if (id == null)
