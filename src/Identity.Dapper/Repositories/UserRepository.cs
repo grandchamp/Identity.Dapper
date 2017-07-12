@@ -331,20 +331,22 @@ namespace Identity.Dapper.Repositories
                         var valuesArray = new string[] {
                                                          $"{_sqlConfiguration.ParameterNotation}UserId",
                                                          $"{_sqlConfiguration.ParameterNotation}LoginProvider",
-                                                         $"{_sqlConfiguration.ParameterNotation}ProviderKey"
+                                                         $"{_sqlConfiguration.ParameterNotation}ProviderKey",
+                                                         $"{_sqlConfiguration.ParameterNotation}Name"
                                                        };
 
                         var query = _sqlConfiguration.InsertUserLoginQuery
                                                      .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                                    _sqlConfiguration.UserLoginTable,
-                                                                                   "\"UserId\", \"LoginProvider\", \"ProviderKey\"",
+                                                                                   "\"UserId\", \"LoginProvider\", \"ProviderKey\", \"Name\"",
                                                                                    string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
                         {
                             UserId = id,
                             LoginProvider = loginInfo.LoginProvider,
-                            ProviderKey = loginInfo.ProviderKey
+                            ProviderKey = loginInfo.ProviderKey,
+                            Name = loginInfo.ProviderDisplayName
                         }, _unitOfWork.Transaction);
 
                         return result > 0;
@@ -554,45 +556,54 @@ namespace Identity.Dapper.Repositories
             {
                 var selectFunction = new Func<DbConnection, Task<TUser>>(async x =>
                 {
-                    var defaultUser = Activator.CreateInstance<TUser>();
-                    var userProperties = defaultUser.GetType()
-                                                    .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"));
+                    try
+                    {
+                        var defaultUser = Activator.CreateInstance<TUser>();
+                        var userProperties = defaultUser.GetType()
+                                                        .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
+                                                                                       && !y.Name.Equals("Id"));
 
-                    if (_sqlConfiguration.UseQuotationMarks)
-                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
+                        if (_sqlConfiguration.UseQuotationMarks)
+                            userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
 
-                    var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         string.Empty,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] {
+                        var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
+                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                             string.Empty,
+                                                                             _sqlConfiguration.ParameterNotation,
+                                                                             new string[] {
                                                                                         "%LOGINPROVIDER%",
                                                                                         "%PROVIDERKEY%"
-                                                                                      },
-                                                                         new string[] {
+                                                                                          },
+                                                                             new string[] {
                                                                                         "LoginProvider",
                                                                                         "ProviderKey"
-                                                                                      },
-                                                                         new string[] {
+                                                                                          },
+                                                                             new string[] {
                                                                                         "%USERFILTER%",
                                                                                         "%USERTABLE%",
                                                                                         "%USERLOGINTABLE%",
-                                                                                      },
-                                                                         new string[] {
+                                                                                          },
+                                                                             new string[] {
                                                                                         userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
                                                                                         _sqlConfiguration.UserTable,
                                                                                         _sqlConfiguration.UserLoginTable,
-                                                                                      }
-                                                                         );
+                                                                                          }
+                                                                             );
 
-                    return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
-                                                                   param: new
-                                                                   {
-                                                                       LoginProvider = loginProvider,
-                                                                       ProviderKey = providerKey
-                                                                   },
-                                                                   transaction: _unitOfWork.Transaction);
+                        return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
+                                                                       param: new
+                                                                       {
+                                                                           LoginProvider = loginProvider,
+                                                                           ProviderKey = providerKey
+                                                                       },
+                                                                       transaction: _unitOfWork.Transaction);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(new EventId(12), ex.Message, ex);
+
+                        return null;
+                    }
                 });
 
                 DbConnection conn = null;
@@ -992,7 +1003,7 @@ namespace Identity.Dapper.Repositories
                                                                              new string[] {
                                                                                             "%ID%",
                                                                                             "%CLAIMVALUE%",
-                                                                                            "%CLAIMTYPE"
+                                                                                            "%CLAIMTYPE%"
                                                                                           },
                                                                              new string[] {
                                                                                             "Id",

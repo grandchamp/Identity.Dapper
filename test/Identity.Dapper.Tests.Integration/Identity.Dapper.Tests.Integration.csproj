@@ -17,9 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.csproj" />
-    <ProjectReference Include="..\src\Identity.Dapper.PostgreSQL\Identity.Dapper.PostgreSQL.csproj" />
-    <ProjectReference Include="..\src\Identity.Dapper.SqlServer\Identity.Dapper.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.csproj" />
+    <ProjectReference Include="..\..\src\Identity.Dapper.PostgreSQL\Identity.Dapper.PostgreSQL.csproj" />
+    <ProjectReference Include="..\..\src\Identity.Dapper.SqlServer\Identity.Dapper.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\Identity.Dapper\Identity.Dapper.csproj" />
   </ItemGroup>
 
 </Project>

@@ -41,7 +41,7 @@ namespace Identity.Dapper
             var filterBuilderArray = new List<string>(propertyNamesArray.Length);
 
             for (int i = 0; i < propertyNamesArray.Length; i++)
-                filterBuilderArray.Add($"\"{tableName}\".\"{propertyNamesArray[i]}\"");
+                filterBuilderArray.Add($"\"{tableName}\".{propertyNamesArray[i]}");
 
             return string.Join(", ", filterBuilderArray);
         }
