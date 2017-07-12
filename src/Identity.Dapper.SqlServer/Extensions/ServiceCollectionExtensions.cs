@@ -7,9 +7,11 @@ using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.SqlServer.Connections;
 using Identity.Dapper.SqlServer.Models;
 using Identity.Dapper.Stores;
+using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
 namespace Identity.Dapper.SqlServer
@@ -19,6 +21,9 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder)
         {
             builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            builder.Services.TryAddSingleton(new DapperIdentityOptions());
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
@@ -28,6 +33,9 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            builder.Services.TryAddSingleton(new DapperIdentityOptions());
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
@@ -37,6 +45,9 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer<TKey>(this IdentityBuilder builder)
         {
             builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            builder.Services.TryAddSingleton(new DapperIdentityOptions());
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
@@ -46,6 +57,9 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer<TKey>(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            builder.Services.TryAddSingleton(new DapperIdentityOptions());
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
@@ -55,6 +69,9 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
         {
             builder.Services.AddSingleton<SqlConfiguration, SqlServerConfiguration>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            builder.Services.TryAddSingleton(new DapperIdentityOptions());
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
@@ -64,6 +81,9 @@ namespace Identity.Dapper.SqlServer
         public static IdentityBuilder AddDapperIdentityForSqlServer<TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder, SqlServerConfiguration configurationOverride)
         {
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            builder.Services.TryAddSingleton(new DapperIdentityOptions());
 
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
@@ -102,7 +122,7 @@ namespace Identity.Dapper.SqlServer
         {
             services.Configure<ConnectionProviderOptions>(configuration);
 
-            services.AddSingleton<IConnectionProvider, SqlServerConnectionProvider>();
+            services.AddScoped<IConnectionProvider, SqlServerConnectionProvider>();
 
             return services;
         }

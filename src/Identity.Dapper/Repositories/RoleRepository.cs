@@ -3,6 +3,7 @@ using Identity.Dapper.Connections;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.Repositories.Contracts;
+using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Dapper.Repositories
 {
-    public class RoleRepository<TRole, TKey, TUserRole, TRoleClaim> 
+    public class RoleRepository<TRole, TKey, TUserRole, TRoleClaim>
         : IRoleRepository<TRole, TKey, TUserRole, TRoleClaim>
         where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
@@ -24,21 +25,21 @@ namespace Identity.Dapper.Repositories
         private readonly IConnectionProvider _connectionProvider;
         private readonly ILogger<RoleRepository<TRole, TKey, TUserRole, TRoleClaim>> _log;
         private readonly SqlConfiguration _sqlConfiguration;
-        public RoleRepository(IConnectionProvider connProv, ILogger<RoleRepository<TRole, TKey, TUserRole, TRoleClaim>> log, SqlConfiguration sqlConf)
+        private readonly IUnitOfWork _unitOfWork;
+        public RoleRepository(IConnectionProvider connProv, ILogger<RoleRepository<TRole, TKey, TUserRole, TRoleClaim>> log, SqlConfiguration sqlConf, IUnitOfWork uow)
         {
             _connectionProvider = connProv;
             _log = log;
             _sqlConfiguration = sqlConf;
+            _unitOfWork = uow;
         }
 
         public async Task<TRole> GetById(TKey id)
         {
             try
             {
-                using (var conn = _connectionProvider.Create())
+                var selectFunction = new Func<DbConnection, Task<TRole>>(async x =>
                 {
-                    await conn.OpenAsync();
-
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
@@ -49,8 +50,25 @@ namespace Identity.Dapper.Repositories
                                                                          new string[] { "%ID%" },
                                                                          new string[] { "Id" });
 
-                    return await conn.QueryFirstOrDefaultAsync<TRole>(sql: query,
-                                                                      param: dynamicParameters);
+                    return await x.QueryFirstOrDefaultAsync<TRole>(sql: query,
+                                                                   param: dynamicParameters,
+                                                                   transaction: _unitOfWork.Transaction);
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync();
+
+                        return await selectFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await selectFunction(conn);
                 }
             }
             catch (Exception ex)
@@ -65,10 +83,8 @@ namespace Identity.Dapper.Repositories
         {
             try
             {
-                using (var conn = _connectionProvider.Create())
+                var selectFunction = new Func<DbConnection, Task<TRole>>(async x =>
                 {
-                    await conn.OpenAsync();
-
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Name", roleName);
 
@@ -79,8 +95,25 @@ namespace Identity.Dapper.Repositories
                                                                          new string[] { "%NAME%" },
                                                                          new string[] { "Name" });
 
-                    return await conn.QueryFirstOrDefaultAsync<TRole>(sql: query,
-                                                                      param: dynamicParameters);
+                    return await x.QueryFirstOrDefaultAsync<TRole>(sql: query,
+                                                                   param: dynamicParameters,
+                                                                   transaction: _unitOfWork.Transaction);
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync();
+
+                        return await selectFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await selectFunction(conn);
                 }
             }
             catch (Exception ex)
@@ -91,20 +124,18 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Insert(TRole role, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> Insert(TRole role, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = _connectionProvider.Create())
+                var insertFunction = new Func<DbConnection, Task<bool>>(async x =>
                 {
-                    await conn.OpenAsync();
-
                     var columnsBuilder = new StringBuilder();
                     var dynamicParameters = new DynamicParameters(role);
 
                     var roleProperties = role.GetType()
-                                           .GetPublicPropertiesNames(x => !x.Name.Equals("Id"))
-                                           .Select(x => string.Concat("\"", x, "\""));
+                                           .GetPublicPropertiesNames(y => !y.Name.Equals("Id"))
+                                           .Select(y => string.Concat("\"", y, "\""));
 
                     var valuesArray = new List<string>(roleProperties.Count());
 
@@ -123,9 +154,25 @@ namespace Identity.Dapper.Repositories
                                                                                columnsBuilder.ToString(),
                                                                                string.Join(", ", valuesArray));
 
-                    var result = await conn.ExecuteAsync(query, dynamicParameters);
+                    var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
                     return result > 0;
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await insertFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await insertFunction(conn);
                 }
             }
             catch (Exception ex)
@@ -135,14 +182,12 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = _connectionProvider.Create())
+                var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
                 {
-                    await conn.OpenAsync();
-
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
@@ -151,9 +196,25 @@ namespace Identity.Dapper.Repositories
                                                                                _sqlConfiguration.RoleTable,
                                                                                $"{_sqlConfiguration.ParameterNotation}Id");
 
-                    var result = await conn.ExecuteAsync(query, dynamicParameters);
+                    var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
                     return result > 0;
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await removeFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await removeFunction(conn);
                 }
             }
             catch (Exception ex)
@@ -163,19 +224,17 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Update(TRole role, CancellationToken cancellationToken, DbTransaction transaction = null)
+        public async Task<bool> Update(TRole role, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = _connectionProvider.Create())
+                var updateFunction = new Func<DbConnection, Task<bool>>(async x =>
                 {
-                    await conn.OpenAsync();
-
                     var dynamicParameters = new DynamicParameters(role);
 
                     var roleProperties = role.GetType()
-                                             .GetPublicPropertiesNames(x => !x.Name.Equals("Id"))
-                                             .Select(x => string.Concat("\"", x, "\""));
+                                             .GetPublicPropertiesNames(y => !y.Name.Equals("Id"))
+                                             .Select(y => string.Concat("\"", y, "\""));
 
                     var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
@@ -185,9 +244,24 @@ namespace Identity.Dapper.Repositories
                                                                                setFragment,
                                                                                $"{_sqlConfiguration.ParameterNotation}Id");
 
-                    var result = await conn.ExecuteAsync(query, dynamicParameters);
+                    var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
                     return result > 0;
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+                        return await updateFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await updateFunction(conn);
                 }
             }
             catch (Exception ex)
