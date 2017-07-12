@@ -1,16 +1,7 @@
 # Identity.Dapper
 **Not ready yet**
 
-Add a reference on your **project.json** file to the corresponding DBMS (Eg: SQL Server)
-```
-"dependencies": {
-    "Microsoft.NETCore.App": {
-      "version": "1.1.0",
-      "type": "platform"
-    },
-    "Identity.Dapper.XXX": "0.4.0-*"
-  }
-```
+Find the corresponding NuGet package for your DBMS (Eg: Identity.Dapper.SqlServer).
 
 To configure the DBMS connection, you can add a **DapperIdentity** and a **DapperIdentityCryptography** section to your configuration file like this:
 ```
