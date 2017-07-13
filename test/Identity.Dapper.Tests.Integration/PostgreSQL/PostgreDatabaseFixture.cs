@@ -14,7 +14,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
         public TestServer TestServer { get; set; }
         public PostgreDatabaseFixture()
         {
-            var builder = new WebHostBuilder().UseStartup<TestStartup>();
+            var builder = new WebHostBuilder().UseStartup<TestStartupPostgreSql>();
             TestServer = new TestServer(builder);
         }
 

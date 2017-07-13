@@ -1,0 +1,7 @@
+﻿{
+  "DapperIdentity": {
+    "ConnectionString": "Server=192.168.99.100;Database=identity;",
+    "Username": "identity",
+    "Password": "123456"
+  }
+}

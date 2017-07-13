@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Identity.Dapper
 {
@@ -9,7 +10,7 @@ namespace Identity.Dapper
         public static List<string> InsertQueryValuesFragment(this List<string> valuesArray, string parameterNotation, IEnumerable<string> propertyNames)
         {
             foreach (var property in propertyNames)
-                valuesArray.Add($"{parameterNotation}{property.Replace("\"", "")}");
+                valuesArray.Add($"{parameterNotation}{property.RemoveSpecialCharacters()}");
 
             return valuesArray;
         }
@@ -27,21 +28,24 @@ namespace Identity.Dapper
                 var propertyName = propertyNamesArray[i];
 
                 if (i == 0)
-                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")}");
+                    setBuilder.Append($"SET {propertyName} = {parameterNotation}{propertyName.RemoveSpecialCharacters()}");
                 else
-                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName.Replace("\"", "")}");
+                    setBuilder.Append($", {propertyName} = {parameterNotation}{propertyName.RemoveSpecialCharacters()}");
             }
 
             return setBuilder.ToString();
         }
 
-        public static string SelectFilterWithTableName(this IEnumerable<string> propertyNames, string tableName)
+        public static string SelectFilterWithTableName(this IEnumerable<string> propertyNames, string tableName, bool useQuotationMarks, string tableFieldNotation)
         {
             var propertyNamesArray = propertyNames.ToArray();
             var filterBuilderArray = new List<string>(propertyNamesArray.Length);
 
             for (int i = 0; i < propertyNamesArray.Length; i++)
-                filterBuilderArray.Add($"\"{tableName}\".{propertyNamesArray[i]}");
+                if (useQuotationMarks)
+                    filterBuilderArray.Add($"\"{tableName}\".{propertyNamesArray[i]}");
+                else
+                    filterBuilderArray.Add($"{tableFieldNotation}{tableName}{tableFieldNotation}.{tableFieldNotation}{propertyNamesArray[i]}{tableFieldNotation}");
 
             return string.Join(", ", filterBuilderArray);
         }

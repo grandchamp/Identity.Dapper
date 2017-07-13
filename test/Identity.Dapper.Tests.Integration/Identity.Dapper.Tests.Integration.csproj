@@ -23,4 +23,13 @@
     <ProjectReference Include="..\..\src\Identity.Dapper\Identity.Dapper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="integrationtest.config.mysql.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="integrationtest.config.psql.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

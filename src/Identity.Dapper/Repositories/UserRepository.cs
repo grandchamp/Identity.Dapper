@@ -66,6 +66,7 @@ namespace Identity.Dapper.Repositories
                                                                          _sqlConfiguration.ParameterNotation,
                                                                          new string[] { "%EMAIL%" },
                                                                          new string[] { "Email" });
+
                     return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
                                                                    param: dynamicParameters,
                                                                    transaction: _unitOfWork.Transaction);
@@ -146,19 +147,28 @@ namespace Identity.Dapper.Repositories
             {
                 var selectFunction = new Func<DbConnection, Task<TUser>>(async x =>
                 {
-                    var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("User", userName);
+                    try
+                    {
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("User", userName);
 
-                    var query = _sqlConfiguration.SelectUserByUserNameQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%USERNAME%" },
-                                                                         new string[] { "User" });
+                        var query = _sqlConfiguration.SelectUserByUserNameQuery
+                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
+                                                                             _sqlConfiguration.UserTable,
+                                                                             _sqlConfiguration.ParameterNotation,
+                                                                             new string[] { "%USERNAME%" },
+                                                                             new string[] { "User" });
 
-                    return await x.QuerySingleOrDefaultAsync<TUser>(sql: query,
-                                                                    param: dynamicParameters,
-                                                                   transaction: _unitOfWork.Transaction);
+                        return await x.QuerySingleOrDefaultAsync<TUser>(sql: query,
+                                                                        param: dynamicParameters,
+                                                                       transaction: _unitOfWork.Transaction);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(ex.Message, ex);
+
+                        return null;
+                    }
                 });
 
                 DbConnection conn = null;
@@ -202,6 +212,8 @@ namespace Identity.Dapper.Repositories
 
                         if (_sqlConfiguration.UseQuotationMarks)
                             userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
+                        else
+                            userProperties = userProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
 
                         var valuesArray = new List<string>(userProperties.Count());
 
@@ -272,7 +284,9 @@ namespace Identity.Dapper.Repositories
                         var query = _sqlConfiguration.InsertUserClaimQuery
                                                      .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                                    _sqlConfiguration.UserClaimTable,
-                                                                                   "\"UserId\", \"ClaimType\", \"ClaimValue\"",
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}UserId{_sqlConfiguration.TableFieldNotation}, " +
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}ClaimType{_sqlConfiguration.TableFieldNotation}, " +
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}ClaimValue{_sqlConfiguration.TableFieldNotation}",
                                                                                    string.Join(", ", valuesArray));
 
                         var resultList = new List<bool>(claims.Count());
@@ -338,7 +352,10 @@ namespace Identity.Dapper.Repositories
                         var query = _sqlConfiguration.InsertUserLoginQuery
                                                      .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                                    _sqlConfiguration.UserLoginTable,
-                                                                                   "\"UserId\", \"LoginProvider\", \"ProviderKey\", \"Name\"",
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}UserId{_sqlConfiguration.TableFieldNotation}, " +
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}LoginProvider{_sqlConfiguration.TableFieldNotation}, " +
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}ProviderKey{_sqlConfiguration.TableFieldNotation}, " +
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}Name{_sqlConfiguration.TableFieldNotation}",
                                                                                    string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
@@ -401,7 +418,8 @@ namespace Identity.Dapper.Repositories
                         var query = _sqlConfiguration.InsertUserRoleQuery
                                                      .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                                    _sqlConfiguration.UserRoleTable,
-                                                                                   "\"UserId\", \"RoleId\"",
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}UserId{_sqlConfiguration.TableFieldNotation}, " +
+                                                                                   $"{_sqlConfiguration.TableFieldNotation}RoleId{_sqlConfiguration.TableFieldNotation}",
                                                                                    string.Join(", ", valuesArray));
 
                         var result = await x.ExecuteAsync(query, new
@@ -508,6 +526,8 @@ namespace Identity.Dapper.Repositories
 
                         if (_sqlConfiguration.UseQuotationMarks)
                             roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
+                        else
+                            roleProperties = roleProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
 
                         var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
@@ -584,7 +604,7 @@ namespace Identity.Dapper.Repositories
                                                                                         "%USERLOGINTABLE%",
                                                                                           },
                                                                              new string[] {
-                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
+                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable,_sqlConfiguration.UseQuotationMarks, _sqlConfiguration.TableFieldNotation),
                                                                                         _sqlConfiguration.UserTable,
                                                                                         _sqlConfiguration.UserLoginTable,
                                                                                           }
@@ -802,7 +822,7 @@ namespace Identity.Dapper.Repositories
                                                                                         "%USERCLAIMTABLE%",
                                                                                       },
                                                                          new string[] {
-                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
+                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable,_sqlConfiguration.UseQuotationMarks, _sqlConfiguration.TableFieldNotation),
                                                                                         _sqlConfiguration.UserTable,
                                                                                         _sqlConfiguration.UserClaimTable,
                                                                                       }
@@ -874,7 +894,7 @@ namespace Identity.Dapper.Repositories
                                                                                         "%ROLETABLE%"
                                                                                       },
                                                                          new string[] {
-                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
+                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable,_sqlConfiguration.UseQuotationMarks, _sqlConfiguration.TableFieldNotation),
                                                                                         _sqlConfiguration.UserTable,
                                                                                         _sqlConfiguration.UserRoleTable,
                                                                                         _sqlConfiguration.RoleTable
@@ -1136,12 +1156,12 @@ namespace Identity.Dapper.Repositories
                                                                              _sqlConfiguration.UserLoginTable,
                                                                              _sqlConfiguration.ParameterNotation,
                                                                              new string[] {
-                                                                                            "%ID%",
+                                                                                            "%USERID%",
                                                                                             "%LOGINPROVIDER%",
                                                                                             "%PROVIDERKEY%"
                                                                                           },
                                                                              new string[] {
-                                                                                            "Id",
+                                                                                            "UserId",
                                                                                             "LoginProvider",
                                                                                             "ProviderKey"
                                                                                           }
@@ -1149,7 +1169,7 @@ namespace Identity.Dapper.Repositories
 
                         var result = await x.ExecuteAsync(query, new
                         {
-                            Id = id,
+                            UserId = id,
                             LoginProvider = loginProvider,
                             ProviderKey = providerKey
                         }, _unitOfWork.Transaction);

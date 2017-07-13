@@ -7,22 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Identity.Dapper.Tests.Integration.PostgreSQL
+namespace Identity.Dapper.Tests.Integration.MySQL
 {
     //TODO:
     //There's a little problem with IClassFixture that on EVERY test, the constructor of the class is called (and if implements IDisposable, the Dispose() is called too)
-    //So, there's no safe way to clean data of the database.
     //As a workaround, every time you run this test, execute restart.sh to reset all data on Docker container
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
-    public class UserManagerTests : IClassFixture<PostgreDatabaseFixture>
+    public class UserManagerTestsMySql : IClassFixture<MySqlDatabaseFixture>
     {
-        private readonly PostgreDatabaseFixture _postgreDatabaseFixture;
+        private readonly MySqlDatabaseFixture _mySqlDatabaseFixture;
         private readonly UserManager<DapperIdentityUser> _userManager;
 
-        public UserManagerTests(PostgreDatabaseFixture postgreDatabaseFixture)
+        public UserManagerTestsMySql(MySqlDatabaseFixture mySqlDatabaseFixture)
         {
-            _postgreDatabaseFixture = postgreDatabaseFixture;
-            _userManager = (UserManager<DapperIdentityUser>)_postgreDatabaseFixture.TestServer.Host.Services.GetService(typeof(UserManager<DapperIdentityUser>));
+            _mySqlDatabaseFixture = mySqlDatabaseFixture;
+            _userManager = (UserManager<DapperIdentityUser>)_mySqlDatabaseFixture.TestServer.Host.Services.GetService(typeof(UserManager<DapperIdentityUser>));
         }
 
         [Fact, TestPriority(1)]

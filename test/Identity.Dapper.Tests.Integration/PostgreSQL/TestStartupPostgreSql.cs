@@ -12,16 +12,16 @@ using System.Text;
 
 namespace Identity.Dapper.Tests.Integration.PostgreSQL
 {
-    public class TestStartup
+    public class TestStartupPostgreSql
     {
-        public TestStartup(IHostingEnvironment env)
+        public TestStartupPostgreSql(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("integrationtest.config.psql.json", optional: false, reloadOnChange: true);
 
             if (env.IsDevelopment())
-                builder.AddUserSecrets<TestStartup>();
+                builder.AddUserSecrets<TestStartupPostgreSql>();
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
