@@ -30,6 +30,9 @@
     <None Update="integrationtest.config.psql.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="integrationtest.config.sqlserver.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

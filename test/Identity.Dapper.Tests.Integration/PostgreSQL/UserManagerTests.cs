@@ -14,12 +14,12 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
     //So, there's no safe way to clean data of the database.
     //As a workaround, every time you run this test, execute restart.sh to reset all data on Docker container
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
-    public class UserManagerTests : IClassFixture<PostgreDatabaseFixture>
+    public class UserManagerTestsPostgreSql : IClassFixture<PostgreDatabaseFixture>
     {
         private readonly PostgreDatabaseFixture _postgreDatabaseFixture;
         private readonly UserManager<DapperIdentityUser> _userManager;
 
-        public UserManagerTests(PostgreDatabaseFixture postgreDatabaseFixture)
+        public UserManagerTestsPostgreSql(PostgreDatabaseFixture postgreDatabaseFixture)
         {
             _postgreDatabaseFixture = postgreDatabaseFixture;
             _userManager = (UserManager<DapperIdentityUser>)_postgreDatabaseFixture.TestServer.Host.Services.GetService(typeof(UserManager<DapperIdentityUser>));
