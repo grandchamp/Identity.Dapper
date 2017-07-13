@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Identity.Dapper.Tests.Integration.PostgreSQL
 {
-    public class PostgreDatabaseFixture : IDisposable
+    public class PostgreDatabaseFixture
     {
         public TestServer TestServer { get; set; }
         public PostgreDatabaseFixture()

@@ -134,14 +134,20 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters(role);
 
                     var roleProperties = role.GetType()
-                                           .GetPublicPropertiesNames(y => !y.Name.Equals("Id"))
-                                           .Select(y => string.Concat("\"", y, "\""));
+                                           .GetPublicPropertiesNames(y => !y.Name.Equals("Id"));
+
+                    if (_sqlConfiguration.UseQuotationMarks)
+                        roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
+                    else
+                        roleProperties = roleProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
+
 
                     var valuesArray = new List<string>(roleProperties.Count());
 
                     if (!role.Id.Equals(default(TKey)))
                     {
-                        columnsBuilder.Append("\"Id\", ");
+                        columnsBuilder.Append(string.Concat(_sqlConfiguration.TableFieldNotation, "Id", _sqlConfiguration.TableFieldNotation));
+
                         valuesArray.Add($"{_sqlConfiguration.ParameterNotation}Id, ");
                     }
 
@@ -233,8 +239,12 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters(role);
 
                     var roleProperties = role.GetType()
-                                             .GetPublicPropertiesNames(y => !y.Name.Equals("Id"))
-                                             .Select(y => string.Concat("\"", y, "\""));
+                                             .GetPublicPropertiesNames(y => !y.Name.Equals("Id"));
+
+                    if (_sqlConfiguration.UseQuotationMarks)
+                        roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
+                    else
+                        roleProperties = roleProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
 
                     var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 

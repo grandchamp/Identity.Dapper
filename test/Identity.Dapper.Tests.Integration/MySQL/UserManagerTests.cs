@@ -12,16 +12,17 @@ namespace Identity.Dapper.Tests.Integration.MySQL
     //TODO:
     //There's a little problem with IClassFixture that on EVERY test, the constructor of the class is called (and if implements IDisposable, the Dispose() is called too)
     //As a workaround, every time you run this test, execute restart.sh to reset all data on Docker container
+    [Collection("MySQL")]
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
-    public class UserManagerTestsMySql : IClassFixture<MySqlDatabaseFixture>
+    public partial class UserManagerTestsMySql : IClassFixture<MySqlDatabaseFixture>
     {
-        private readonly MySqlDatabaseFixture _mySqlDatabaseFixture;
+        private readonly MySqlDatabaseFixture _databaseFixture;
         private readonly UserManager<DapperIdentityUser> _userManager;
 
-        public UserManagerTestsMySql(MySqlDatabaseFixture mySqlDatabaseFixture)
+        public UserManagerTestsMySql(MySqlDatabaseFixture databaseFixture)
         {
-            _mySqlDatabaseFixture = mySqlDatabaseFixture;
-            _userManager = (UserManager<DapperIdentityUser>)_mySqlDatabaseFixture.TestServer.Host.Services.GetService(typeof(UserManager<DapperIdentityUser>));
+            _databaseFixture = databaseFixture;
+            _userManager = (UserManager<DapperIdentityUser>)_databaseFixture.TestServer.Host.Services.GetService(typeof(UserManager<DapperIdentityUser>));
         }
 
         [Fact, TestPriority(1)]
@@ -379,7 +380,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             Assert.Equal("testchanged@test.com", user.Email, ignoreCase: true);
         }
 
-        [Fact, TestPriority(99)]
+        [Fact, TestPriority(29)]
         public async Task CanRemoveUser()
         {
             var user = await _userManager.FindByNameAsync("test");

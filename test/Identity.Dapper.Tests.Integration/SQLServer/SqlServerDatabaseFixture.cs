@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Identity.Dapper.Tests.Integration.SQLServer
 {
-    public class SqlServerDatabaseFixture : IDisposable
+    public class SqlServerDatabaseFixture
     {
         public TestServer TestServer { get; set; }
         public SqlServerDatabaseFixture()

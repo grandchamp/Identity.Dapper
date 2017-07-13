@@ -520,16 +520,16 @@ namespace Identity.Dapper.Repositories
                     {
                         var dynamicParameters = new DynamicParameters(user);
 
-                        var roleProperties = user.GetType()
+                        var userProperties = user.GetType()
                                                  .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
                                                                                 && !y.Name.Equals("Id"));
 
                         if (_sqlConfiguration.UseQuotationMarks)
-                            roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
+                            userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
                         else
-                            roleProperties = roleProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
+                            userProperties = userProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
 
-                        var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
+                        var setFragment = userProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
 
                         var query = _sqlConfiguration.UpdateUserQuery
                                                      .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,

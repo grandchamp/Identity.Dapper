@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Identity.Dapper.Tests.Integration.MySQL
 {
-    public class MySqlDatabaseFixture : IDisposable
+    public class MySqlDatabaseFixture
     {
         public TestServer TestServer { get; set; }
         public MySqlDatabaseFixture()
