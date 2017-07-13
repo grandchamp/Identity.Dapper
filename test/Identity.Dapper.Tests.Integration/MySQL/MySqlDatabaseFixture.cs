@@ -18,11 +18,6 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             TestServer = new TestServer(builder);
         }
 
-        public void DeleteAllData()
-        {
-
-        }
-
         public void Dispose()
         {
             TestServer.Dispose();

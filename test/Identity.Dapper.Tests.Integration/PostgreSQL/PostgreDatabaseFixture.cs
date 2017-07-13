@@ -18,19 +18,6 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
             TestServer = new TestServer(builder);
         }
 
-        public void DeleteAllData()
-        {
-            var pSqlConnProvider = (PostgreSqlConnectionProvider)TestServer.Host.Services.GetService(typeof(IConnectionProvider));
-            using (var conn = pSqlConnProvider.Create())
-            {
-                conn.Open();
-
-                var query = "TRUNCATE dbo.\"IdentityUser\", dbo.\"IdentityRole\", dbo.\"IdentityLogin\", dbo.\"IdentityUserClaim\", dbo.\"IdentityUserRole\"";
-
-                var result = conn.Execute(query);
-            }
-        }
-
         public void Dispose()
         {
             TestServer.Dispose();
