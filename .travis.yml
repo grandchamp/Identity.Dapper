@@ -8,7 +8,7 @@ services:
   - docker
   
 before_install:
-  - kill -9 $(lsof -t -i:3306)
+  - kill -9 $(lsof -i:3000 -t) 2 > /dev/null
   - docker build -t mysql_identity -f test/Identity.Dapper.Tests.Integration/MySQL/Dockerfile .
   - docker build -t psql_integration -f test/Identity.Dapper.Tests.Integration/PostgreSQL/Dockerfile .
   - docker build -t sqlserver_integration -f test/Identity.Dapper.Tests.Integration/SQLServer/Dockerfile .
