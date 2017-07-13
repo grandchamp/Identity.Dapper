@@ -1,0 +1,23 @@
+sudo: required
+language: csharp
+dist: trusty
+mono: none
+dotnet: 2.0.0-preview2
+
+services:
+  - docker
+  
+before-install:
+  - docker build -t mysql_identity -f test/Identity.Dapper.Tests.Integration/MySQL/Dockerfile .
+  - docker build -t psql_integration -f test/Identity.Dapper.Tests.Integration/PostgreSQL/Dockerfile .
+  - docker build -t sqlserver_integration -f test/Identity.Dapper.Tests.Integration/SQLServer/Dockerfile .
+  - docker run -it -p 1433:1433 -d sqlserver_integration
+  - docker-compose up -d
+  - docker run -it -p 5432:5432 -d psql_integration
+
+install:
+  - dotnet restore
+
+script:
+  - dotnet build
+  - dotnet test test/Identity.Dapper.Tests.Integration/Identity.Dapper.Tests.Integration.csproj
