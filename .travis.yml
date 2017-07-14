@@ -16,7 +16,6 @@ before_install:
   - docker run -it -p 1433:1433 -d sqlserver_integration
   - docker-compose -f test/Identity.Dapper.Tests.Integration/MySQL/docker-compose.yml up -d
   - docker run -it -p 5432:5432 -d psql_integration
-  - docker network inspect bridge
 
 install:
   - dotnet restore
