@@ -1,0 +1,12 @@
+﻿version: '3'
+
+services:
+ mysql:
+    image: mysql_identity
+    ports:
+     - "3306:3306"
+    volumes:
+     - "/opt/docker/mysql.conf.d:/etc/mysql/conf.d"
+    tmpfs:
+     - /var/lib/mysql/:rw,noexec,nosuid,size=600m
+     - /tmp/:rw,noexec,nosuid,size=50m

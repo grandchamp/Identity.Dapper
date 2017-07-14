@@ -1,16 +1,7 @@
 # Identity.Dapper
 **Not ready yet**
 
-Add a reference on your **project.json** file to the corresponding DBMS (Eg: SQL Server)
-```
-"dependencies": {
-    "Microsoft.NETCore.App": {
-      "version": "1.1.0",
-      "type": "platform"
-    },
-    "Identity.Dapper.XXX": "0.4.0-*"
-  }
-```
+Find the corresponding NuGet package for your DBMS (Eg: Identity.Dapper.SqlServer).
 
 To configure the DBMS connection, you can add a **DapperIdentity** and a **DapperIdentityCryptography** section to your configuration file like this:
 ```
@@ -46,8 +37,24 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
         .AddDapperIdentityForXXX()
         .AddDefaultTokenProviders();
 ```
-
 All **XXX** are replaced by your DBMS.
+
+If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
+
+And inside your controller, you'll have to insert on constructor a `DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>` variable, like this:
+
+```
+private readonly DapperUserStore<CustomUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>, DapperIdentityUserClaim<int>, DapperIdentityUserLogin<int>, CustomRole> _dapperStore;
+
+...
+
+ public ManageController(IUserStore<CustomUser> dapperStore)
+        {
+            _dapperStore = dapperStore as DapperUserStore<CustomUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>, DapperIdentityUserClaim<int>, DapperIdentityUserLogin<int>, CustomRole>;
+        }
+```
+
+And after all operations, you'll have to call `DapperUserStore.SaveChanges()` method, otherwise your changes will be rollbacked.
 
 Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support for Oracle when the company release the .NET Core version for their System.Data implementation.
 

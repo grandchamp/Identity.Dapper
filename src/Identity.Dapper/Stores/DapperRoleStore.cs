@@ -1,11 +1,15 @@
 ﻿using Identity.Dapper.Connections;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Models;
 using Identity.Dapper.Repositories.Contracts;
+using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Identity.Dapper.Stores
 {
@@ -16,14 +20,70 @@ namespace Identity.Dapper.Stores
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
     {
+        private DbConnection _connection;
+
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IConnectionProvider _connectionProvider;
         private readonly ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> _log;
         private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
+        private readonly DapperIdentityOptions _dapperIdentityOptions;
         public DapperRoleStore(IConnectionProvider connProv,
                                ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> log, 
-                               IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo)
+                               IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo,
+                               IUnitOfWork uow,
+                               DapperIdentityOptions dapperIdOpts)
         {
             _roleRepository = roleRepo;
             _log = log;
+            _connectionProvider = connProv;
+            _unitOfWork = uow;
+            _dapperIdentityOptions = dapperIdOpts;
+        }
+
+        private async Task CreateTransactionIfNotExists(CancellationToken cancellationToken)
+        {
+            if (!_dapperIdentityOptions.UseTransactionalBehavior)
+            {
+                _connection = _connectionProvider.Create();
+                await _connection.OpenAsync(cancellationToken);
+            }
+            else
+            {
+                _connection = _unitOfWork.CreateOrGetConnection();
+
+                if (_connection.State == System.Data.ConnectionState.Closed)
+                    await _connection.OpenAsync(cancellationToken);
+            }
+        }
+
+        public Task SaveChanges(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return !_dapperIdentityOptions.UseTransactionalBehavior ? Task.CompletedTask : CommitTransaction();
+        }
+
+        private Task CommitTransaction()
+        {
+            if (_dapperIdentityOptions.UseTransactionalBehavior)
+            {
+                try
+                {
+                    _unitOfWork.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    _log.LogError(ex.Message, ex);
+
+                    _unitOfWork.DiscardChanges();
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            if (_dapperIdentityOptions.UseTransactionalBehavior)
+                _unitOfWork?.Dispose();
         }
 
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
@@ -68,9 +128,12 @@ namespace Identity.Dapper.Stores
             }
         }
 
-        public void Dispose()
+        public virtual TKey ConvertIdFromString(string id)
         {
+            if (id == null)
+                return default(TKey);
 
+            return (TKey)TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
         }
 
         public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
@@ -82,7 +145,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _roleRepository.GetById((TKey)Convert.ChangeType(roleId, typeof(TKey)));
+                var result = await _roleRepository.GetById(ConvertIdFromString(roleId));
 
                 return result;
             }
@@ -154,6 +217,8 @@ namespace Identity.Dapper.Stores
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
+
+            role.Name = normalizedName;
 
             return Task.FromResult(0);
         }

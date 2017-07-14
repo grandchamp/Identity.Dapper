@@ -13,6 +13,7 @@ namespace Identity.Dapper.PostgreSQL.Models
             ParameterNotation = "@";
             SchemaName = "dbo";
             UseQuotationMarks = true;
+            TableFieldNotation = "\"";
             InsertRoleQuery = "INSERT INTO %SCHEMA%.\"%TABLENAME%\" %COLUMNS% VALUES(%VALUES%)";
             DeleteRoleQuery = "DELETE FROM %SCHEMA%.\"%TABLENAME%\" WHERE \"Id\" = %ID%";
             UpdateRoleQuery = "UPDATE %SCHEMA%.\"%TABLENAME%\" %SETVALUES% WHERE \"Id\" = %ID%";
@@ -37,7 +38,7 @@ namespace Identity.Dapper.PostgreSQL.Models
             RemoveClaimsQuery = "DELETE FROM %SCHEMA%.\"%TABLENAME%\" WHERE \"UserId\" = %ID% AND \"ClaimType\" = %CLAIMTYPE% AND \"ClaimValue\" = %CLAIMVALUE%";
             RemoveUserFromRoleQuery = "DELETE FROM %SCHEMA%.\"%USERROLETABLE%\" UR USING %SCHEMA%.\"%ROLETABLE%\" R WHERE UR.\"RoleId\" = R.\"Id\" AND UR.\"UserId\" = %USERID% AND UPPER(R.\"Name\") = %ROLENAME%";
             RemoveLoginForUserQuery = "DELETE FROM %SCHEMA%.\"%TABLENAME%\" WHERE \"UserId\" = %USERID% AND \"LoginProvider\" = %LOGINPROVIDER% AND \"ProviderKey\" = %PROVIDERKEY%";
-            UpdateClaimForUserQuery = "UPDATE %SCHEMA%.\"%TABLENAME%\" SET \"ClaimType\" = %NEWCLAIMTYPE% AND \"ClaimValue\" = %NEWCLAIMVALUE% WHERE \"UserId\" = %USERID% AND \"ClaimType\" = %CLAIMTYPE% AND \"ClaimValue\" = %CLAIMVALUE%";
+            UpdateClaimForUserQuery = "UPDATE %SCHEMA%.\"%TABLENAME%\" SET \"ClaimType\" = %NEWCLAIMTYPE%, \"ClaimValue\" = %NEWCLAIMVALUE% WHERE \"UserId\" = %USERID% AND \"ClaimType\" = %CLAIMTYPE% AND \"ClaimValue\" = %CLAIMVALUE%";
             RoleTable = "IdentityRole";
             UserTable = "IdentityUser";
             UserClaimTable = "IdentityUserClaim";

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Identity.Dapper
 {
@@ -47,5 +48,7 @@ namespace Identity.Dapper
 
             return queryBuilder.ToString();
         }
+
+        public static string RemoveSpecialCharacters(this string value) => Regex.Replace(value, @"[^\w\d]", "");
     }
 }

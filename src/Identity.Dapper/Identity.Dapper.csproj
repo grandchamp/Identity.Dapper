@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Identity package that uses Dapper instead EntityFramework for use with .NET Core. This is the base package, alone it won't do nothing. Use the Identity.Dapper.SqlServer to use with SQL Server or Identity.Dapper.PostgreSQL to use with PostgreSQL.</Description>
+    <AssemblyTitle>Identity.Dapper</AssemblyTitle>
+    <Authors>grandchamp</Authors>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Identity.Dapper</AssemblyName>
+    <PackageId>Identity.Dapper</PackageId>
+    <PackageTags>asp.net;core;dapper;identity</PackageTags>
+    <PackageProjectUrl>https://github.com/grandchamp/Identity.Dapper</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/grandchamp/Identity.Dapper.git</RepositoryUrl>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Version>0.5.0-alpha</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.0.0-preview2-final" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.4.0-preview2-25405-01" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0-preview2-final" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

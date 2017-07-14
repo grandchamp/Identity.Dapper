@@ -14,5 +14,12 @@ namespace Identity.Dapper
 
             return services;
         }
+
+        public static IServiceCollection ConfigureDapperIdentityOptions(this IServiceCollection services, DapperIdentityOptions options)
+        {
+            services.AddSingleton(options);
+
+            return services;
+        }
     }
 }

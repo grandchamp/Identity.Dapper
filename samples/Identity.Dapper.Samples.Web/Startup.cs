@@ -1,4 +1,5 @@
 ﻿using Identity.Dapper.Entities;
+using Identity.Dapper.Models;
 using Identity.Dapper.MySQL;
 using Identity.Dapper.PostgreSQL;
 using Identity.Dapper.Samples.Web.Entities;
@@ -24,7 +25,7 @@ namespace Identity.Dapper.Samples.Web
             if (env.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
+                builder.AddUserSecrets<Startup>();
             }
 
             builder.AddEnvironmentVariables();
@@ -36,14 +37,15 @@ namespace Identity.Dapper.Samples.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
-            //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
+            services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
+                    .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
+                    .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
             //services.ConfigureDapperPostgreSqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
             //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
-            services.ConfigureDapperMySqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
-                    .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
+            //services.ConfigureDapperMySqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
+            //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
             services.AddIdentity<CustomUser, CustomRole>(x =>
                                                          {
@@ -54,8 +56,8 @@ namespace Identity.Dapper.Samples.Web
                                                              x.Password.RequireUppercase = false;
                                                          })
                     //.AddDapperIdentityForPostgreSql()
-                    //.AddDapperIdentityForSqlServer()
-                    .AddDapperIdentityForMySql()
+                    .AddDapperIdentityForSqlServer()
+                    //.AddDapperIdentityForMySql()
                     .AddDefaultTokenProviders();
 
             services.AddMvc();
@@ -82,7 +84,7 @@ namespace Identity.Dapper.Samples.Web
 
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            app.UseAuthentication();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
