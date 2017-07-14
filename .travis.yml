@@ -10,12 +10,18 @@ services:
 before_install:
   - sudo service mysql stop
   - sudo service postgresql stop
+  - docker rm $(docker ps -a | grep mysql | awk '{ print $1 }')
+  - docker rm $(docker ps -a | grep psql | awk '{ print $1 }')
+  - docker rm $(docker ps -a | grep sqlserver | awk '{ print $1 }')
   - docker build -t mysql_identity -f test/Identity.Dapper.Tests.Integration/MySQL/Dockerfile .
   - docker build -t psql_integration -f test/Identity.Dapper.Tests.Integration/PostgreSQL/Dockerfile .
   - docker build -t sqlserver_integration -f test/Identity.Dapper.Tests.Integration/SQLServer/Dockerfile .
   - docker run -it -p 1433:1433 -d sqlserver_integration
   - docker-compose -f test/Identity.Dapper.Tests.Integration/MySQL/docker-compose.yml up -d
   - docker run -it -p 5432:5432 -d psql_integration
+  - docker logs $(docker ps -a | grep mysql | awk '{ print $1 }')
+  - docker logs $(docker ps -a | grep psql | awk '{ print $1 }')
+  - docker logs $(docker ps -a | grep sqlserver | awk '{ print $1 }')
 
 install:
   - dotnet restore
