@@ -1,4 +1,4 @@
-﻿/****** Object:  Table [IdentityLogin]    Script Date: 16/06/2016 15:56:28 ******/
+/****** Object:  Table [IdentityLogin]    Script Date: 16/06/2016 15:56:28 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
