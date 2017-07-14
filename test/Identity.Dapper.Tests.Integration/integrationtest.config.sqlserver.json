@@ -1,6 +1,6 @@
 ﻿{
   "DapperIdentity": {
-    "ConnectionString": "Server=localhost;Database=master;",
+    "ConnectionString": "Server=127.0.0.1;Database=master;",
     "Username": "sa",
     "Password": "test@123!"
   }
