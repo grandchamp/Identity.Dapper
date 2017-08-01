@@ -1,4 +1,5 @@
-﻿-- Table: dbo."IdentityUser"
+CREATE SCHEMA dbo
+-- Table: dbo."IdentityUser"
 CREATE TABLE dbo."IdentityUser"
 (
   "UserName" character varying(256) NOT NULL,
