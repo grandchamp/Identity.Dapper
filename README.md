@@ -1,5 +1,5 @@
 # Identity.Dapper
-**Not ready yet**
+[![Build Status](https://travis-ci.org/grandchamp/Identity.Dapper.svg?branch=master)](https://travis-ci.org/grandchamp/Identity.Dapper)
 
 Find the corresponding NuGet package for your DBMS (Eg: Identity.Dapper.SqlServer).
 
