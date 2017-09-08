@@ -78,6 +78,9 @@ ipch/
 *.sdf
 *.cachefile
 
+# Visual Studio Code
+.vscode/
+
 # Visual Studio profiler
 *.psess
 *.vsp
