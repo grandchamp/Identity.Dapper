@@ -56,8 +56,8 @@ namespace Identity.Dapper.Samples.Web
                                                              x.Password.RequireNonAlphanumeric = false;
                                                              x.Password.RequireUppercase = false;
                                                          })
-                    //.AddDapperIdentityForPostgreSql()
-                    .AddDapperIdentityForSqlServer()
+                    .AddDapperIdentityForPostgreSql()
+                    //.AddDapperIdentityForSqlServer()
                     //.AddDapperIdentityForMySql()
                     .AddDefaultTokenProviders();
 
