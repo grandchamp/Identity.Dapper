@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Identity.Dapper.PostgreSQL.Models;
+using Identity.Dapper.PostgreSQL.Connections;
 
 namespace Identity.Dapper.Tests.Integration.PostgreSQL
 {
@@ -33,7 +35,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDapperPostgreSqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
+            services.ConfigureDapperConnectionProvider<PostgreSqlConnectionProvider>(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
                     .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
@@ -45,7 +47,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
             })
-                    .AddDapperIdentityForPostgreSql()
+                    .AddDapperIdentity<PostgreSqlConfiguration>()
                     .AddDefaultTokenProviders();
 
             // Add application services.

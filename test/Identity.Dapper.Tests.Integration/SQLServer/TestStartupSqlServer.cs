@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Identity.Dapper.SqlServer.Connections;
+using Identity.Dapper.SqlServer.Models;
 
 namespace Identity.Dapper.Tests.Integration.SQLServer
 {
@@ -33,7 +35,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDapperSqlServerConnectionProvider(Configuration.GetSection("DapperIdentity"))
+            services.ConfigureDapperConnectionProvider<SqlServerConnectionProvider>(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
                     .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
@@ -45,7 +47,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
             })
-                    .AddDapperIdentityForSqlServer()
+                    .AddDapperIdentity<SqlServerConfiguration>()
                     .AddDefaultTokenProviders();
 
             // Add application services.
