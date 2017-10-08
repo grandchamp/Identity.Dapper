@@ -26,7 +26,7 @@ namespace Identity.Dapper
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }
