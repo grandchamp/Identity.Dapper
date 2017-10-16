@@ -7,6 +7,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>Identity.Dapper.Samples.Web</PackageId>
     <UserSecretsId>aspnet-Identity.Dapper.Samples.Web-3f490e5c-6ec3-4d10-bfcb-8193cef5df85</UserSecretsId>
+    <Version>0.6.0-alpha</Version>
   </PropertyGroup>
 
   <ItemGroup>
