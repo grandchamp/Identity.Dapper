@@ -38,9 +38,7 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
         .AddDefaultTokenProviders();
 ```
 
-Where ***T*** for the method ```ConfigureDapperFor``` is ```DBMSNameConnectionProvider``` and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration```.
-
-All **XXX** are replaced by your DBMS.
+Where ***T*** for the method ```ConfigureDapperFor``` is ```DBMSNameConnectionProvider``` (eg: ```SqlServerConnectionProvider```) and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration``` (eg: ```SqlServerConfiguration```).
 
 If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
 
@@ -65,13 +63,13 @@ Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support 
 Specify the <TKey>
 ```
 services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
-        .AddDapperIdentityForXXX<Guid>();
+        .AddDapperIdentityFor<T, Guid>();
 ```
 
 ## Changing the default schema (SqlServer)
 Pass a SqlServerConfiguration()
 ```
-services.AddDapperIdentityForSqlServer(new CustomSqlServerConfiguration())
+services.AddDapperIdentityFor(new CustomSqlServerConfiguration())
 ```
 Extend the Identity.Dapper.SqlServer.Models.SqlServerConfiguration
 ```
