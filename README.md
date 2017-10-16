@@ -30,13 +30,16 @@ The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and I
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
-services.ConfigureDapperXXXConnectionProvider(Configuration.GetSection("DapperIdentity"))
+services.ConfigureDapperFor<T>(Configuration.GetSection("DapperIdentity"))
         .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
 services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
-        .AddDapperIdentityForXXX()
+        .AddDapperIdentityFor<T>()
         .AddDefaultTokenProviders();
 ```
+
+Where ***T*** for the method ```ConfigureDapperFor``` is ```DBMSNameConnectionProvider``` and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration```.
+
 All **XXX** are replaced by your DBMS.
 
 If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
