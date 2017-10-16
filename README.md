@@ -30,14 +30,15 @@ The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and I
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
-services.ConfigureDapperXXXConnectionProvider(Configuration.GetSection("DapperIdentity"))
+services.ConfigureDapperFor<T>(Configuration.GetSection("DapperIdentity"))
         .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
 services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
-        .AddDapperIdentityForXXX()
+        .AddDapperIdentityFor<T>()
         .AddDefaultTokenProviders();
 ```
-All **XXX** are replaced by your DBMS.
+
+Where ***T*** for the method ```ConfigureDapperFor``` is ```DBMSNameConnectionProvider``` (eg: ```SqlServerConnectionProvider```) and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration``` (eg: ```SqlServerConfiguration```).
 
 If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
 
@@ -62,15 +63,17 @@ Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support 
 Specify the <TKey>
 ```
 services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
-        .AddDapperIdentityForXXX<Guid>();
+        .AddDapperIdentityFor<T, Guid>();
 ```
 
 ## Changing the default schema (SqlServer)
-Pass a SqlServerConfiguration()
+
+Pass a ```SqlServerConfiguration()```
 ```
-services.AddDapperIdentityForSqlServer(new CustomSqlServerConfiguration())
+services.AddDapperIdentityFor(new CustomSqlServerConfiguration())
 ```
-Extend the Identity.Dapper.SqlServer.Models.SqlServerConfiguration
+Extend the ```Identity.Dapper.SqlServer.Models.SqlServerConfiguration```
+
 ```
 public class CustomSqlServerConfiguration : SqlServerConfiguration
 {
