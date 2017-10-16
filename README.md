@@ -71,7 +71,8 @@ Pass a SqlServerConfiguration()
 ```
 services.AddDapperIdentityFor(new CustomSqlServerConfiguration())
 ```
-Extend the Identity.Dapper.SqlServer.Models.SqlServerConfiguration
+Extend the ```Identity.Dapper.SqlServer.Models.SqlServerConfiguration```
+
 ```
 public class CustomSqlServerConfiguration : SqlServerConfiguration
 {
