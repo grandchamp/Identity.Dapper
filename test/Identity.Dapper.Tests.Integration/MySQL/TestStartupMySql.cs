@@ -1,6 +1,8 @@
 ﻿using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.MySQL;
+using Identity.Dapper.MySQL.Connections;
+using Identity.Dapper.MySQL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +35,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDapperMySqlConnectionProvider(Configuration.GetSection("DapperIdentity"))
+            services.ConfigureDapperConnectionProvider<MySqlConnectionProvider>(Configuration.GetSection("DapperIdentity"))
                     .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
                     .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
@@ -45,7 +47,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
             })
-                    .AddDapperIdentityForMySql()
+                    .AddDapperIdentityFor<MySqlConfiguration>()
                     .AddDefaultTokenProviders();
 
             // Add application services.
