@@ -28,7 +28,7 @@ namespace Identity.Dapper.Stores
         private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
         private readonly DapperIdentityOptions _dapperIdentityOptions;
         public DapperRoleStore(IConnectionProvider connProv,
-                               ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> log, 
+                               ILogger<DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>> log,
                                IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo,
                                IUnitOfWork uow,
                                DapperIdentityOptions dapperIdOpts)
@@ -103,7 +103,10 @@ namespace Identity.Dapper.Stores
             {
                 _log.LogError(ex.Message, ex);
 
-                return IdentityResult.Failed();
+                return IdentityResult.Failed(new IdentityError[]
+                {
+                    new IdentityError{ Description = ex.Message }
+                });
             }
         }
 
@@ -124,7 +127,10 @@ namespace Identity.Dapper.Stores
             {
                 _log.LogError(ex.Message, ex);
 
-                return IdentityResult.Failed();
+                return IdentityResult.Failed(new IdentityError[]
+                {
+                    new IdentityError{ Description = ex.Message }
+                });
             }
         }
 
@@ -252,7 +258,10 @@ namespace Identity.Dapper.Stores
             {
                 _log.LogError(ex.Message, ex);
 
-                return IdentityResult.Failed();
+                return IdentityResult.Failed(new IdentityError[]
+                {
+                    new IdentityError{ Description = ex.Message }
+                });
             }
         }
     }

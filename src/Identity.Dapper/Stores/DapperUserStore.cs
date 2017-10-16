@@ -192,7 +192,10 @@ namespace Identity.Dapper.Stores
             {
                 _log.LogError(ex.Message, ex);
 
-                return IdentityResult.Failed();
+                return IdentityResult.Failed(new IdentityError[]
+                {
+                    new IdentityError{ Description = ex.Message }
+                });
             }
         }
 
@@ -217,7 +220,10 @@ namespace Identity.Dapper.Stores
             {
                 _log.LogError(ex.Message, ex);
 
-                return IdentityResult.Failed();
+                return IdentityResult.Failed(new IdentityError[]
+                {
+                    new IdentityError{ Description = ex.Message }
+                });
             }
         }
 
@@ -866,7 +872,10 @@ namespace Identity.Dapper.Stores
             {
                 _log.LogError(ex.Message, ex);
 
-                return IdentityResult.Failed();
+                return IdentityResult.Failed(new IdentityError[]
+                {
+                    new IdentityError{ Description = ex.Message }
+                });
             }
         }
     }

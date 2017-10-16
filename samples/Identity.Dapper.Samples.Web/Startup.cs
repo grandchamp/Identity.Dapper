@@ -2,8 +2,10 @@
 using Identity.Dapper.Models;
 using Identity.Dapper.MySQL;
 using Identity.Dapper.MySQL.Connections;
+using Identity.Dapper.MySQL.Models;
 using Identity.Dapper.PostgreSQL;
 using Identity.Dapper.PostgreSQL.Connections;
+using Identity.Dapper.PostgreSQL.Models;
 using Identity.Dapper.Samples.Web.Entities;
 using Identity.Dapper.Samples.Web.Services;
 using Identity.Dapper.SqlServer;
@@ -42,17 +44,17 @@ namespace Identity.Dapper.Samples.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDapperConnectionProvider<SqlServerConnectionProvider>(Configuration.GetSection("DapperIdentity"))
-                    .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
-                    .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
+            //services.ConfigureDapperConnectionProvider<SqlServerConnectionProvider>(Configuration.GetSection("DapperIdentity"))
+            //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
+            //        .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
             //services.ConfigureDapperConnectionProvider<MySqlConnectionProvider>(Configuration.GetSection("DapperIdentity"))
             //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
             //        .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
-            //services.ConfigureDapperConnectionProvider<PostgreSqlConnectionProvider>(Configuration.GetSection("DapperIdentity"))
-            //        .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
-            //        .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
+            services.ConfigureDapperConnectionProvider<PostgreSqlConnectionProvider>(Configuration.GetSection("DapperIdentity"))
+                    .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"))
+                    .ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = false }); //Change to True to use Transactions in all operations
 
             services.AddIdentity<CustomUser, CustomRole>(x =>
                                                          {
@@ -62,9 +64,9 @@ namespace Identity.Dapper.Samples.Web
                                                              x.Password.RequireNonAlphanumeric = false;
                                                              x.Password.RequireUppercase = false;
                                                          })
-                    //.AddDapperIdentityFor<PostgreSqlConnectionProvider>()
-                    .AddDapperIdentityFor<SqlServerConfiguration>()
-                    //.AddDapperIdentityFor<MySqlConnectionProvider>()
+                    .AddDapperIdentityFor<PostgreSqlConfiguration>()
+                    //.AddDapperIdentityFor<SqlServerConfiguration>()
+                    //.AddDapperIdentityFor<MySqlConfiguration>()
                     .AddDefaultTokenProviders();
 
             services.AddMvc();

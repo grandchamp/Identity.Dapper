@@ -240,7 +240,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(4), ex.Message, ex);
-                        return default(TKey);
+
+                        throw;
                     }
                 });
 
@@ -263,7 +264,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(new EventId(4), ex.Message, ex);
-                return default(TKey);
+
+                throw;
             }
         }
 
@@ -307,7 +309,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(5), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -324,13 +327,15 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await insertFunction(conn);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogError(new EventId(5), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -371,7 +376,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(6), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -388,13 +394,15 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await insertFunction(conn);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogError(new EventId(6), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -433,7 +441,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(7), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -456,7 +465,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(new EventId(7), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -483,7 +493,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(8), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -500,13 +511,15 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await removeFunction(conn);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogError(new EventId(8), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -544,7 +557,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(9), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -560,13 +574,15 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await updateFunction(conn);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogError(new EventId(9), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -622,7 +638,7 @@ namespace Identity.Dapper.Repositories
                     {
                         _log.LogError(new EventId(12), ex.Message, ex);
 
-                        return null;
+                        throw;
                     }
                 });
 
@@ -639,6 +655,7 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await selectFunction(conn);
                 }
             }
@@ -646,7 +663,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(10), ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -688,7 +705,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(11), ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -743,7 +760,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(12), ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -786,7 +803,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(13), ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -859,7 +876,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(14), ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -931,7 +948,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(15), ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -1004,7 +1021,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(new EventId(16), ex.Message, ex);
 
-                return false;
+                throw;
             }
         }
 
@@ -1048,7 +1065,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(17), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -1071,7 +1089,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(new EventId(17), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -1116,7 +1135,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(18), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -1139,7 +1159,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(new EventId(18), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -1179,7 +1200,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(19), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -1196,13 +1218,15 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await removeFunction(conn);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogError(new EventId(19), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -1248,7 +1272,8 @@ namespace Identity.Dapper.Repositories
                     catch (Exception ex)
                     {
                         _log.LogError(new EventId(20), ex.Message, ex);
-                        return false;
+
+                        throw;
                     }
                 });
 
@@ -1265,13 +1290,15 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await removeFunction(conn);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogError(new EventId(20), ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
     }

@@ -75,7 +75,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -113,6 +113,7 @@ namespace Identity.Dapper.Repositories
                 else
                 {
                     conn = _unitOfWork.CreateOrGetConnection();
+
                     return await selectFunction(conn);
                 }
             }
@@ -120,7 +121,7 @@ namespace Identity.Dapper.Repositories
             {
                 _log.LogError(ex.Message, ex);
 
-                return null;
+                throw;
             }
         }
 
@@ -184,7 +185,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -226,7 +228,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
 
@@ -277,7 +280,8 @@ namespace Identity.Dapper.Repositories
             catch (Exception ex)
             {
                 _log.LogError(ex.Message, ex);
-                return false;
+
+                throw;
             }
         }
     }
