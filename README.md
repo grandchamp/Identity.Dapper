@@ -68,11 +68,7 @@ services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
 
 ## Changing the default schema (SqlServer)
 
-Pass a ```SqlServerConfiguration()```
-```
-services.AddDapperIdentityFor(new CustomSqlServerConfiguration())
-```
-Extend the ```Identity.Dapper.SqlServer.Models.SqlServerConfiguration```
+Pass a custom class that inherits from ```SqlServerConfiguration``` (or other)
 
 ```
 public class CustomSqlServerConfiguration : SqlServerConfiguration
@@ -82,4 +78,9 @@ public class CustomSqlServerConfiguration : SqlServerConfiguration
         base.SchemaName = "[customSchema]";
     }
 }
+```
+
+And add it with
+```
+services.AddDapperIdentityFor<CustomSqlServerConfiguration>()
 ```
