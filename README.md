@@ -30,7 +30,7 @@ The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and I
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
-services.ConfigureDapperFor<T>(Configuration.GetSection("DapperIdentity"))
+services.ConfigureDapperConnectionProvider<T>(Configuration.GetSection("DapperIdentity"))
         .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
 services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
@@ -38,7 +38,7 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
         .AddDefaultTokenProviders();
 ```
 
-Where ***T*** for the method ```ConfigureDapperFor``` is ```DBMSNameConnectionProvider``` (eg: ```SqlServerConnectionProvider```) and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration``` (eg: ```SqlServerConfiguration```).
+Where ***T*** for the method ```ConfigureDapperConnectionProvider``` is ```DBMSNameConnectionProvider``` (eg: ```SqlServerConnectionProvider```) and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration``` (eg: ```SqlServerConfiguration```).
 
 If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
 
