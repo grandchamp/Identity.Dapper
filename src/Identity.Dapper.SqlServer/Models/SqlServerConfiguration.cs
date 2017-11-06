@@ -39,11 +39,11 @@ namespace Identity.Dapper.SqlServer.Models
             RemoveUserFromRoleQuery = "DELETE FROM %SCHEMA%.%USERROLETABLE% WHERE UserId = %USERID% AND RoleId = (SELECT Id FROM %SCHEMA%.%ROLETABLE% WHERE Name = %ROLENAME%)";
             RemoveLoginForUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID% AND LoginProvider = %LOGINPROVIDER% AND ProviderKey = %PROVIDERKEY%";
             UpdateClaimForUserQuery = "UPDATE %SCHEMA%.%TABLENAME% SET ClaimType = %NEWCLAIMTYPE%, ClaimValue = %NEWCLAIMVALUE% WHERE UserId = %USERID% AND ClaimType = %CLAIMTYPE% AND ClaimValue = %CLAIMVALUE%";
-            RoleTable = "IdentityRole";
-            UserTable = "IdentityUser";
-            UserClaimTable = "IdentityUserClaim";
-            UserRoleTable = "IdentityUserRole";
-            UserLoginTable = "IdentityLogin";
+            RoleTable = "[IdentityRole]";
+            UserTable = "[IdentityUser]";
+            UserClaimTable = "[IdentityUserClaim]";
+            UserRoleTable = "[IdentityUserRole]";
+            UserLoginTable = "[IdentityLogin]";
         }
     }
 }
