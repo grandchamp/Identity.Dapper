@@ -18,7 +18,7 @@ namespace Identity.Dapper.Queries.User
                                                                  _sqlConfiguration.UserTable,
                                                                  _sqlConfiguration.ParameterNotation,
                                                                  new string[] { "%USERNAME%" },
-                                                                 new string[] { "User" });
+                                                                 new string[] { "UserName" });
 
             return query;
         }

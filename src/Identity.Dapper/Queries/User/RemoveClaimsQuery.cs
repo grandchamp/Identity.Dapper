@@ -23,7 +23,7 @@ namespace Identity.Dapper.Queries.User
                                                                                  "%CLAIMTYPE%"
                                                                               },
                                                                  new string[] {
-                                                                                 "Id",
+                                                                                 "UserId",
                                                                                  "ClaimValue",
                                                                                  "ClaimType"
                                                                               }

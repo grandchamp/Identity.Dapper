@@ -22,7 +22,7 @@ namespace Identity.Dapper.Queries.User
 
             var query = _sqlConfiguration.InsertUserRoleQuery
                                          .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
-                                                                       _sqlConfiguration.UserTable,
+                                                                       _sqlConfiguration.UserRoleTable,
                                                                        columns.GetCommaSeparatedColumns(_sqlConfiguration),
                                                                        string.Join(", ", valuesArray));
 

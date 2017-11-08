@@ -152,6 +152,125 @@ namespace Identity.Dapper.Tests.Queries
 
             Assert.Equal(expected, generatedQuery);
         }
-        
+
+        [Fact]
+        public void InsertUserQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetInsertQuery<InsertUserQuery, DapperIdentityUser>(new DapperIdentityUser());
+
+            var expected = "INSERT INTO [dbo].[IdentityUser] ([AccessFailedCount], [Email], [EmailConfirmed], [LockoutEnabled], [LockoutEnd], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [SecurityStamp], [TwoFactorEnabled], [UserName]) OUTPUT INSERTED.Id VALUES(@AccessFailedCount, @Email, @EmailConfirmed, @LockoutEnabled, @LockoutEnd, @PasswordHash, @PhoneNumber, @PhoneNumberConfirmed, @SecurityStamp, @TwoFactorEnabled, @UserName)";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void InsertUserQueryGeneratesCorrectQueryWhenUsingCustomUser()
+        {
+            var generatedQuery = _queryFactory.GetInsertQuery<InsertUserQuery, CustomDapperIdentityUser>(new CustomDapperIdentityUser());
+
+            var expected = "INSERT INTO [dbo].[IdentityUser] ([AccessFailedCount], [Dummy], [Email], [EmailConfirmed], [LockoutEnabled], [LockoutEnd], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [SecurityStamp], [TwoFactorEnabled], [UserName]) OUTPUT INSERTED.Id VALUES(@AccessFailedCount, @Dummy, @Email, @EmailConfirmed, @LockoutEnabled, @LockoutEnd, @PasswordHash, @PhoneNumber, @PhoneNumberConfirmed, @SecurityStamp, @TwoFactorEnabled, @UserName)";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void InsertUserRoleQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetInsertQuery<InsertUserRoleQuery, DapperIdentityUserRole<int>>(new DapperIdentityUserRole<int>());
+
+            var expected = "INSERT INTO [dbo].[IdentityUserRole] ([RoleId], [UserId]) VALUES(@RoleId, @UserId)";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void IsInRoleQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetQuery<IsInRoleQuery, DapperIdentityUser>(new DapperIdentityUser());
+
+            var expected = "SELECT 1 FROM [dbo].[IdentityUser], [dbo].[IdentityUserRole], [dbo].[IdentityRole] WHERE [dbo].[IdentityRole].[Name] = @RoleName AND [dbo].[IdentityUser].[Id] = @UserId AND [dbo].[IdentityUserRole].[RoleId] = [dbo].[IdentityRole].[Id] AND [dbo].[IdentityUserRole].[UserId] = [dbo].[IdentityUser].[Id]";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void RemoveClaimsQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetDeleteQuery<RemoveClaimsQuery>();
+
+            var expected = "DELETE FROM [dbo].[IdentityUserClaim] WHERE [UserId] = @UserId AND [ClaimType] = @ClaimType AND [ClaimValue] = @ClaimValue";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void RemoveLoginForUserQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetDeleteQuery<RemoveLoginForUserQuery>();
+
+            var expected = "DELETE FROM [dbo].[IdentityLogin] WHERE [UserId] = @UserId AND [LoginProvider] = @LoginProvider AND [ProviderKey] = @ProviderKey";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void RemoveUserFromRoleQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetDeleteQuery<RemoveUserFromRoleQuery>();
+
+            var expected = "DELETE FROM [dbo].[IdentityUserRole] WHERE [UserId] = @UserId AND [RoleId] = (SELECT [Id] FROM [dbo].[IdentityRole] WHERE [Name] = @RoleName)";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void SelectUserByEmailQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetQuery<SelectUserByEmailQuery>();
+
+            var expected = "SELECT * FROM [dbo].[IdentityUser] WHERE [Email] = @Email";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void SelectUserByIdQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetQuery<SelectUserByIdQuery>();
+
+            var expected = "SELECT * FROM [dbo].[IdentityUser] WHERE [Id] = @Id";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void SelectUserByUserNameQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
+
+            var expected = "SELECT * FROM [dbo].[IdentityUser] WHERE [UserName] = @UserName";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void UpdateClaimForUserQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetUpdateQuery<UpdateClaimForUserQuery, DapperIdentityUserClaim<int>>(new DapperIdentityUserClaim<int>());
+
+            var expected = "UPDATE [dbo].[IdentityUserClaim] SET [ClaimType] = @NewClaimType, [ClaimValue] = @NewClaimValue WHERE [UserId] = @UserId AND [ClaimType] = @ClaimType AND [ClaimValue] = @ClaimValue";
+
+            Assert.Equal(expected, generatedQuery);
+        }
+
+        [Fact]
+        public void UpdateUserQueryGeneratesCorrectQuery()
+        {
+            var generatedQuery = _queryFactory.GetUpdateQuery<UpdateUserQuery, DapperIdentityUser>(new DapperIdentityUser());
+
+            var expected = "UPDATE [dbo].[IdentityUser] SET [AccessFailedCount] = @AccessFailedCount, [Email] = @Email, [EmailConfirmed] = @EmailConfirmed, [LockoutEnabled] = @LockoutEnabled, [LockoutEnd] = @LockoutEnd, [PasswordHash] = @PasswordHash, [PhoneNumber] = @PhoneNumber, [PhoneNumberConfirmed] = @PhoneNumberConfirmed, [SecurityStamp] = @SecurityStamp, [TwoFactorEnabled] = @TwoFactorEnabled, [UserName] = @UserName WHERE [Id] = @Id";
+
+            Assert.Equal(expected, generatedQuery);
+        }
     }
 }

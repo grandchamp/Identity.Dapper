@@ -22,7 +22,7 @@ namespace Identity.Dapper.SqlServer.Models
             InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% OUTPUT INSERTED.Id VALUES(%VALUES%)";
             DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [Id] = %ID%";
             UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE [Id] = %ID%";
-            SelectUserByUserNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UserName = %USERNAME%";
+            SelectUserByUserNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserName] = %USERNAME%";
             SelectUserByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [Email] = %EMAIL%";
             SelectUserByIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [Id] = %ID%";
             InsertUserClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";

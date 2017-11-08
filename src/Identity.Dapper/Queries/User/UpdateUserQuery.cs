@@ -19,7 +19,7 @@ namespace Identity.Dapper.Queries.User
 
             var query = _sqlConfiguration.UpdateUserQuery
                                          .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
-                                                                       _sqlConfiguration.RoleTable,
+                                                                       _sqlConfiguration.UserTable,
                                                                        setFragment,
                                                                        $"{_sqlConfiguration.ParameterNotation}Id");
 
