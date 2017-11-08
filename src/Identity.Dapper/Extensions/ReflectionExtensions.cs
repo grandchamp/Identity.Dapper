@@ -10,7 +10,7 @@ namespace Identity.Dapper
         public static IEnumerable<string> GetPublicPropertiesNames(this Type type, Func<PropertyInfo, bool> filterBy = null)
         {
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                 .Where(x => x.CanWrite && x.CanRead)
+                                 .Where(x => type.Name.Contains("AnonymousType") ? x.CanRead : x.CanWrite && x.CanRead)
                                  .AsEnumerable();
 
             if (filterBy != null)

@@ -1,7 +1,11 @@
 ﻿using Identity.Dapper.Connections;
 using Identity.Dapper.Cryptography;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Factories;
+using Identity.Dapper.Factories.Contracts;
 using Identity.Dapper.Models;
+using Identity.Dapper.Queries;
+using Identity.Dapper.Queries.Contracts;
 using Identity.Dapper.Repositories;
 using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.Stores;
@@ -35,6 +39,8 @@ namespace Identity.Dapper
         {
             builder.Services.AddSingleton<SqlConfiguration, T>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+            builder.Services.AddSingleton<IQueryList, QueryList>();
+            builder.Services.AddSingleton<IQueryFactory, QueryFactory>();
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 

@@ -8,12 +8,12 @@ using Identity.Dapper.Tests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Identity.Dapper.Tests.Queries
+namespace Identity.Dapper.Tests.Queries.SQLServer
 {
-    public class UserQueriesTests
+    public class SqlServerUserQueriesTests
     {
         private readonly IQueryFactory _queryFactory;
-        public UserQueriesTests()
+        public SqlServerUserQueriesTests()
         {
             var services = new ServiceCollection();
             services.AddIdentity<DapperIdentityUser, DapperIdentityRole>(x =>
@@ -82,7 +82,7 @@ namespace Identity.Dapper.Tests.Queries
         public void GetUserLoginInfoByIdQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUserLoginInfoByIdQuery>();
-            var expected = "SELECT [LoginProvider], [ProviderKey], [ProviderDisplayName] FROM [dbo].[IdentityLogin] WHERE [UserId] = @UserId";
+            var expected = "SELECT [LoginProvider], [Name], [ProviderKey] FROM [dbo].[IdentityLogin] WHERE [UserId] = @UserId";
 
             Assert.Equal(expected, generatedQuery);
         }

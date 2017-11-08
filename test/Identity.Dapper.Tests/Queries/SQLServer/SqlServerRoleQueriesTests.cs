@@ -8,12 +8,12 @@ using Identity.Dapper.Tests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Identity.Dapper.Tests.Repositories
+namespace Identity.Dapper.Tests.Queries.SQLServer
 {
-    public class RoleQueriesTests
+    public class SqlServerRoleQueriesTests
     {
         private readonly IQueryFactory _queryFactory;
-        public RoleQueriesTests()
+        public SqlServerRoleQueriesTests()
         {
             var services = new ServiceCollection();
             services.AddIdentity<DapperIdentityUser, DapperIdentityRole>(x =>

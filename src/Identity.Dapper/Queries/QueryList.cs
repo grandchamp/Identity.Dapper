@@ -1,6 +1,7 @@
 ﻿using Identity.Dapper.Queries.Contracts;
 using Microsoft.Extensions.DependencyModel;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,16 +10,16 @@ namespace Identity.Dapper.Queries
 {
     public class QueryList : IQueryList
     {
-        private Dictionary<Type, IQuery> _dictionary;
+        private ConcurrentDictionary<Type, IQuery> _dictionary;
 
         private readonly IServiceProvider _serviceProvider;
         public QueryList(IServiceProvider serviceProvider)
         {
-            _dictionary = new Dictionary<Type, IQuery>();
+            _dictionary = new ConcurrentDictionary<Type, IQuery>();
             _serviceProvider = serviceProvider;
         }
 
-        public Dictionary<Type, IQuery> RetrieveQueryList()
+        public ConcurrentDictionary<Type, IQuery> RetrieveQueryList()
         {
             if (_dictionary.Count == 0)
             {
@@ -47,13 +48,13 @@ namespace Identity.Dapper.Queries
                     });
 
                     if (typeof(IInsertQuery).IsAssignableFrom(type) && !type.IsAbstract)
-                        _dictionary.Add(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IInsertQuery);
+                        _dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IInsertQuery);
                     else if (typeof(IDeleteQuery).IsAssignableFrom(type) && !type.IsAbstract)
-                        _dictionary.Add(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IDeleteQuery);
+                        _dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IDeleteQuery);
                     else if (typeof(ISelectQuery).IsAssignableFrom(type) && !type.IsAbstract)
-                        _dictionary.Add(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as ISelectQuery);
+                        _dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as ISelectQuery);
                     else if (typeof(IUpdateQuery).IsAssignableFrom(type) && !type.IsAbstract)
-                        _dictionary.Add(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IUpdateQuery);
+                        _dictionary.TryAdd(type, Activator.CreateInstance(type, getConstructorParameters(type).ToArray()) as IUpdateQuery);
                 }
             }
 

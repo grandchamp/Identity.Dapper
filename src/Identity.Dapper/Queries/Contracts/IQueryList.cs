@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Identity.Dapper.Queries.Contracts
 {
     public interface IQueryList
     {
-        Dictionary<Type, IQuery> RetrieveQueryList();
+        ConcurrentDictionary<Type, IQuery> RetrieveQueryList();
     }
 }

@@ -1,13 +1,13 @@
 ﻿using Identity.Dapper.Factories.Contracts;
 using Identity.Dapper.Queries.Contracts;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Identity.Dapper.Factories
 {
     public class QueryFactory : IQueryFactory
     {
-        private readonly Dictionary<Type, IQuery> _queryList;
+        private readonly ConcurrentDictionary<Type, IQuery> _queryList;
         public QueryFactory(IQueryList queryList)
         {
             _queryList = queryList.RetrieveQueryList();

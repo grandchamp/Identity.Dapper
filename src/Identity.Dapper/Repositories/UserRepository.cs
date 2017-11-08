@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Dynamic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -144,7 +145,7 @@ namespace Identity.Dapper.Repositories
                     try
                     {
                         var dynamicParameters = new DynamicParameters();
-                        dynamicParameters.Add("User", userName);
+                        dynamicParameters.Add("UserName", userName);
 
                         var query = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
@@ -296,15 +297,17 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var userLogin = Activator.CreateInstance<TUserLogin>();
-                        userLogin.UserId = id;
-                        userLogin.LoginProvider = loginInfo.LoginProvider;
-                        userLogin.ProviderKey = loginInfo.ProviderKey;
-                        userLogin.ProviderDisplayName = loginInfo.ProviderDisplayName;
+                        dynamic userLogin = new
+                        {
+                            UserId = id,
+                            LoginProvider = loginInfo.LoginProvider,
+                            ProviderKey = loginInfo.ProviderKey,
+                            Name = loginInfo.ProviderDisplayName
+                        };
 
-                        var query = _queryFactory.GetInsertQuery<InsertUserLoginQuery, TUserLogin>(userLogin);
+                        var query = (string)_queryFactory.GetInsertQuery<InsertUserLoginQuery, dynamic>(userLogin);
 
-                        var result = await x.ExecuteAsync(query, userLogin, _unitOfWork.Transaction);
+                        var result = await x.ExecuteAsync(query, (object)userLogin, _unitOfWork.Transaction);
 
                         return result > 0;
                     }
@@ -807,7 +810,7 @@ namespace Identity.Dapper.Repositories
                         {
                             resultList.Add(await x.ExecuteAsync(query, new
                             {
-                                Id = id,
+                                UserId = id,
                                 ClaimValue = claim.Value,
                                 ClaimType = claim.Type
                             }, _unitOfWork.Transaction) > 0);
