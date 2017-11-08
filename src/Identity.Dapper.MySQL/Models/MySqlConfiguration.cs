@@ -12,8 +12,8 @@ namespace Identity.Dapper.MySQL.Models
         {
             ParameterNotation = "@";
             SchemaName = "identity";
-            UseQuotationMarks = false;
-            TableFieldNotation = "`";
+            TableColumnStartNotation = "`";
+            TableColumnEndNotation = "`";
             InsertRoleQuery = "INSERT INTO `%SCHEMA%`.`%TABLENAME%` %COLUMNS% VALUES(%VALUES%)";
             DeleteRoleQuery = "DELETE FROM `%SCHEMA%`.`%TABLENAME%` WHERE `Id` = %ID%";
             UpdateRoleQuery = "UPDATE `%SCHEMA%`.`%TABLENAME%` %SETVALUES% WHERE `Id` = %ID%";

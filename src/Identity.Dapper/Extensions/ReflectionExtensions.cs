@@ -16,7 +16,8 @@ namespace Identity.Dapper
             if (filterBy != null)
                 properties = properties.Where(filterBy);
 
-            return properties.Select(x => x.Name);
+            return properties.Select(x => x.Name)
+                             .OrderBy(x => x);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using Identity.Dapper.Connections;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Factories.Contracts;
 using Identity.Dapper.Models;
+using Identity.Dapper.Queries.User;
 using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +13,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,17 +34,20 @@ namespace Identity.Dapper.Repositories
         private readonly SqlConfiguration _sqlConfiguration;
         private readonly IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IQueryFactory _queryFactory;
         public UserRepository(IConnectionProvider connProv,
                               ILogger<UserRepository<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> log,
                               SqlConfiguration sqlConf,
                               IRoleRepository<TRole, TKey, TUserRole, TRoleClaim> roleRepo,
-                              IUnitOfWork uow)
+                              IUnitOfWork uow,
+                              IQueryFactory queryFactory)
         {
             _connectionProvider = connProv;
             _log = log;
             _sqlConfiguration = sqlConf;
             _roleRepository = roleRepo;
             _unitOfWork = uow;
+            _queryFactory = queryFactory;
         }
 
         public Task<IEnumerable<TUser>> GetAll()
@@ -60,12 +64,7 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Email", email);
 
-                    var query = _sqlConfiguration.SelectUserByEmailQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%EMAIL%" },
-                                                                         new string[] { "Email" });
+                    var query = _queryFactory.GetQuery<SelectUserByEmailQuery>();
 
                     return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
                                                                    param: dynamicParameters,
@@ -90,7 +89,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(1), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 return null;
             }
@@ -105,12 +104,7 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
-                    var query = _sqlConfiguration.SelectUserByIdQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%ID%" },
-                                                                         new string[] { "Id" });
+                    var query = _queryFactory.GetQuery<SelectUserByIdQuery>();
 
                     return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
                                                                    param: dynamicParameters,
@@ -135,7 +129,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(2), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 return null;
             }
@@ -152,12 +146,7 @@ namespace Identity.Dapper.Repositories
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("User", userName);
 
-                        var query = _sqlConfiguration.SelectUserByUserNameQuery
-                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserTable,
-                                                                             _sqlConfiguration.ParameterNotation,
-                                                                             new string[] { "%USERNAME%" },
-                                                                             new string[] { "User" });
+                        var query = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
                         return await x.QuerySingleOrDefaultAsync<TUser>(sql: query,
                                                                         param: dynamicParameters,
@@ -165,7 +154,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         return null;
                     }
@@ -189,7 +178,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(3), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 return null;
             }
@@ -203,35 +192,9 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var columnsBuilder = new StringBuilder();
                         var dynamicParameters = new DynamicParameters(user);
 
-                        var userProperties = user.GetType()
-                                                 .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                && !y.Name.Equals("Id"));
-
-                        if (_sqlConfiguration.UseQuotationMarks)
-                            userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
-                        else
-                            userProperties = userProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
-
-                        var valuesArray = new List<string>(userProperties.Count());
-
-                        if (!user.Id.Equals(default(TKey)))
-                        {
-                            columnsBuilder.Append("\"Id\", ");
-                            valuesArray.Add($"{_sqlConfiguration.ParameterNotation}Id");
-                        }
-
-                        columnsBuilder.Append(string.Join(",", userProperties));
-
-                        valuesArray = valuesArray.InsertQueryValuesFragment(_sqlConfiguration.ParameterNotation, userProperties);
-
-                        var query = _sqlConfiguration.InsertUserQuery
-                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
-                                                                                   _sqlConfiguration.UserTable,
-                                                                                   columnsBuilder.ToString(),
-                                                                                   string.Join(", ", valuesArray));
+                        var query = _queryFactory.GetInsertQuery<InsertUserQuery, TUser>(user);
 
                         var result = await x.ExecuteScalarAsync<TKey>(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -239,7 +202,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(4), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -263,7 +226,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(4), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -277,38 +240,24 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var valuesArray = new string[] {
-                                                         $"{_sqlConfiguration.ParameterNotation}UserId",
-                                                         $"{_sqlConfiguration.ParameterNotation}ClaimType",
-                                                         $"{_sqlConfiguration.ParameterNotation}ClaimValue"
-                                                       };
-
-                        var query = _sqlConfiguration.InsertUserClaimQuery
-                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
-                                                                                   _sqlConfiguration.UserClaimTable,
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}UserId{_sqlConfiguration.TableFieldNotation}, " +
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}ClaimType{_sqlConfiguration.TableFieldNotation}, " +
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}ClaimValue{_sqlConfiguration.TableFieldNotation}",
-                                                                                   string.Join(", ", valuesArray));
-
                         var resultList = new List<bool>(claims.Count());
                         foreach (var claim in claims)
                         {
-                            resultList.Add(await x.ExecuteAsync(query,
-                                                                new
-                                                                {
-                                                                    UserId = id,
-                                                                    ClaimType = claim.Type,
-                                                                    ClaimValue = claim.Value
-                                                                },
-                                                                _unitOfWork.Transaction) > 0);
+                            var userClaim = Activator.CreateInstance<TUserClaim>();
+                            userClaim.UserId = id;
+                            userClaim.ClaimType = claim.Type;
+                            userClaim.ClaimValue = claim.Value;
+
+                            var query = _queryFactory.GetInsertQuery<InsertUserClaimQuery, TUserClaim>(userClaim);
+
+                            resultList.Add(await x.ExecuteAsync(query, userClaim, _unitOfWork.Transaction) > 0);
                         }
 
                         return resultList.TrueForAll(y => y);
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(5), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -333,7 +282,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(5), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -347,35 +296,21 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var valuesArray = new string[] {
-                                                         $"{_sqlConfiguration.ParameterNotation}UserId",
-                                                         $"{_sqlConfiguration.ParameterNotation}LoginProvider",
-                                                         $"{_sqlConfiguration.ParameterNotation}ProviderKey",
-                                                         $"{_sqlConfiguration.ParameterNotation}Name"
-                                                       };
+                        var userLogin = Activator.CreateInstance<TUserLogin>();
+                        userLogin.UserId = id;
+                        userLogin.LoginProvider = loginInfo.LoginProvider;
+                        userLogin.ProviderKey = loginInfo.ProviderKey;
+                        userLogin.ProviderDisplayName = loginInfo.ProviderDisplayName;
 
-                        var query = _sqlConfiguration.InsertUserLoginQuery
-                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
-                                                                                   _sqlConfiguration.UserLoginTable,
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}UserId{_sqlConfiguration.TableFieldNotation}, " +
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}LoginProvider{_sqlConfiguration.TableFieldNotation}, " +
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}ProviderKey{_sqlConfiguration.TableFieldNotation}, " +
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}Name{_sqlConfiguration.TableFieldNotation}",
-                                                                                   string.Join(", ", valuesArray));
+                        var query = _queryFactory.GetInsertQuery<InsertUserLoginQuery, TUserLogin>(userLogin);
 
-                        var result = await x.ExecuteAsync(query, new
-                        {
-                            UserId = id,
-                            LoginProvider = loginInfo.LoginProvider,
-                            ProviderKey = loginInfo.ProviderKey,
-                            Name = loginInfo.ProviderDisplayName
-                        }, _unitOfWork.Transaction);
+                        var result = await x.ExecuteAsync(query, userLogin, _unitOfWork.Transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(6), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -400,7 +335,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(6), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -418,29 +353,19 @@ namespace Identity.Dapper.Repositories
                         if (role == null)
                             return false;
 
-                        var valuesArray = new string[] {
-                                                         $"{_sqlConfiguration.ParameterNotation}UserId",
-                                                         $"{_sqlConfiguration.ParameterNotation}RoleId"
-                                                       };
+                        var userRole = Activator.CreateInstance<TUserRole>();
+                        userRole.RoleId = role.Id;
+                        userRole.UserId = id;
 
-                        var query = _sqlConfiguration.InsertUserRoleQuery
-                                                     .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
-                                                                                   _sqlConfiguration.UserRoleTable,
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}UserId{_sqlConfiguration.TableFieldNotation}, " +
-                                                                                   $"{_sqlConfiguration.TableFieldNotation}RoleId{_sqlConfiguration.TableFieldNotation}",
-                                                                                   string.Join(", ", valuesArray));
+                        var query = _queryFactory.GetInsertQuery<InsertUserRoleQuery, TUserRole>(userRole);
 
-                        var result = await x.ExecuteAsync(query, new
-                        {
-                            UserId = id,
-                            RoleId = role.Id
-                        }, _unitOfWork.Transaction);
+                        var result = await x.ExecuteAsync(query, userRole, _unitOfWork.Transaction);
 
                         return result > 0;
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(7), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -464,7 +389,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(7), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -481,10 +406,7 @@ namespace Identity.Dapper.Repositories
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("Id", id);
 
-                        var query = _sqlConfiguration.DeleteUserQuery
-                                                     .ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
-                                                                                   _sqlConfiguration.UserTable,
-                                                                                   $"{_sqlConfiguration.ParameterNotation}Id");
+                        var query = _queryFactory.GetDeleteQuery<DeleteUserQuery>();
 
                         var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -492,7 +414,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(8), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -517,7 +439,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(8), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -533,22 +455,7 @@ namespace Identity.Dapper.Repositories
                     {
                         var dynamicParameters = new DynamicParameters(user);
 
-                        var userProperties = user.GetType()
-                                                 .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                && !y.Name.Equals("Id"));
-
-                        if (_sqlConfiguration.UseQuotationMarks)
-                            userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
-                        else
-                            userProperties = userProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
-
-                        var setFragment = userProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
-
-                        var query = _sqlConfiguration.UpdateUserQuery
-                                                     .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
-                                                                                   _sqlConfiguration.UserTable,
-                                                                                   setFragment,
-                                                                                   $"{_sqlConfiguration.ParameterNotation}Id");
+                        var query = _queryFactory.GetUpdateQuery<UpdateUserQuery, TUser>(user);
 
                         var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -556,7 +463,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(9), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -580,7 +487,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(9), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -595,36 +502,8 @@ namespace Identity.Dapper.Repositories
                     try
                     {
                         var defaultUser = Activator.CreateInstance<TUser>();
-                        var userProperties = defaultUser.GetType()
-                                                        .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                       && !y.Name.Equals("Id"));
 
-                        if (_sqlConfiguration.UseQuotationMarks)
-                            userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
-
-                        var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
-                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             string.Empty,
-                                                                             _sqlConfiguration.ParameterNotation,
-                                                                             new string[] {
-                                                                                        "%LOGINPROVIDER%",
-                                                                                        "%PROVIDERKEY%"
-                                                                                          },
-                                                                             new string[] {
-                                                                                        "LoginProvider",
-                                                                                        "ProviderKey"
-                                                                                          },
-                                                                             new string[] {
-                                                                                        "%USERFILTER%",
-                                                                                        "%USERTABLE%",
-                                                                                        "%USERLOGINTABLE%",
-                                                                                          },
-                                                                             new string[] {
-                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable,_sqlConfiguration.UseQuotationMarks, _sqlConfiguration.TableFieldNotation),
-                                                                                        _sqlConfiguration.UserTable,
-                                                                                        _sqlConfiguration.UserLoginTable,
-                                                                                          }
-                                                                             );
+                        var query = _queryFactory.GetQuery<GetUserLoginByLoginProviderAndProviderKeyQuery, TUser>(defaultUser);
 
                         return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
                                                                        param: new
@@ -636,7 +515,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(12), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -661,7 +540,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(10), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -673,14 +552,10 @@ namespace Identity.Dapper.Repositories
             {
                 var selectFunction = new Func<DbConnection, Task<IList<Claim>>>(async x =>
                 {
-                    var query = _sqlConfiguration.GetClaimsByUserIdQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserClaimTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%ID%" },
-                                                                         new string[] { "UserId" });
+                    var query = _queryFactory.GetQuery<GetClaimsByUserIdQuery>();
 
                     var result = await x.QueryAsync(query, new { UserId = id }, _unitOfWork.Transaction);
+
                     return result?.Select(y => new Claim(y.ClaimType, y.ClaimValue))
                                   .ToList();
                 });
@@ -703,7 +578,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(11), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -715,25 +590,7 @@ namespace Identity.Dapper.Repositories
             {
                 var selectFunction = new Func<DbConnection, Task<IList<string>>>(async x =>
                 {
-                    var query = _sqlConfiguration.GetRolesByUserIdQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         string.Empty,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] {
-                                                                                        "%ID%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "UserId"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "%ROLETABLE%",
-                                                                                        "%USERROLETABLE%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        _sqlConfiguration.RoleTable,
-                                                                                        _sqlConfiguration.UserRoleTable
-                                                                                      }
-                                                                        );
+                    var query = _queryFactory.GetQuery<GetRolesByUserIdQuery>();
 
                     var result = await x.QueryAsync<string>(query, new { UserId = id }, _unitOfWork.Transaction);
 
@@ -758,7 +615,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(12), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -770,12 +627,7 @@ namespace Identity.Dapper.Repositories
             {
                 var selectFunction = new Func<DbConnection, Task<IList<UserLoginInfo>>>(async x =>
                 {
-                    var query = _sqlConfiguration.GetUserLoginInfoByIdQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserLoginTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%ID%" },
-                                                                         new string[] { "UserId" });
+                    var query = _queryFactory.GetQuery<GetUserLoginInfoByIdQuery>();
 
                     var result = await x.QueryAsync(query, new { UserId = id }, _unitOfWork.Transaction);
 
@@ -801,7 +653,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(13), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -814,36 +666,7 @@ namespace Identity.Dapper.Repositories
                 var selectFunction = new Func<DbConnection, Task<IList<TUser>>>(async x =>
                 {
                     var defaultUser = Activator.CreateInstance<TUser>();
-                    var userProperties = defaultUser.GetType()
-                                                    .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"));
-
-                    if (_sqlConfiguration.UseQuotationMarks)
-                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
-
-                    var query = _sqlConfiguration.GetUsersByClaimQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] {
-                                                                                        "%CLAIMVALUE%",
-                                                                                        "%CLAIMTYPE%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "ClaimValue",
-                                                                                        "ClaimType"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "%USERFILTER%",
-                                                                                        "%USERTABLE%",
-                                                                                        "%USERCLAIMTABLE%",
-                                                                                      },
-                                                                         new string[] {
-                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable,_sqlConfiguration.UseQuotationMarks, _sqlConfiguration.TableFieldNotation),
-                                                                                        _sqlConfiguration.UserTable,
-                                                                                        _sqlConfiguration.UserClaimTable,
-                                                                                      }
-                                                                         );
+                    var query = _queryFactory.GetQuery<GetUsersByClaimQuery, TUser>(defaultUser);
 
                     var result = await x.QueryAsync<TUser>(sql: query,
                                                            param: new
@@ -874,7 +697,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(14), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -887,36 +710,8 @@ namespace Identity.Dapper.Repositories
                 var selectFunction = new Func<DbConnection, Task<IList<TUser>>>(async x =>
                 {
                     var defaultUser = Activator.CreateInstance<TUser>();
-                    var userProperties = defaultUser.GetType()
-                                                    .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"));
 
-                    if (_sqlConfiguration.UseQuotationMarks)
-                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
-
-                    var query = _sqlConfiguration.GetUsersInRoleQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         string.Empty,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] {
-                                                                                        "%ROLENAME%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "RoleName"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "%USERFILTER%",
-                                                                                        "%USERTABLE%",
-                                                                                        "%USERROLETABLE%",
-                                                                                        "%ROLETABLE%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable,_sqlConfiguration.UseQuotationMarks, _sqlConfiguration.TableFieldNotation),
-                                                                                        _sqlConfiguration.UserTable,
-                                                                                        _sqlConfiguration.UserRoleTable,
-                                                                                        _sqlConfiguration.RoleTable
-                                                                                      }
-                                                                         );
+                    var query = _queryFactory.GetQuery<GetUsersInRoleQuery, TUser>(defaultUser);
 
                     var result = await x.QueryAsync<TUser>(sql: query,
                                                            param: new
@@ -946,7 +741,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(15), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -959,36 +754,8 @@ namespace Identity.Dapper.Repositories
                 var selectFunction = new Func<DbConnection, Task<bool>>(async x =>
                 {
                     var defaultUser = Activator.CreateInstance<TUser>();
-                    var userProperties = defaultUser.GetType()
-                                                    .GetPublicPropertiesNames(y => !y.Name.Equals("ConcurrencyStamp")
-                                                                                   && !y.Name.Equals("Id"));
 
-                    if (_sqlConfiguration.UseQuotationMarks)
-                        userProperties = userProperties.Select(y => string.Concat("\"", y, "\""));
-
-                    var query = _sqlConfiguration.IsInRoleQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.UserTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] {
-                                                                                        "%ROLENAME%",
-                                                                                        "%USERID%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "RoleName",
-                                                                                        "UserId"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        "%USERTABLE%",
-                                                                                        "%USERROLETABLE%",
-                                                                                        "%ROLETABLE%"
-                                                                                      },
-                                                                         new string[] {
-                                                                                        _sqlConfiguration.UserTable,
-                                                                                        _sqlConfiguration.UserRoleTable,
-                                                                                        _sqlConfiguration.RoleTable
-                                                                                      }
-                                                                         );
+                    var query = _queryFactory.GetQuery<IsInRoleQuery, TUser>(defaultUser);
 
                     var result = await x.QueryAsync(sql: query,
                                                     param: new
@@ -1019,7 +786,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(16), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -1033,21 +800,7 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var query = _sqlConfiguration.RemoveClaimsQuery
-                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserClaimTable,
-                                                                             _sqlConfiguration.ParameterNotation,
-                                                                             new string[] {
-                                                                                            "%ID%",
-                                                                                            "%CLAIMVALUE%",
-                                                                                            "%CLAIMTYPE%"
-                                                                                          },
-                                                                             new string[] {
-                                                                                            "Id",
-                                                                                            "ClaimValue",
-                                                                                            "ClaimType"
-                                                                                          }
-                                                                             );
+                        var query = _queryFactory.GetDeleteQuery<RemoveClaimsQuery>();
 
                         var resultList = new List<bool>(claims.Count());
                         foreach (var claim in claims)
@@ -1064,7 +817,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(17), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -1088,7 +841,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(17), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -1102,27 +855,7 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var query = _sqlConfiguration.RemoveUserFromRoleQuery
-                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserRoleTable,
-                                                                             _sqlConfiguration.ParameterNotation,
-                                                                             new string[] {
-                                                                                            "%USERID%",
-                                                                                            "%ROLENAME%"
-                                                                                          },
-                                                                             new string[] {
-                                                                                            "UserId",
-                                                                                            "RoleName"
-                                                                                          },
-                                                                             new string[] {
-                                                                                            "%USERROLETABLE%",
-                                                                                            "%ROLETABLE%"
-                                                                                          },
-                                                                             new string[] {
-                                                                                            _sqlConfiguration.UserRoleTable,
-                                                                                            _sqlConfiguration.RoleTable
-                                                                                          }
-                                                                             );
+                        var query = _queryFactory.GetDeleteQuery<RemoveUserFromRoleQuery>();
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -1134,7 +867,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(18), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -1158,7 +891,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(18), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -1172,21 +905,7 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var query = _sqlConfiguration.RemoveLoginForUserQuery
-                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserLoginTable,
-                                                                             _sqlConfiguration.ParameterNotation,
-                                                                             new string[] {
-                                                                                            "%USERID%",
-                                                                                            "%LOGINPROVIDER%",
-                                                                                            "%PROVIDERKEY%"
-                                                                                          },
-                                                                             new string[] {
-                                                                                            "UserId",
-                                                                                            "LoginProvider",
-                                                                                            "ProviderKey"
-                                                                                          }
-                                                                             );
+                        var query = _queryFactory.GetDeleteQuery<RemoveLoginForUserQuery>();
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -1199,7 +918,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(19), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -1224,7 +943,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(19), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }
@@ -1238,25 +957,9 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var query = _sqlConfiguration.UpdateClaimForUserQuery
-                                                     .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                             _sqlConfiguration.UserClaimTable,
-                                                                             _sqlConfiguration.ParameterNotation,
-                                                                             new string[] {
-                                                                                            "%NEWCLAIMTYPE%",
-                                                                                            "%NEWCLAIMVALUE%",
-                                                                                            "%USERID%",
-                                                                                            "%CLAIMTYPE%",
-                                                                                            "%CLAIMVALUE%"
-                                                                                          },
-                                                                             new string[] {
-                                                                                            "NewClaimType",
-                                                                                            "NewClaimValue",
-                                                                                            "UserId",
-                                                                                            "ClaimType",
-                                                                                            "ClaimValue"
-                                                                                          }
-                                                                             );
+                        //I don't need to make a new GetUpdateQuery that don't pass a TEntity object just for use
+                        //on this method, so i'll just pass null because i don't use the TEntity object on this method
+                        var query = _queryFactory.GetUpdateQuery<UpdateClaimForUserQuery, TUserClaim>(null);
 
                         var result = await x.ExecuteAsync(query, new
                         {
@@ -1271,7 +974,7 @@ namespace Identity.Dapper.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError(new EventId(20), ex.Message, ex);
+                        _log.LogError(ex, ex.Message);
 
                         throw;
                     }
@@ -1296,7 +999,7 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(new EventId(20), ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
                 throw;
             }

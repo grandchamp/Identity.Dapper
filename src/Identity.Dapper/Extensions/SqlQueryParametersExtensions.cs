@@ -36,16 +36,13 @@ namespace Identity.Dapper
             return setBuilder.ToString();
         }
 
-        public static string SelectFilterWithTableName(this IEnumerable<string> propertyNames, string tableName, bool useQuotationMarks, string tableFieldNotation)
+        public static string SelectFilterWithTableName(this IEnumerable<string> propertyNames, string tableName)
         {
             var propertyNamesArray = propertyNames.ToArray();
             var filterBuilderArray = new List<string>(propertyNamesArray.Length);
 
             for (int i = 0; i < propertyNamesArray.Length; i++)
-                if (useQuotationMarks)
-                    filterBuilderArray.Add($"\"{tableName}\".{propertyNamesArray[i]}");
-                else
-                    filterBuilderArray.Add($"{tableFieldNotation}{tableName}{tableFieldNotation}.{tableFieldNotation}{propertyNamesArray[i]}{tableFieldNotation}");
+                filterBuilderArray.Add($"{tableName}.{propertyNamesArray[i]}");
 
             return string.Join(", ", filterBuilderArray);
         }

@@ -6,8 +6,8 @@
 
         public string SchemaName { get; set; }
         public string ParameterNotation { get; set; }
-        public bool UseQuotationMarks { get; set; }
-        public string TableFieldNotation { get; set; }
+        public string TableColumnStartNotation { get; set; }
+        public string TableColumnEndNotation { get; set; }
 
         #region Table Names
         public string RoleTable { get; set; }
