@@ -27,4 +27,6 @@ install:
 
 script:
   - dotnet build
+  - dotnet test test/Identity.Dapper.Tests/Identity.Dapper.Tests.csproj
   - dotnet test test/Identity.Dapper.Tests.Integration/Identity.Dapper.Tests.Integration.csproj
+  
