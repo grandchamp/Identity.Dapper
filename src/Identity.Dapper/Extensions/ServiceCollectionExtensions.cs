@@ -39,8 +39,7 @@ namespace Identity.Dapper
         {
             builder.Services.AddSingleton<SqlConfiguration, T>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
-            builder.Services.AddSingleton<IQueryList, QueryList>();
-            builder.Services.AddSingleton<IQueryFactory, QueryFactory>();
+            AddQueries(builder);
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
@@ -53,6 +52,7 @@ namespace Identity.Dapper
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
             return builder;
@@ -64,6 +64,7 @@ namespace Identity.Dapper
             builder.Services.AddSingleton<SqlConfiguration, T>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
             return builder;
@@ -75,6 +76,7 @@ namespace Identity.Dapper
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
             return builder;
@@ -86,6 +88,7 @@ namespace Identity.Dapper
             builder.Services.AddSingleton<SqlConfiguration, T>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
             return builder;
@@ -97,6 +100,7 @@ namespace Identity.Dapper
             builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
             return builder;
@@ -138,6 +142,12 @@ namespace Identity.Dapper
             services.AddScoped<IConnectionProvider, T>();
 
             return services;
+        }
+
+        private static void AddQueries(IdentityBuilder builder)
+        {
+            builder.Services.AddSingleton<IQueryList, QueryList>();
+            builder.Services.AddSingleton<IQueryFactory, QueryFactory>();
         }
     }
 }
