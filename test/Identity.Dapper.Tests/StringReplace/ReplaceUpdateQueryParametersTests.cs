@@ -11,8 +11,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceUpdateQueryParametersTest()
         {
-            var query = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
-            var expectedQuery = "UPDATE dbo.IdentityUser SET VALUES WHERE Id = @Id";
+            const string query = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
+            const string expectedQuery = "UPDATE dbo.IdentityUser SET VALUES WHERE Id = @Id";
 
             Assert.Equal(expectedQuery,
                          query.ReplaceUpdateQueryParameters("dbo",

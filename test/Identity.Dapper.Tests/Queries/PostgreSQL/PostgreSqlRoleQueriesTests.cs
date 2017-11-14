@@ -37,7 +37,7 @@ namespace Identity.Dapper.Tests.Queries.PostgreSQL
         public void DeleteRoleQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetDeleteQuery<DeleteRoleQuery>();
-            var expected = "DELETE FROM \"dbo\".\"IdentityRole\" WHERE \"Id\" = @Id";
+            const string expected = "DELETE FROM \"dbo\".\"IdentityRole\" WHERE \"Id\" = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -46,7 +46,7 @@ namespace Identity.Dapper.Tests.Queries.PostgreSQL
         public void InsertRoleQueryWithoutIdGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertRoleQuery, CustomDapperIdentityRole>(new CustomDapperIdentityRole());
-            var expected = "INSERT INTO \"dbo\".\"IdentityRole\" (\"Dummy\", \"Name\") VALUES(@Dummy, @Name)";
+            const string expected = "INSERT INTO \"dbo\".\"IdentityRole\" (\"Dummy\", \"Name\") VALUES(@Dummy, @Name)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -55,7 +55,7 @@ namespace Identity.Dapper.Tests.Queries.PostgreSQL
         public void InsertRoleQueryWithIdGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertRoleQuery, CustomDapperIdentityRole>(new CustomDapperIdentityRole { Id = 2 });
-            var expected = "INSERT INTO \"dbo\".\"IdentityRole\" (\"Dummy\", \"Id\", \"Name\") VALUES(@Dummy, @Id, @Name)";
+            const string expected = "INSERT INTO \"dbo\".\"IdentityRole\" (\"Dummy\", \"Id\", \"Name\") VALUES(@Dummy, @Id, @Name)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -64,7 +64,7 @@ namespace Identity.Dapper.Tests.Queries.PostgreSQL
         public void SelectRoleByIdGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<SelectRoleByIdQuery>();
-            var expected = "SELECT * FROM \"dbo\".\"IdentityRole\" WHERE \"Id\" = @Id";
+            const string expected = "SELECT * FROM \"dbo\".\"IdentityRole\" WHERE \"Id\" = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -73,7 +73,7 @@ namespace Identity.Dapper.Tests.Queries.PostgreSQL
         public void SelectRoleByNameGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<SelectRoleByNameQuery>();
-            var expected = "SELECT * FROM \"dbo\".\"IdentityRole\" WHERE UPPER(\"Name\") = @Name";
+            const string expected = "SELECT * FROM \"dbo\".\"IdentityRole\" WHERE UPPER(\"Name\") = @Name";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -89,7 +89,7 @@ namespace Identity.Dapper.Tests.Queries.PostgreSQL
             });
 
 
-            var expected = "UPDATE \"dbo\".\"IdentityRole\" SET \"Dummy\" = @Dummy, \"Name\" = @Name WHERE \"Id\" = @Id";
+            const string expected = "UPDATE \"dbo\".\"IdentityRole\" SET \"Dummy\" = @Dummy, \"Name\" = @Name WHERE \"Id\" = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }

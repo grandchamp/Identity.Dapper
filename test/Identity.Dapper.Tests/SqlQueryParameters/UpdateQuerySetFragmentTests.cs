@@ -19,7 +19,7 @@ namespace Identity.Dapper.Tests.SqlQueryParameters
                 "\"D\""
             };
 
-            var expected = "SET A = @A, \"B\" = @B, C = @C, \"D\" = @D";
+            const string expected = "SET A = @A, \"B\" = @B, C = @C, \"D\" = @D";
 
             Assert.Equal(expected,
                          values.UpdateQuerySetFragment("@"));

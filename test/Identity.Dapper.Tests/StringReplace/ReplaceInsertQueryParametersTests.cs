@@ -11,8 +11,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceInsertQueryParametersTest()
         {
-            var query = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
-            var expected = "INSERT INTO dbo.IdentityUser (A, B, C) VALUES(@A, @B, @C)";
+            const string query = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
+            const string expected = "INSERT INTO dbo.IdentityUser (A, B, C) VALUES(@A, @B, @C)";
 
             Assert.Equal(expected,
                          query.ReplaceInsertQueryParameters("dbo",

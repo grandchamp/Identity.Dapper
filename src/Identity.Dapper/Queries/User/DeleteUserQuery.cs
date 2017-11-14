@@ -1,8 +1,5 @@
 ﻿using Identity.Dapper.Models;
 using Identity.Dapper.Queries.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Identity.Dapper.Queries.User
 {

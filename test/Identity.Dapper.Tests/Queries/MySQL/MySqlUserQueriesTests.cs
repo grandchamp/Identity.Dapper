@@ -37,7 +37,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void DeleteUserQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetDeleteQuery<DeleteUserQuery>();
-            var expected = "DELETE FROM `identity`.`identityuser` WHERE `Id` = @Id";
+            const string expected = "DELETE FROM `identity`.`identityuser` WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -46,7 +46,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetClaimsByUserIdQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetClaimsByUserIdQuery>();
-            var expected = "SELECT `ClaimType`, `ClaimValue` FROM `identity`.`identityuserclaim` WHERE `UserId` = @UserId";
+            const string expected = "SELECT `ClaimType`, `ClaimValue` FROM `identity`.`identityuserclaim` WHERE `UserId` = @UserId";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -55,7 +55,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetRolesByUserIdQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetRolesByUserIdQuery>();
-            var expected = "SELECT `Name` FROM `identity`.`identityrole`, `identity`.`identityuserrole` WHERE `UserId` = @UserId AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id`";
+            const string expected = "SELECT `Name` FROM `identity`.`identityrole`, `identity`.`identityuserrole` WHERE `UserId` = @UserId AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id`";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -64,7 +64,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUserLoginByLoginProviderAndProviderKeyQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUserLoginByLoginProviderAndProviderKeyQuery, DapperIdentityUser>(new DapperIdentityUser());
-            var expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identitylogin` WHERE `identity`.`identityuser`.`Id` = `identity`.`identitylogin`.`UserId` AND `LoginProvider` = @LoginProvider AND `ProviderKey` = @ProviderKey LIMIT 1";
+            const string expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identitylogin` WHERE `identity`.`identityuser`.`Id` = `identity`.`identitylogin`.`UserId` AND `LoginProvider` = @LoginProvider AND `ProviderKey` = @ProviderKey LIMIT 1";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -73,7 +73,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUserLoginByLoginProviderAndProviderKeyQueryGeneratesCorrectQueryWhenUsingCustomUser()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUserLoginByLoginProviderAndProviderKeyQuery, CustomDapperIdentityUser>(new CustomDapperIdentityUser());
-            var expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Dummy`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identitylogin` WHERE `identity`.`identityuser`.`Id` = `identity`.`identitylogin`.`UserId` AND `LoginProvider` = @LoginProvider AND `ProviderKey` = @ProviderKey LIMIT 1";
+            const string expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Dummy`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identitylogin` WHERE `identity`.`identityuser`.`Id` = `identity`.`identitylogin`.`UserId` AND `LoginProvider` = @LoginProvider AND `ProviderKey` = @ProviderKey LIMIT 1";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -82,7 +82,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUserLoginInfoByIdQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUserLoginInfoByIdQuery>();
-            var expected = "SELECT `LoginProvider`, `Name`, `ProviderKey` FROM `identity`.`identitylogin` WHERE `UserId` = @UserId";
+            const string expected = "SELECT `LoginProvider`, `Name`, `ProviderKey` FROM `identity`.`identitylogin` WHERE `UserId` = @UserId";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -91,7 +91,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUsersByClaimQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUsersByClaimQuery, DapperIdentityUser>(new DapperIdentityUser());
-            var expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserclaim` WHERE `ClaimValue` = @ClaimValue AND `ClaimType` = @ClaimType";
+            const string expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserclaim` WHERE `ClaimValue` = @ClaimValue AND `ClaimType` = @ClaimType";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -100,7 +100,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUsersByClaimQueryGeneratesCorrectQueryWhenUsingCustomUser()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUsersByClaimQuery, CustomDapperIdentityUser>(new CustomDapperIdentityUser());
-            var expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Dummy`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserclaim` WHERE `ClaimValue` = @ClaimValue AND `ClaimType` = @ClaimType";
+            const string expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Dummy`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserclaim` WHERE `ClaimValue` = @ClaimValue AND `ClaimType` = @ClaimType";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -109,7 +109,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUsersInRoleQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUsersInRoleQuery, DapperIdentityUser>(new DapperIdentityUser());
-            var expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserrole`, `identity`.`identityrole` WHERE `identity`.`identityrole`.`Name` = @RoleName AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id` AND `identity`.`identityuserrole`.`UserId` = `identity`.`identityuser`.`Id`";
+            const string expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserrole`, `identity`.`identityrole` WHERE `identity`.`identityrole`.`Name` = @RoleName AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id` AND `identity`.`identityuserrole`.`UserId` = `identity`.`identityuser`.`Id`";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -118,7 +118,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void GetUsersInRoleQueryGeneratesCorrectQueryWhenUsingCustomUser()
         {
             var generatedQuery = _queryFactory.GetQuery<GetUsersInRoleQuery, CustomDapperIdentityUser>(new CustomDapperIdentityUser());
-            var expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Dummy`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserrole`, `identity`.`identityrole` WHERE `identity`.`identityrole`.`Name` = @RoleName AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id` AND `identity`.`identityuserrole`.`UserId` = `identity`.`identityuser`.`Id`";
+            const string expected = "SELECT `identityuser`.`AccessFailedCount`, `identityuser`.`Dummy`, `identityuser`.`Email`, `identityuser`.`EmailConfirmed`, `identityuser`.`LockoutEnabled`, `identityuser`.`LockoutEnd`, `identityuser`.`PasswordHash`, `identityuser`.`PhoneNumber`, `identityuser`.`PhoneNumberConfirmed`, `identityuser`.`SecurityStamp`, `identityuser`.`TwoFactorEnabled`, `identityuser`.`UserName` FROM `identity`.`identityuser`, `identity`.`identityuserrole`, `identity`.`identityrole` WHERE `identity`.`identityrole`.`Name` = @RoleName AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id` AND `identity`.`identityuserrole`.`UserId` = `identity`.`identityuser`.`Id`";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -128,7 +128,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertUserClaimQuery, DapperIdentityUserClaim<int>>(new DapperIdentityUserClaim<int>());
 
-            var expected = "INSERT INTO `identity`.`identityuserclaim` (`ClaimType`, `ClaimValue`, `UserId`) VALUES(@ClaimType, @ClaimValue, @UserId)";
+            const string expected = "INSERT INTO `identity`.`identityuserclaim` (`ClaimType`, `ClaimValue`, `UserId`) VALUES(@ClaimType, @ClaimValue, @UserId)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -138,7 +138,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertUserClaimQuery, DapperIdentityUserClaim<int>>(new DapperIdentityUserClaim<int> { Id = 123 });
 
-            var expected = "INSERT INTO `identity`.`identityuserclaim` (`ClaimType`, `ClaimValue`, `Id`, `UserId`) VALUES(@ClaimType, @ClaimValue, @Id, @UserId)";
+            const string expected = "INSERT INTO `identity`.`identityuserclaim` (`ClaimType`, `ClaimValue`, `Id`, `UserId`) VALUES(@ClaimType, @ClaimValue, @Id, @UserId)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -148,7 +148,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertUserLoginQuery, DapperIdentityUserLogin<int>>(new DapperIdentityUserLogin<int>());
 
-            var expected = "INSERT INTO `identity`.`identitylogin` (`LoginProvider`, `ProviderDisplayName`, `ProviderKey`, `UserId`) VALUES(@LoginProvider, @ProviderDisplayName, @ProviderKey, @UserId)";
+            const string expected = "INSERT INTO `identity`.`identitylogin` (`LoginProvider`, `ProviderDisplayName`, `ProviderKey`, `UserId`) VALUES(@LoginProvider, @ProviderDisplayName, @ProviderKey, @UserId)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -158,7 +158,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertUserQuery, DapperIdentityUser>(new DapperIdentityUser());
 
-            var expected = "INSERT INTO `identity`.`identityuser` (`AccessFailedCount`, `Email`, `EmailConfirmed`, `LockoutEnabled`, `LockoutEnd`, `PasswordHash`, `PhoneNumber`, `PhoneNumberConfirmed`, `SecurityStamp`, `TwoFactorEnabled`, `UserName`) VALUES(@AccessFailedCount, @Email, @EmailConfirmed, @LockoutEnabled, @LockoutEnd, @PasswordHash, @PhoneNumber, @PhoneNumberConfirmed, @SecurityStamp, @TwoFactorEnabled, @UserName);SELECT LAST_INSERT_ID();";
+            const string expected = "INSERT INTO `identity`.`identityuser` (`AccessFailedCount`, `Email`, `EmailConfirmed`, `LockoutEnabled`, `LockoutEnd`, `PasswordHash`, `PhoneNumber`, `PhoneNumberConfirmed`, `SecurityStamp`, `TwoFactorEnabled`, `UserName`) VALUES(@AccessFailedCount, @Email, @EmailConfirmed, @LockoutEnabled, @LockoutEnd, @PasswordHash, @PhoneNumber, @PhoneNumberConfirmed, @SecurityStamp, @TwoFactorEnabled, @UserName);SELECT LAST_INSERT_ID();";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -168,7 +168,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertUserQuery, CustomDapperIdentityUser>(new CustomDapperIdentityUser());
 
-            var expected = "INSERT INTO `identity`.`identityuser` (`AccessFailedCount`, `Dummy`, `Email`, `EmailConfirmed`, `LockoutEnabled`, `LockoutEnd`, `PasswordHash`, `PhoneNumber`, `PhoneNumberConfirmed`, `SecurityStamp`, `TwoFactorEnabled`, `UserName`) VALUES(@AccessFailedCount, @Dummy, @Email, @EmailConfirmed, @LockoutEnabled, @LockoutEnd, @PasswordHash, @PhoneNumber, @PhoneNumberConfirmed, @SecurityStamp, @TwoFactorEnabled, @UserName);SELECT LAST_INSERT_ID();";
+            const string expected = "INSERT INTO `identity`.`identityuser` (`AccessFailedCount`, `Dummy`, `Email`, `EmailConfirmed`, `LockoutEnabled`, `LockoutEnd`, `PasswordHash`, `PhoneNumber`, `PhoneNumberConfirmed`, `SecurityStamp`, `TwoFactorEnabled`, `UserName`) VALUES(@AccessFailedCount, @Dummy, @Email, @EmailConfirmed, @LockoutEnabled, @LockoutEnd, @PasswordHash, @PhoneNumber, @PhoneNumberConfirmed, @SecurityStamp, @TwoFactorEnabled, @UserName);SELECT LAST_INSERT_ID();";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -178,7 +178,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertUserRoleQuery, DapperIdentityUserRole<int>>(new DapperIdentityUserRole<int>());
 
-            var expected = "INSERT INTO `identity`.`identityuserrole` (`RoleId`, `UserId`) VALUES(@RoleId, @UserId)";
+            const string expected = "INSERT INTO `identity`.`identityuserrole` (`RoleId`, `UserId`) VALUES(@RoleId, @UserId)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -187,7 +187,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void IsInRoleQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<IsInRoleQuery, DapperIdentityUser>(new DapperIdentityUser());
-            var expected = "SELECT 1 FROM `identity`.`identityuser`, `identity`.`identityuserrole`, `identity`.`identityrole` WHERE `identity`.`identityrole`.`Name` = @RoleName AND `identity`.`identityuser`.`Id` = @UserId AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id` AND `identity`.`identityuserrole`.`UserId` = `identity`.`identityuser`.`Id`";
+            const string expected = "SELECT 1 FROM `identity`.`identityuser`, `identity`.`identityuserrole`, `identity`.`identityrole` WHERE `identity`.`identityrole`.`Name` = @RoleName AND `identity`.`identityuser`.`Id` = @UserId AND `identity`.`identityuserrole`.`RoleId` = `identity`.`identityrole`.`Id` AND `identity`.`identityuserrole`.`UserId` = `identity`.`identityuser`.`Id`";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -197,7 +197,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetDeleteQuery<RemoveClaimsQuery>();
 
-            var expected = "DELETE FROM `identity`.`identityuserclaim` WHERE `UserId` = @UserId AND `ClaimType` = @ClaimType AND `ClaimValue` = @ClaimValue";
+            const string expected = "DELETE FROM `identity`.`identityuserclaim` WHERE `UserId` = @UserId AND `ClaimType` = @ClaimType AND `ClaimValue` = @ClaimValue";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -207,7 +207,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetDeleteQuery<RemoveLoginForUserQuery>();
 
-            var expected = "DELETE FROM `identity`.`identitylogin` WHERE `UserId` = @UserId AND `LoginProvider` = @LoginProvider AND `ProviderKey` = @ProviderKey";
+            const string expected = "DELETE FROM `identity`.`identitylogin` WHERE `UserId` = @UserId AND `LoginProvider` = @LoginProvider AND `ProviderKey` = @ProviderKey";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -216,7 +216,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void RemoveUserFromRoleQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetDeleteQuery<RemoveUserFromRoleQuery>();
-            var expected = "DELETE FROM `identity`.`identityuserrole` WHERE `UserId` = @UserId AND `RoleId` = (SELECT `Id` FROM `identity`.`identityrole` WHERE `Name` = @RoleName)";
+            const string expected = "DELETE FROM `identity`.`identityuserrole` WHERE `UserId` = @UserId AND `RoleId` = (SELECT `Id` FROM `identity`.`identityrole` WHERE `Name` = @RoleName)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -226,7 +226,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByEmailQuery>();
 
-            var expected = "SELECT * FROM `identity`.`identityuser` WHERE `Email` = @Email";
+            const string expected = "SELECT * FROM `identity`.`identityuser` WHERE `Email` = @Email";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -236,7 +236,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByIdQuery>();
 
-            var expected = "SELECT * FROM `identity`.`identityuser` WHERE `Id` = @Id";
+            const string expected = "SELECT * FROM `identity`.`identityuser` WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -246,7 +246,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
-            var expected = "SELECT * FROM `identity`.`identityuser` WHERE `UserName` = @UserName";
+            const string expected = "SELECT * FROM `identity`.`identityuser` WHERE `UserName` = @UserName";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -256,7 +256,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetUpdateQuery<UpdateClaimForUserQuery, DapperIdentityUserClaim<int>>(new DapperIdentityUserClaim<int>());
 
-            var expected = "UPDATE `identity`.`identityuserclaim` SET `ClaimType` = @NewClaimType, `ClaimValue` = @NewClaimValue WHERE `UserId` = @UserId AND `ClaimType` = @ClaimType AND `ClaimValue` = @ClaimValue";
+            const string expected = "UPDATE `identity`.`identityuserclaim` SET `ClaimType` = @NewClaimType, `ClaimValue` = @NewClaimValue WHERE `UserId` = @UserId AND `ClaimType` = @ClaimType AND `ClaimValue` = @ClaimValue";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -266,7 +266,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetUpdateQuery<UpdateUserQuery, DapperIdentityUser>(new DapperIdentityUser());
 
-            var expected = "UPDATE `identity`.`identityuser` SET `AccessFailedCount` = @AccessFailedCount, `Email` = @Email, `EmailConfirmed` = @EmailConfirmed, `LockoutEnabled` = @LockoutEnabled, `LockoutEnd` = @LockoutEnd, `PasswordHash` = @PasswordHash, `PhoneNumber` = @PhoneNumber, `PhoneNumberConfirmed` = @PhoneNumberConfirmed, `SecurityStamp` = @SecurityStamp, `TwoFactorEnabled` = @TwoFactorEnabled, `UserName` = @UserName WHERE `Id` = @Id";
+            const string expected = "UPDATE `identity`.`identityuser` SET `AccessFailedCount` = @AccessFailedCount, `Email` = @Email, `EmailConfirmed` = @EmailConfirmed, `LockoutEnabled` = @LockoutEnabled, `LockoutEnd` = @LockoutEnd, `PasswordHash` = @PasswordHash, `PhoneNumber` = @PhoneNumber, `PhoneNumberConfirmed` = @PhoneNumberConfirmed, `SecurityStamp` = @SecurityStamp, `TwoFactorEnabled` = @TwoFactorEnabled, `UserName` = @UserName WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }

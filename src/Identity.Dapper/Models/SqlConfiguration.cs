@@ -2,7 +2,7 @@
 {
     public abstract class SqlConfiguration
     {
-        public SqlConfiguration() { }
+        protected SqlConfiguration() { }
 
         public string SchemaName { get; set; }
         public string ParameterNotation { get; set; }

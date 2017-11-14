@@ -56,7 +56,7 @@ namespace Identity.Dapper.Stores
             _dapperIdentityOptions = dapperIdOpts;
         }
 
-        private async Task CreateTransactionIfNotExists(CancellationToken cancellationToken)
+        private async Task CreateTransactionIfNotExistsAsync(CancellationToken cancellationToken)
         {
             if (!_dapperIdentityOptions.UseTransactionalBehavior)
             {
@@ -72,13 +72,16 @@ namespace Identity.Dapper.Stores
             }
         }
 
-        public Task SaveChanges(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return !_dapperIdentityOptions.UseTransactionalBehavior ? Task.CompletedTask : CommitTransaction();
-        }
+        public Task SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) =>
+            !_dapperIdentityOptions.UseTransactionalBehavior
+                        ? Task.CompletedTask
+                        : CommitTransactionAsync(cancellationToken);
 
-        private Task CommitTransaction()
+        private Task CommitTransactionAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (cancellationToken != default(CancellationToken))
+                cancellationToken.ThrowIfCancellationRequested();
+
             if (_dapperIdentityOptions.UseTransactionalBehavior)
             {
                 try
@@ -114,14 +117,14 @@ namespace Identity.Dapper.Stores
         public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             try
             {
-                var result = await _userRepository.InsertClaims(user.Id, claims, cancellationToken);
+                var result = await _userRepository.InsertClaimsAsync(user.Id, claims, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -132,14 +135,14 @@ namespace Identity.Dapper.Stores
         public async Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             try
             {
-                var result = await _userRepository.InsertLoginInfo(user.Id, login, cancellationToken);
+                var result = await _userRepository.InsertLoginInfoAsync(user.Id, login, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -150,14 +153,14 @@ namespace Identity.Dapper.Stores
         public async Task AddToRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             try
             {
-                var result = await _userRepository.AddToRole(user.Id, roleName, cancellationToken);
+                var result = await _userRepository.AddToRoleAsync(user.Id, roleName, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -168,14 +171,14 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             try
             {
-                var result = await _userRepository.Insert(user, cancellationToken);
+                var result = await _userRepository.InsertAsync(user, cancellationToken);
 
                 if (!result.Equals(default(TKey)))
                 {
@@ -202,19 +205,16 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             try
             {
-                var result = await _userRepository.Remove(user.Id, cancellationToken);
+                var result = await _userRepository.RemoveAsync(user.Id, cancellationToken);
 
-                if (result)
-                    return IdentityResult.Success;
-                else
-                    return IdentityResult.Failed();
+                return result ? IdentityResult.Success : IdentityResult.Failed();
             }
             catch (Exception ex)
             {
@@ -236,7 +236,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetByEmail(normalizedEmail);
+                var result = await _userRepository.GetByEmailAsync(normalizedEmail);
 
                 return result;
             }
@@ -257,7 +257,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetById((TKey)Convert.ChangeType(userId, typeof(TKey)));
+                var result = await _userRepository.GetByIdAsync((TKey)Convert.ChangeType(userId, typeof(TKey)));
 
                 return result;
             }
@@ -275,7 +275,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetByUserLogin(loginProvider, providerKey);
+                var result = await _userRepository.GetByUserLoginAsync(loginProvider, providerKey);
 
                 return result;
             }
@@ -296,7 +296,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetByUserName(normalizedUserName);
+                var result = await _userRepository.GetByUserNameAsync(normalizedUserName);
 
                 return result;
             }
@@ -327,7 +327,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetClaimsByUserId(user.Id);
+                var result = await _userRepository.GetClaimsByUserIdAsync(user.Id);
 
                 return result;
             }
@@ -388,7 +388,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetUserLoginInfoById(user.Id);
+                var result = await _userRepository.GetUserLoginInfoByIdAsync(user.Id);
 
                 return result;
             }
@@ -459,7 +459,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetRolesByUserId(user.Id);
+                var result = await _userRepository.GetRolesByUserIdAsync(user.Id);
 
                 return result;
             }
@@ -525,7 +525,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetUsersByClaim(claim);
+                var result = await _userRepository.GetUsersByClaimAsync(claim);
 
                 return result;
             }
@@ -546,7 +546,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetUsersInRole(roleName);
+                var result = await _userRepository.GetUsersInRoleAsync(roleName);
 
                 return result;
             }
@@ -588,7 +588,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.IsInRole(user.Id, roleName);
+                var result = await _userRepository.IsInRoleAsync(user.Id, roleName);
 
                 return result;
             }
@@ -603,7 +603,7 @@ namespace Identity.Dapper.Stores
         public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -613,7 +613,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.RemoveClaims(user.Id, claims, cancellationToken);
+                var result = await _userRepository.RemoveClaimsAsync(user.Id, claims, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -624,7 +624,7 @@ namespace Identity.Dapper.Stores
         public async Task RemoveFromRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -634,7 +634,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.RemoveFromRole(user.Id, roleName, cancellationToken);
+                var result = await _userRepository.RemoveFromRoleAsync(user.Id, roleName, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -645,7 +645,7 @@ namespace Identity.Dapper.Stores
         public async Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -658,7 +658,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.RemoveLogin(user.Id, loginProvider, providerKey, cancellationToken);
+                var result = await _userRepository.RemoveLoginAsync(user.Id, loginProvider, providerKey, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -674,7 +674,7 @@ namespace Identity.Dapper.Stores
         public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -687,7 +687,7 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.UpdateClaim(user.Id, claim, newClaim, cancellationToken);
+                var result = await _userRepository.UpdateClaimAsync(user.Id, claim, newClaim, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -855,18 +855,16 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExists(cancellationToken);
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             try
             {
-                var result = await _userRepository.Update(user, cancellationToken);
-                if (result)
-                    return IdentityResult.Success;
-                else
-                    return IdentityResult.Failed();
+                var result = await _userRepository.UpdateAsync(user, cancellationToken);
+
+                return result ? IdentityResult.Success : IdentityResult.Failed();
             }
             catch (Exception ex)
             {

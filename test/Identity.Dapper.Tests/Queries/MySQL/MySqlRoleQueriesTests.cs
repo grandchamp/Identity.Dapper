@@ -37,7 +37,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void DeleteRoleQueryGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetDeleteQuery<DeleteRoleQuery>();
-            var expected = "DELETE FROM `identity`.`identityrole` WHERE `Id` = @Id";
+            const string expected = "DELETE FROM `identity`.`identityrole` WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -46,7 +46,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void InsertRoleQueryWithoutIdGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertRoleQuery, CustomDapperIdentityRole>(new CustomDapperIdentityRole());
-            var expected = "INSERT INTO `identity`.`identityrole` (`Dummy`, `Name`) VALUES(@Dummy, @Name)";
+            const string expected = @"INSERT INTO `identity`.`identityrole` (`Dummy`, `Name`) VALUES(@Dummy, @Name)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -55,7 +55,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void InsertRoleQueryWithIdGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetInsertQuery<InsertRoleQuery, CustomDapperIdentityRole>(new CustomDapperIdentityRole { Id = 2 });
-            var expected = "INSERT INTO `identity`.`identityrole` (`Dummy`, `Id`, `Name`) VALUES(@Dummy, @Id, @Name)";
+            const string expected = "INSERT INTO `identity`.`identityrole` (`Dummy`, `Id`, `Name`) VALUES(@Dummy, @Id, @Name)";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -64,7 +64,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void SelectRoleByIdGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<SelectRoleByIdQuery>();
-            var expected = "SELECT * FROM `identity`.`identityrole` WHERE `Id` = @Id";
+            const string expected = "SELECT * FROM `identity`.`identityrole` WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -73,7 +73,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         public void SelectRoleByNameGeneratesCorrectQuery()
         {
             var generatedQuery = _queryFactory.GetQuery<SelectRoleByNameQuery>();
-            var expected = "SELECT * FROM `identity`.`identityrole` WHERE `Name` = @Name";
+            const string expected = "SELECT * FROM `identity`.`identityrole` WHERE `Name` = @Name";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -89,7 +89,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
             });
 
 
-            var expected = "UPDATE `identity`.`identityrole` SET `Dummy` = @Dummy, `Name` = @Name WHERE `Id` = @Id";
+            const string expected = "UPDATE `identity`.`identityrole` SET `Dummy` = @Dummy, `Name` = @Name WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }

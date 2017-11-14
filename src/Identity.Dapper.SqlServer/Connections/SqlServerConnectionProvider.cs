@@ -1,15 +1,10 @@
 ﻿using Identity.Dapper.Connections;
+using Identity.Dapper.Cryptography;
+using Identity.Dapper.Models;
+using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.Extensions.Options;
-using Identity.Dapper.Models;
-using Identity.Dapper.Cryptography;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Identity.Dapper.SqlServer.Connections
 {
@@ -37,9 +32,11 @@ namespace Identity.Dapper.SqlServer.Connections
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username))
                 throw new ArgumentNullException("There's no DapperIdentity:Username configured. Please, register the value.");
 
-            var sqlConnectionBuilder = new SqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString);
-            sqlConnectionBuilder.Password = _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password);
-            sqlConnectionBuilder.UserID = _connectionProviderOptions.Value.Username;
+            var sqlConnectionBuilder = new SqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString)
+            {
+                Password = _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password),
+                UserID = _connectionProviderOptions.Value.Username
+            };
 
             return new SqlConnection(sqlConnectionBuilder.ToString());
         }

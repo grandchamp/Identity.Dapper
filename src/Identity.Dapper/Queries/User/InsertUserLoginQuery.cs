@@ -23,7 +23,7 @@ namespace Identity.Dapper.Queries.User
             var query = _sqlConfiguration.InsertUserLoginQuery
                                          .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.UserLoginTable,
-                                                                       columns.GetCommaSeparatedColumns(_sqlConfiguration),
+                                                                       columns.GetCommaSeparatedColumns(),
                                                                        string.Join(", ", valuesArray));
 
             return query;

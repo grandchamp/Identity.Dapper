@@ -12,7 +12,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
     //TODO:
     //There's a little problem with IClassFixture that on EVERY test, the constructor of the class is called (and if implements IDisposable, the Dispose() is called too)
     //As a workaround, every time you run this test, execute restart.sh to reset all data on Docker container
-    [Collection("MySQL")]
+    [Collection(nameof(MySQL))]
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
     public partial class UserManagerTestsMySql : IClassFixture<MySqlDatabaseFixture>
     {

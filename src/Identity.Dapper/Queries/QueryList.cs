@@ -10,7 +10,7 @@ namespace Identity.Dapper.Queries
 {
     public class QueryList : IQueryList
     {
-        private ConcurrentDictionary<Type, IQuery> _dictionary;
+        private readonly ConcurrentDictionary<Type, IQuery> _dictionary;
 
         private readonly IServiceProvider _serviceProvider;
         public QueryList(IServiceProvider serviceProvider)
@@ -36,8 +36,7 @@ namespace Identity.Dapper.Queries
                     {
                         var constructorParameters = type.GetTypeInfo()
                                                         .DeclaredConstructors
-                                                        .Where(y => y.IsPublic)
-                                                        .FirstOrDefault()
+                                                        .FirstOrDefault(y => y.IsPublic)
                                                         .GetParameters();
 
                         var parameterList = new List<object>();

@@ -6,10 +6,10 @@ using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using System.ComponentModel;
 
 namespace Identity.Dapper.Stores
 {
@@ -40,7 +40,7 @@ namespace Identity.Dapper.Stores
             _dapperIdentityOptions = dapperIdOpts;
         }
 
-        private async Task CreateTransactionIfNotExists(CancellationToken cancellationToken)
+        private async Task CreateTransactionIfNotExistsAsync(CancellationToken cancellationToken)
         {
             if (!_dapperIdentityOptions.UseTransactionalBehavior)
             {
@@ -56,13 +56,16 @@ namespace Identity.Dapper.Stores
             }
         }
 
-        public Task SaveChanges(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return !_dapperIdentityOptions.UseTransactionalBehavior ? Task.CompletedTask : CommitTransaction();
-        }
+        public Task SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) =>
+            !_dapperIdentityOptions.UseTransactionalBehavior 
+                        ? Task.CompletedTask 
+                        : CommitTransactionAsync(cancellationToken);
 
-        private Task CommitTransaction()
+        private Task CommitTransactionAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (cancellationToken != default(CancellationToken))
+                cancellationToken.ThrowIfCancellationRequested();
+
             if (_dapperIdentityOptions.UseTransactionalBehavior)
             {
                 try
@@ -89,13 +92,14 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
             try
             {
-                var result = await _roleRepository.Insert(role, cancellationToken);
+                var result = await _roleRepository.InsertAsync(role, cancellationToken);
 
                 return result ? IdentityResult.Success : IdentityResult.Failed();
             }
@@ -113,13 +117,14 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
             try
             {
-                var result = await _roleRepository.Remove(role.Id, cancellationToken);
+                var result = await _roleRepository.RemoveAsync(role.Id, cancellationToken);
 
                 return result ? IdentityResult.Success : IdentityResult.Failed();
             }
@@ -145,13 +150,14 @@ namespace Identity.Dapper.Stores
         public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (string.IsNullOrEmpty(roleId))
                 throw new ArgumentNullException(nameof(roleId));
 
             try
             {
-                var result = await _roleRepository.GetById(ConvertIdFromString(roleId));
+                var result = await _roleRepository.GetByIdAsync(ConvertIdFromString(roleId));
 
                 return result;
             }
@@ -166,13 +172,14 @@ namespace Identity.Dapper.Stores
         public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (string.IsNullOrEmpty(normalizedRoleName))
                 throw new ArgumentNullException(nameof(normalizedRoleName));
 
             try
             {
-                var result = await _roleRepository.GetByName(normalizedRoleName);
+                var result = await _roleRepository.GetByNameAsync(normalizedRoleName);
 
                 return result;
             }
@@ -184,19 +191,21 @@ namespace Identity.Dapper.Stores
             }
         }
 
-        public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
+        public async Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
-            return Task.FromResult(role.Name);
+            return role.Name;
         }
 
-        public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
+        public async Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
@@ -204,53 +213,53 @@ namespace Identity.Dapper.Stores
             if (role.Id.Equals(default(TKey)))
                 return null;
 
-            return Task.FromResult(role.Id.ToString());
+            return role.Id.ToString();
         }
 
-        public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
+        public async Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
-            return Task.FromResult(role.Name);
+            return role.Name;
         }
 
-        public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
+        public async Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
             role.Name = normalizedName;
-
-            return Task.FromResult(0);
         }
 
-        public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
+        public async Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
             role.Name = roleName;
-
-            return Task.FromResult(0);
         }
 
         public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
             try
             {
-                var result = await _roleRepository.Update(role, cancellationToken);
+                var result = await _roleRepository.UpdateAsync(role, cancellationToken);
 
                 return result ? IdentityResult.Success : IdentityResult.Failed();
             }

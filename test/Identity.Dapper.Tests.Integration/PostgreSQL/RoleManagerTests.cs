@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Identity.Dapper.Tests.Integration.PostgreSQL
 {
-    [Collection("PostgreSQL")]
+    [Collection(nameof(PostgreSQL))]
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
     public class RoleManagerTestsPostgreSql : IClassFixture<PostgreDatabaseFixture>
     {

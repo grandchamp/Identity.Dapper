@@ -23,7 +23,7 @@ namespace Identity.Dapper.Queries.User
             var query = _sqlConfiguration.InsertUserClaimQuery
                                          .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.UserClaimTable,
-                                                                       columns.GetCommaSeparatedColumns(_sqlConfiguration),
+                                                                       columns.GetCommaSeparatedColumns(),
                                                                        string.Join(", ", valuesArray));
 
             return query;

@@ -27,7 +27,7 @@ namespace Identity.Dapper.Entities
         where TUserRole : DapperIdentityUserRole<TKey>
         where TRoleClaim : DapperIdentityRoleClaim<TKey>
     {
-        #region Properties 
+        #region Properties
 
         public virtual ICollection<TUserRole> Users { get; } = new List<TUserRole>();
         public virtual ICollection<TRoleClaim> Claims { get; } = new List<TRoleClaim>();

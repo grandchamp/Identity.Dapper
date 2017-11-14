@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using Identity.Dapper.Samples.Web.Entities;
+using Identity.Dapper.Samples.Web.Models.AccountViewModels;
+using Identity.Dapper.Samples.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Identity.Dapper.Samples.Web.Models;
-using Identity.Dapper.Samples.Web.Models.AccountViewModels;
-using Identity.Dapper.Samples.Web.Services;
-using Identity.Dapper.Entities;
-using Identity.Dapper.Samples.Web.Entities;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Identity.Dapper.Samples.Web.Controllers
 {
@@ -147,7 +143,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { ReturnUrl = returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
@@ -190,7 +186,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+                return View(nameof(ExternalLoginConfirmation), new ExternalLoginConfirmationViewModel { Email = email });
             }
         }
 
@@ -243,7 +239,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
                 return View("Error");
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            return View(result.Succeeded ? nameof(ConfirmEmail) : "Error");
         }
 
         //
@@ -268,7 +264,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    return View(nameof(ForgotPasswordConfirmation));
                 }
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713

@@ -8,7 +8,7 @@ namespace Identity.Dapper
 {
     public static class ColumnsBuilderExtensions
     {
-        public static string GetCommaSeparatedColumns(this IEnumerable<string> properties, SqlConfiguration sqlConfiguration)
+        public static string GetCommaSeparatedColumns(this IEnumerable<string> properties)
         {
             var columnsBuilder = new StringBuilder();
 
@@ -23,21 +23,20 @@ namespace Identity.Dapper
         {
             ignoreProperties = ignoreProperties ?? Enumerable.Empty<string>();
 
-            IEnumerable<string> roleProperties = Enumerable.Empty<string>();
+            var roleProperties = Enumerable.Empty<string>();
             var idProperty = entity.GetType().GetProperty("Id");
 
-            if (idProperty != null && ignoreIdProperty == false)
+            if (idProperty != null && !ignoreIdProperty)
             {
                 var defaultIdTypeValue = Activator.CreateInstance(idProperty.PropertyType);
                 var idPropertyValue = idProperty.GetValue(entity, null);
 
-                if (!idPropertyValue.Equals(defaultIdTypeValue))
-                    roleProperties = entity.GetType()
-                                           .GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y));
-                else
-                    roleProperties = entity.GetType()
-                                       .GetPublicPropertiesNames(y => !y.Name.Equals("Id")
-                                                                      && !ignoreProperties.Any(x => x == y.Name));
+                roleProperties = !idPropertyValue.Equals(defaultIdTypeValue) 
+                                    ? entity.GetType()
+                                            .GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y))
+                                    : entity.GetType()
+                                            .GetPublicPropertiesNames(y => !y.Name.Equals("Id")
+                                                                           && !ignoreProperties.Any(x => x == y.Name));
             }
             else
             {

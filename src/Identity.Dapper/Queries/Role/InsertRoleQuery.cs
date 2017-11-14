@@ -1,9 +1,7 @@
 ﻿using Identity.Dapper.Models;
 using Identity.Dapper.Queries.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Identity.Dapper.Queries.Role
 {
@@ -25,7 +23,7 @@ namespace Identity.Dapper.Queries.Role
             var query = _sqlConfiguration.InsertRoleQuery
                                          .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
                                                                        _sqlConfiguration.RoleTable,
-                                                                       columns.GetCommaSeparatedColumns(_sqlConfiguration),
+                                                                       columns.GetCommaSeparatedColumns(),
                                                                        string.Join(", ", valuesArray));
 
             return query;

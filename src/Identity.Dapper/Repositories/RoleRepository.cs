@@ -3,7 +3,6 @@ using Identity.Dapper.Connections;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Factories.Contracts;
 using Identity.Dapper.Models;
-using Identity.Dapper.Queries;
 using Identity.Dapper.Queries.Role;
 using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.UnitOfWork.Contracts;
@@ -36,7 +35,7 @@ namespace Identity.Dapper.Repositories
             _queryFactory = queryFactory;
         }
 
-        public async Task<TRole> GetById(TKey id)
+        public async Task<TRole> GetByIdAsync(TKey id)
         {
             try
             {
@@ -76,7 +75,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<TRole> GetByName(string roleName)
+        public async Task<TRole> GetByNameAsync(string roleName)
         {
             try
             {
@@ -117,7 +116,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Insert(TRole role, CancellationToken cancellationToken)
+        public async Task<bool> InsertAsync(TRole role, CancellationToken cancellationToken)
         {
             try
             {
@@ -156,7 +155,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken)
+        public async Task<bool> RemoveAsync(TKey id, CancellationToken cancellationToken)
         {
             try
             {
@@ -196,7 +195,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Update(TRole role, CancellationToken cancellationToken)
+        public async Task<bool> UpdateAsync(TRole role, CancellationToken cancellationToken)
         {
             try
             {

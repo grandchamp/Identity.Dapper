@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Dynamic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -51,12 +50,9 @@ namespace Identity.Dapper.Repositories
             _queryFactory = queryFactory;
         }
 
-        public Task<IEnumerable<TUser>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
+        public Task<IEnumerable<TUser>> GetAllAsync() => throw new NotImplementedException();
 
-        public async Task<TUser> GetByEmail(string email)
+        public async Task<TUser> GetByEmailAsync(string email)
         {
             try
             {
@@ -96,7 +92,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<TUser> GetById(TKey id)
+        public async Task<TUser> GetByIdAsync(TKey id)
         {
             try
             {
@@ -136,7 +132,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<TUser> GetByUserName(string userName)
+        public async Task<TUser> GetByUserNameAsync(string userName)
         {
             try
             {
@@ -185,7 +181,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<TKey> Insert(TUser user, CancellationToken cancellationToken)
+        public async Task<TKey> InsertAsync(TUser user, CancellationToken cancellationToken)
         {
             try
             {
@@ -233,7 +229,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public async Task<bool> InsertClaimsAsync(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             try
             {
@@ -289,7 +285,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> InsertLoginInfo(TKey id, UserLoginInfo loginInfo, CancellationToken cancellationToken)
+        public async Task<bool> InsertLoginInfoAsync(TKey id, UserLoginInfo loginInfo, CancellationToken cancellationToken)
         {
             try
             {
@@ -344,7 +340,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken)
+        public async Task<bool> AddToRoleAsync(TKey id, string roleName, CancellationToken cancellationToken)
         {
             try
             {
@@ -352,7 +348,7 @@ namespace Identity.Dapper.Repositories
                 {
                     try
                     {
-                        var role = await _roleRepository.GetByName(roleName);
+                        var role = await _roleRepository.GetByNameAsync(roleName);
                         if (role == null)
                             return false;
 
@@ -398,7 +394,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken)
+        public async Task<bool> RemoveAsync(TKey id, CancellationToken cancellationToken)
         {
             try
             {
@@ -448,7 +444,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> Update(TUser user, CancellationToken cancellationToken)
+        public async Task<bool> UpdateAsync(TUser user, CancellationToken cancellationToken)
         {
             try
             {
@@ -496,7 +492,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<TUser> GetByUserLogin(string loginProvider, string providerKey)
+        public async Task<TUser> GetByUserLoginAsync(string loginProvider, string providerKey)
         {
             try
             {
@@ -549,7 +545,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<IList<Claim>> GetClaimsByUserId(TKey id)
+        public async Task<IList<Claim>> GetClaimsByUserIdAsync(TKey id)
         {
             try
             {
@@ -587,7 +583,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<IList<string>> GetRolesByUserId(TKey id)
+        public async Task<IList<string>> GetRolesByUserIdAsync(TKey id)
         {
             try
             {
@@ -624,7 +620,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<IList<UserLoginInfo>> GetUserLoginInfoById(TKey id)
+        public async Task<IList<UserLoginInfo>> GetUserLoginInfoByIdAsync(TKey id)
         {
             try
             {
@@ -662,7 +658,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<IList<TUser>> GetUsersByClaim(Claim claim)
+        public async Task<IList<TUser>> GetUsersByClaimAsync(Claim claim)
         {
             try
             {
@@ -706,7 +702,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<IList<TUser>> GetUsersInRole(string roleName)
+        public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName)
         {
             try
             {
@@ -750,7 +746,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> IsInRole(TKey id, string roleName)
+        public async Task<bool> IsInRoleAsync(TKey id, string roleName)
         {
             try
             {
@@ -795,7 +791,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public async Task<bool> RemoveClaimsAsync(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             try
             {
@@ -850,7 +846,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken)
+        public async Task<bool> RemoveFromRoleAsync(TKey id, string roleName, CancellationToken cancellationToken)
         {
             try
             {
@@ -900,7 +896,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken)
+        public async Task<bool> RemoveLoginAsync(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken)
         {
             try
             {
@@ -952,7 +948,7 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken)
+        public async Task<bool> UpdateClaimAsync(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken)
         {
             try
             {

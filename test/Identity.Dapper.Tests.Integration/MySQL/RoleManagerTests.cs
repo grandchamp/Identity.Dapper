@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Identity.Dapper.Tests.Integration.MySQL
 {
-    [Collection("MySQL")]
+    [Collection(nameof(MySQL))]
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
     public class RoleManagerTestsMySql : IClassFixture<MySqlDatabaseFixture>
     {

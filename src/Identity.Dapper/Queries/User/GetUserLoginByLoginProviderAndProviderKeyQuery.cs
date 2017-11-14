@@ -1,7 +1,6 @@
 ﻿using Identity.Dapper.Models;
 using Identity.Dapper.Queries.Contracts;
 using System;
-using System.Linq;
 
 namespace Identity.Dapper.Queries.User
 {
