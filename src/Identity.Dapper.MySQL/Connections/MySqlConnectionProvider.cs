@@ -26,17 +26,17 @@ namespace Identity.Dapper.MySQL.Connections
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.ConnectionString))
                 throw new ArgumentNullException("There's no DapperIdentity:ConnectionString configured. Please, register the value.");
 
+            var mySqlConnectionBuilder = new MySqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString);
+
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.Password))
                 throw new ArgumentNullException("There's no DapperIdentity:Password configured. Please, register the value.");
+            else
+                mySqlConnectionBuilder.Password = mySqlConnectionBuilder.IntegratedSecurity ? string.Empty : _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password);
 
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username))
                 throw new ArgumentNullException("There's no DapperIdentity:Username configured. Please, register the value.");
-
-            var mySqlConnectionBuilder = new MySqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString)
-            {
-                Password = _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password),
-                UserID = _connectionProviderOptions.Value.Username
-            };
+            else
+                mySqlConnectionBuilder.UserID = mySqlConnectionBuilder.IntegratedSecurity ? string.Empty : _connectionProviderOptions.Value.Username;
 
             return new MySqlConnection(mySqlConnectionBuilder.ToString());
         }
