@@ -226,7 +226,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByEmailQuery>();
 
-            const string expected = "SELECT * FROM `identity`.`identityuser` WHERE `Email` = @Email";
+            const string expected = "SELECT `identity`.`identityuser`.*, `identity`.`identityuserrole`.* FROM `identity`.`identityuser` LEFT JOIN `identity`.`identityuserrole` ON `identity`.`identityuserrole`.`UserId` =  `identity`.`identityuser`.`Id` WHERE `Email` = @Email";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -236,7 +236,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByIdQuery>();
 
-            const string expected = "SELECT * FROM `identity`.`identityuser` WHERE `Id` = @Id";
+            const string expected = "SELECT `identity`.`identityuser`.*, `identity`.`identityuserrole`.* FROM `identity`.`identityuser` LEFT JOIN `identity`.`identityuserrole` ON `identity`.`identityuserrole`.`UserId` =  `identity`.`identityuser`.`Id` WHERE `Id` = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -246,7 +246,7 @@ namespace Identity.Dapper.Tests.Queries.MySQL
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
-            const string expected = "SELECT * FROM `identity`.`identityuser` WHERE `UserName` = @UserName";
+            const string expected = "SELECT `identity`.`identityuser`.*, `identity`.`identityuserrole`.* FROM `identity`.`identityuser` LEFT JOIN `identity`.`identityuserrole` ON `identity`.`identityuserrole`.`UserId` =  `identity`.`identityuser`.`Id` WHERE `UserName` = @UserName";
 
             Assert.Equal(expected, generatedQuery);
         }

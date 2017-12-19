@@ -228,7 +228,7 @@ namespace Identity.Dapper.Tests.Queries.SQLServer
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByEmailQuery>();
 
-            const string expected = "SELECT * FROM [dbo].[IdentityUser] WHERE [Email] = @Email";
+            const string expected = "SELECT [dbo].[IdentityUser].*, [dbo].[IdentityUserRole].* FROM [dbo].[IdentityUser] LEFT JOIN [dbo].[IdentityUserRole] ON [dbo].[IdentityUserRole].[UserId] =  [dbo].[IdentityUser].[Id] WHERE [Email] = @Email";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -238,7 +238,7 @@ namespace Identity.Dapper.Tests.Queries.SQLServer
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByIdQuery>();
 
-            const string expected = "SELECT * FROM [dbo].[IdentityUser] WHERE [Id] = @Id";
+            const string expected = "SELECT [dbo].[IdentityUser].*, [dbo].[IdentityUserRole].* FROM [dbo].[IdentityUser] LEFT JOIN [dbo].[IdentityUserRole] ON [dbo].[IdentityUserRole].[UserId] =  [dbo].[IdentityUser].[Id] WHERE [Id] = @Id";
 
             Assert.Equal(expected, generatedQuery);
         }
@@ -248,7 +248,7 @@ namespace Identity.Dapper.Tests.Queries.SQLServer
         {
             var generatedQuery = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
-            const string expected = "SELECT * FROM [dbo].[IdentityUser] WHERE [UserName] = @UserName";
+            const string expected = "SELECT [dbo].[IdentityUser].*, [dbo].[IdentityUserRole].* FROM [dbo].[IdentityUser] LEFT JOIN [dbo].[IdentityUserRole] ON [dbo].[IdentityUserRole].[UserId] =  [dbo].[IdentityUser].[Id] WHERE [UserName] = @UserName";
 
             Assert.Equal(expected, generatedQuery);
         }
