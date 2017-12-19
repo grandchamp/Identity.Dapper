@@ -162,11 +162,11 @@ namespace Identity.Dapper.Repositories
                         var query = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
                         var userDictionary = new Dictionary<TKey, TUser>();
-                        var result = await x.QueryAsync<TUser, TUserRole, TUser>(sql: query,
-                                                                                 param: dynamicParameters,
-                                                                                 transaction: _unitOfWork.Transaction,
-                                                                                 map: UserRoleMapping(userDictionary),
-                                                                                 splitOn: "UserId");
+                        var result = await x.QueryAsync(sql: query,
+                                                        param: dynamicParameters,
+                                                        transaction: _unitOfWork.Transaction,
+                                                        map: UserRoleMapping(userDictionary),
+                                                        splitOn: "UserId");
 
                         if (userDictionary.Count > 0)
                             return userDictionary.FirstOrDefault().Value;
@@ -349,8 +349,8 @@ namespace Identity.Dapper.Repositories
                         dynamic userLogin = new
                         {
                             UserId = id,
-                            LoginProvider = loginInfo.LoginProvider,
-                            ProviderKey = loginInfo.ProviderKey,
+                            loginInfo.LoginProvider,
+                            loginInfo.ProviderKey,
                             Name = loginInfo.ProviderDisplayName
                         };
 
@@ -557,13 +557,21 @@ namespace Identity.Dapper.Repositories
 
                         var query = _queryFactory.GetQuery<GetUserLoginByLoginProviderAndProviderKeyQuery, TUser>(defaultUser);
 
-                        return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
-                                                                       param: new
-                                                                       {
-                                                                           LoginProvider = loginProvider,
-                                                                           ProviderKey = providerKey
-                                                                       },
-                                                                       transaction: _unitOfWork.Transaction);
+                        var userDictionary = new Dictionary<TKey, TUser>();
+                        var result = await x.QueryAsync(sql: query,
+                                                        param: new
+                                                        {
+                                                            LoginProvider = loginProvider,
+                                                            ProviderKey = providerKey
+                                                        },
+                                                        transaction: _unitOfWork.Transaction,
+                                                        map: UserRoleMapping(userDictionary),
+                                                        splitOn: "UserId");
+
+                        if (userDictionary.Count > 0)
+                            return userDictionary.FirstOrDefault().Value;
+
+                        return result.FirstOrDefault();
                     }
                     catch (Exception ex)
                     {

@@ -37,11 +37,13 @@ namespace Identity.Dapper.Queries.User
                                                                                         "%USERFILTER%",
                                                                                         "%USERTABLE%",
                                                                                         "%USERLOGINTABLE%",
+                                                                                        "%USERROLETABLE%"
                                                                               },
                                                                  new string[] {
                                                                                         userProperties.SelectFilterWithTableName(_sqlConfiguration.UserTable),
                                                                                         _sqlConfiguration.UserTable,
                                                                                         _sqlConfiguration.UserLoginTable,
+                                                                                        _sqlConfiguration.UserRoleTable
                                                                               }
                                                                  );
 

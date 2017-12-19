@@ -24,7 +24,7 @@ namespace Identity.Dapper.PostgreSQL.Models
             InsertUserClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             InsertUserLoginQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             InsertUserRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
-            GetUserLoginByLoginProviderAndProviderKeyQuery = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERLOGINTABLE% WHERE %SCHEMA%.%USERTABLE%.\"Id\" = %SCHEMA%.%USERLOGINTABLE%.\"UserId\" AND \"LoginProvider\" = %LOGINPROVIDER% AND \"ProviderKey\" = %PROVIDERKEY% LIMIT 1";
+            GetUserLoginByLoginProviderAndProviderKeyQuery = "SELECT %USERFILTER%, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.\"UserId\" = %SCHEMA%.%USERTABLE%.\"Id\" INNER JOIN %SCHEMA%.%USERLOGINTABLE% ON %SCHEMA%.%USERTABLE%.\"Id\" = %SCHEMA%.%USERLOGINTABLE%.\"UserId\" WHERE \"LoginProvider\" = %LOGINPROVIDER% AND \"ProviderKey\" = %PROVIDERKEY% LIMIT 1";
             GetClaimsByUserIdQuery = "SELECT \"ClaimType\", \"ClaimValue\" FROM %SCHEMA%.%TABLENAME% WHERE \"UserId\" = %ID%";
             GetRolesByUserIdQuery = "SELECT \"Name\" FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.\"Id\" = %SCHEMA%.%USERROLETABLE%.\"RoleId\" AND \"UserId\" = %ID%";
             GetUserLoginInfoByIdQuery = "SELECT \"LoginProvider\", \"Name\", \"ProviderKey\" FROM %SCHEMA%.%TABLENAME% WHERE \"UserId\" = %ID%";

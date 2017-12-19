@@ -176,5 +176,21 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
 
             Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
         }
+
+        [Fact, TestPriority(517)]
+        public async Task FindByLoginReturnRoles()
+        {
+            await _userManager.CreateAsync(new DapperIdentityUser { UserName = "testrole2", Email = "test2@test.com" }, "123456");
+
+            var user = await _userManager.FindByNameAsync("testrole2");
+
+            await _userManager.AddToRoleAsync(user, "test5");
+
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("mylogin", "mylogin", "mylogin"));
+
+            var user2 = await _userManager.FindByLoginAsync("mylogin", "mylogin");
+
+            Assert.Collection(user2.Roles, x => x.RoleId.Equals(5));
+        }
     }
 }
