@@ -63,9 +63,33 @@ namespace Identity.Dapper.Repositories
 
                     var query = _queryFactory.GetQuery<SelectUserByEmailQuery>();
 
-                    return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
-                                                                   param: dynamicParameters,
-                                                                   transaction: _unitOfWork.Transaction);
+                    var userDictionary = new Dictionary<TKey, TUser>();
+                    var result = await x.QueryAsync<TUser, TUserRole, TUser>(sql: query,
+                                                                             param: dynamicParameters,
+                                                                             transaction: _unitOfWork.Transaction,
+                                                                             map: (user, role) =>
+                                                                             {
+                                                                                 var dictionaryUser = default(TUser);
+                                                                                 if (userDictionary.TryGetValue(user.Id, out dictionaryUser))
+                                                                                 {
+                                                                                     dictionaryUser.Roles.Add(role);
+                                                                                 }
+                                                                                 else
+                                                                                 {
+                                                                                     user.Roles.Add(role);
+                                                                                     userDictionary.Add(user.Id, user);
+
+                                                                                     dictionaryUser = user;
+                                                                                 }
+
+                                                                                 return dictionaryUser;
+                                                                             },
+                                                                             splitOn: "UserId");
+
+                    if (userDictionary.Count > 0)
+                        return userDictionary.FirstOrDefault().Value;
+
+                    return result.FirstOrDefault();
                 });
 
                 DbConnection conn = null;
@@ -103,9 +127,33 @@ namespace Identity.Dapper.Repositories
 
                     var query = _queryFactory.GetQuery<SelectUserByIdQuery>();
 
-                    return await x.QueryFirstOrDefaultAsync<TUser>(sql: query,
-                                                                   param: dynamicParameters,
-                                                                   transaction: _unitOfWork.Transaction);
+                    var userDictionary = new Dictionary<TKey, TUser>();
+                    var result = await x.QueryAsync<TUser, TUserRole, TUser>(sql: query,
+                                                                             param: dynamicParameters,
+                                                                             transaction: _unitOfWork.Transaction,
+                                                                             map: (user, role) =>
+                                                                             {
+                                                                                 var dictionaryUser = default(TUser);
+                                                                                 if (userDictionary.TryGetValue(user.Id, out dictionaryUser))
+                                                                                 {
+                                                                                     dictionaryUser.Roles.Add(role);
+                                                                                 }
+                                                                                 else
+                                                                                 {
+                                                                                     user.Roles.Add(role);
+                                                                                     userDictionary.Add(user.Id, user);
+
+                                                                                     dictionaryUser = user;
+                                                                                 }
+
+                                                                                 return dictionaryUser;
+                                                                             },
+                                                                             splitOn: "UserId");
+
+                    if (userDictionary.Count > 0)
+                        return userDictionary.FirstOrDefault().Value;
+
+                    return result.FirstOrDefault();
                 });
 
                 DbConnection conn = null;
@@ -145,9 +193,33 @@ namespace Identity.Dapper.Repositories
 
                         var query = _queryFactory.GetQuery<SelectUserByUserNameQuery>();
 
-                        return await x.QuerySingleOrDefaultAsync<TUser>(sql: query,
-                                                                        param: dynamicParameters,
-                                                                       transaction: _unitOfWork.Transaction);
+                        var userDictionary = new Dictionary<TKey, TUser>();
+                        var result = await x.QueryAsync<TUser, TUserRole, TUser>(sql: query,
+                                                                                 param: dynamicParameters,
+                                                                                 transaction: _unitOfWork.Transaction,
+                                                                                 map: (user, role) =>
+                                                                                 {
+                                                                                     var dictionaryUser = default(TUser);
+                                                                                     if (userDictionary.TryGetValue(user.Id, out dictionaryUser))
+                                                                                     {
+                                                                                         dictionaryUser.Roles.Add(role);
+                                                                                     }
+                                                                                     else
+                                                                                     {
+                                                                                         user.Roles.Add(role);
+                                                                                         userDictionary.Add(user.Id, user);
+
+                                                                                         dictionaryUser = user;
+                                                                                     }
+
+                                                                                     return dictionaryUser;
+                                                                                 },
+                                                                                 splitOn: "UserId");
+
+                        if (userDictionary.Count > 0)
+                            return userDictionary.FirstOrDefault().Value;
+
+                        return result.FirstOrDefault();
                     }
                     catch (Exception ex)
                     {

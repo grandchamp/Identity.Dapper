@@ -15,10 +15,25 @@ namespace Identity.Dapper.Queries.User
         {
             var query = _sqlConfiguration.SelectUserByIdQuery
                                          .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                 _sqlConfiguration.UserTable,
+                                                                 string.Empty,
                                                                  _sqlConfiguration.ParameterNotation,
-                                                                 new string[] { "%ID%" },
-                                                                 new string[] { "Id" });
+                                                                new string[] {
+                                                                                "%ID%"
+                                                                              },
+                                                                 new string[] {
+                                                                                "Id",
+                                                                              },
+                                                                 new string[] {
+                                                                                "%USERTABLE%",
+                                                                                "%ROLETABLE%",
+                                                                                "%USERROLETABLE%",
+                                                                              },
+                                                                 new string[] {
+                                                                                _sqlConfiguration.UserTable,
+                                                                                _sqlConfiguration.RoleTable,
+                                                                                _sqlConfiguration.UserRoleTable,
+                                                                              }
+                                                                 );
 
             return query;
         }

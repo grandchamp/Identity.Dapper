@@ -18,9 +18,9 @@ namespace Identity.Dapper.PostgreSQL.Models
             InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%) RETURNING \"Id\"";
             DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE \"Id\" = %ID%";
             UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE \"Id\" = %ID%";
-            SelectUserByUserNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UPPER(\"UserName\") = %USERNAME%";
-            SelectUserByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UPPER(\"Email\") = %EMAIL%";
-            SelectUserByIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE \"Id\" = %ID%";
+            SelectUserByUserNameQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.\"UserId\" = %SCHEMA%.%USERTABLE%.\"Id\" WHERE UPPER(\"UserName\") = %USERNAME%";
+            SelectUserByEmailQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON  %SCHEMA%.%USERROLETABLE%.\"UserId\" = %SCHEMA%.%USERTABLE%.\"Id\" WHERE UPPER(\"Email\") = %EMAIL%";
+            SelectUserByIdQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.\"UserId\" = %SCHEMA%.%USERTABLE%.\"Id\" WHERE \"Id\" = %ID%";
             InsertUserClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             InsertUserLoginQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             InsertUserRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";

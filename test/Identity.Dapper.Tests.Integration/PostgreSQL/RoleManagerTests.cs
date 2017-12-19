@@ -1,8 +1,5 @@
 ﻿using Identity.Dapper.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -29,10 +26,14 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
             var result = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test" });
             var result2 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test2" });
             var result3 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test3" });
+            var result4 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test4" });
+            var result5 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test5" });
 
             Assert.True(result.Succeeded);
             Assert.True(result2.Succeeded);
             Assert.True(result3.Succeeded);
+            Assert.True(result4.Succeeded);
+            Assert.True(result5.Succeeded);
         }
 
         [Fact, TestPriority(301)]
@@ -101,7 +102,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
         {
             var user = await _userManager.FindByNameAsync("testrole");
 
-            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3" });
+            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3", "test5" });
 
             Assert.True(result.Succeeded);
         }
@@ -113,7 +114,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
 
             var result = await _userManager.GetRolesAsync(user);
 
-            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3"));
+            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3") || x.Equals("TEST5"));
         }
 
         [Fact, TestPriority(309)]
@@ -152,6 +153,30 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
             var result = await _userManager.RemoveFromRolesAsync(user, new[] { "test2", "test3" });
 
             Assert.True(result.Succeeded);
+        }
+
+        [Fact, TestPriority(313)]
+        public async Task FindByEmailReturnRoles()
+        {
+            var user = await _userManager.FindByEmailAsync("test@test.com");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(314)]
+        public async Task FindByNameReturnRoles()
+        {
+            var user = await _userManager.FindByNameAsync("testrole");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(315)]
+        public async Task FindByIdReturnRoles()
+        {
+            var user = await _userManager.FindByIdAsync("1");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
         }
     }
 }

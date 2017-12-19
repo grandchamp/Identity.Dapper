@@ -1,9 +1,5 @@
 ﻿using Identity.Dapper.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -153,6 +149,30 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             var result = await _userManager.RemoveFromRolesAsync(user, new[] { "test2", "test3" });
 
             Assert.True(result.Succeeded);
+        }
+
+        [Fact, TestPriority(113)]
+        public async Task FindByEmailReturnRoles()
+        {
+            var user = await _userManager.FindByEmailAsync("test@test.com");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(114)]
+        public async Task FindByNameReturnRoles()
+        {
+            var user = await _userManager.FindByNameAsync("testrole");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(115)]
+        public async Task FindByIdReturnRoles()
+        {
+            var user = await _userManager.FindByIdAsync("1");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
         }
     }
 }

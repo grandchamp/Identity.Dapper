@@ -18,9 +18,9 @@ namespace Identity.Dapper.MySQL.Models
             InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%);SELECT LAST_INSERT_ID();";
             DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE `Id` = %ID%";
             UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE `Id` = %ID%";
-            SelectUserByUserNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE `UserName` = %USERNAME%";
-            SelectUserByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE `Email` = %EMAIL%";
-            SelectUserByIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE `Id` = %ID%";
+            SelectUserByUserNameQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.`UserId` =  %SCHEMA%.%USERTABLE%.`Id` WHERE `UserName` = %USERNAME%";
+            SelectUserByEmailQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.`UserId` =  %SCHEMA%.%USERTABLE%.`Id` WHERE `Email` = %EMAIL%";
+            SelectUserByIdQuery = "SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.`UserId` =  %SCHEMA%.%USERTABLE%.`Id` WHERE `Id` = %ID%";
             InsertUserClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             InsertUserLoginQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
             InsertUserRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
