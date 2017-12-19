@@ -26,14 +26,12 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
             var result = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test" });
             var result2 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test2" });
             var result3 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test3" });
-            var result4 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test4" });
-            var result5 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test5" });
+            var result4 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test5" });
 
             Assert.True(result.Succeeded);
             Assert.True(result2.Succeeded);
             Assert.True(result3.Succeeded);
             Assert.True(result4.Succeeded);
-            Assert.True(result5.Succeeded);
         }
 
         [Fact, TestPriority(301)]

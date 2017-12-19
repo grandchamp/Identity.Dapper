@@ -26,10 +26,12 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             var result = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test" });
             var result2 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test2" });
             var result3 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test3" });
+            var result4 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test5" });
 
             Assert.True(result.Succeeded);
             Assert.True(result2.Succeeded);
             Assert.True(result3.Succeeded);
+            Assert.True(result4.Succeeded);
         }
 
         [Fact, TestPriority(101)]
@@ -98,7 +100,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
         {
             var user = await _userManager.FindByNameAsync("testrole");
 
-            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3" });
+            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3", "test5" });
 
             Assert.True(result.Succeeded);
         }
@@ -110,7 +112,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
 
             var result = await _userManager.GetRolesAsync(user);
 
-            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3"));
+            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3") || x.Equals("TEST5"));
         }
 
         [Fact, TestPriority(109)]

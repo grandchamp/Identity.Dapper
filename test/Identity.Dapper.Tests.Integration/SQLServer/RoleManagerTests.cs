@@ -26,10 +26,12 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
             var result = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test" });
             var result2 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test2" });
             var result3 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test3" });
+            var result4 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test5" });
 
             Assert.True(result.Succeeded);
             Assert.True(result2.Succeeded);
             Assert.True(result3.Succeeded);
+            Assert.True(result4.Succeeded);
         }
 
         [Fact, TestPriority(502)]
@@ -98,7 +100,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
         {
             var user = await _userManager.FindByNameAsync("testrole");
 
-            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3" });
+            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3", "test5" });
 
             Assert.True(result.Succeeded);
         }
@@ -110,7 +112,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
 
             var result = await _userManager.GetRolesAsync(user);
 
-            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3"));
+            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3") || x.Equals("TEST5"));
         }
 
         [Fact, TestPriority(510)]
@@ -151,7 +153,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
             Assert.True(result.Succeeded);
         }
 
-        [Fact, TestPriority(513)]
+        [Fact, TestPriority(514)]
         public async Task FindByEmailReturnRoles()
         {
             var user = await _userManager.FindByEmailAsync("test@test.com");
@@ -159,7 +161,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
             Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
         }
 
-        [Fact, TestPriority(514)]
+        [Fact, TestPriority(515)]
         public async Task FindByNameReturnRoles()
         {
             var user = await _userManager.FindByNameAsync("testrole");
@@ -167,7 +169,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
             Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
         }
 
-        [Fact, TestPriority(515)]
+        [Fact, TestPriority(516)]
         public async Task FindByIdReturnRoles()
         {
             var user = await _userManager.FindByIdAsync("1");
