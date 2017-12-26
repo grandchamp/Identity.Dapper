@@ -46,6 +46,12 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
         .AddDefaultTokenProviders();
 ```
 
+or 
+
+```
+services.ConfigureDapperConnectionProvider<T>(Configuration.GetSection("ConnectionStrings"))
+```
+
 Where ***T*** for the method ```ConfigureDapperConnectionProvider``` is ```DBMSNameConnectionProvider``` (eg: ```SqlServerConnectionProvider```) and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration``` (eg: ```SqlServerConfiguration```).
 
 If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
