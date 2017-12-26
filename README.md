@@ -16,6 +16,14 @@ To configure the DBMS connection, you can add a **DapperIdentity** and a **Dappe
 }
 ```
 
+Alternatively, you can use **ConnectionStrings** default section:
+
+```
+"ConnectionStrings": {
+    "DefaultConnection": "Connection string of your database"
+}
+```
+
 Or you can use the User Secrets commands:
 ```
 dotnet user-secrets set DapperIdentity:ConnectionString "Connection string of your database"
