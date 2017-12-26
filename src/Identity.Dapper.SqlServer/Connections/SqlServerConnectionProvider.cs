@@ -26,17 +26,15 @@ namespace Identity.Dapper.SqlServer.Connections
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.ConnectionString))
                 throw new ArgumentNullException("There's no DapperIdentity:ConnectionString configured. Please, register the value.");
 
-            var sqlConnectionBuilder = new SqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString);
-
-            if (!sqlConnectionBuilder.IntegratedSecurity && string.IsNullOrEmpty(_connectionProviderOptions.Value?.Password))
-                throw new ArgumentNullException("There's no DapperIdentity:Password configured. Please, register the value.");
-            else
-                sqlConnectionBuilder.Password = sqlConnectionBuilder.IntegratedSecurity ? string.Empty : _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password);
-
-            if (!sqlConnectionBuilder.IntegratedSecurity && string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username))
-                throw new ArgumentNullException("There's no DapperIdentity:Username configured. Please, register the value.");
-            else
-                sqlConnectionBuilder.UserID = sqlConnectionBuilder.IntegratedSecurity ? string.Empty : _connectionProviderOptions.Value.Username;
+            var sqlConnectionBuilder = new SqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString)
+            {
+                Password = string.IsNullOrEmpty(_connectionProviderOptions.Value?.Password)
+                                                   ? string.Empty
+                                                   : _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password),
+                UserID = string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username)
+                                                   ? string.Empty
+                                                   : _connectionProviderOptions.Value.Username
+            };
 
             return new SqlConnection(sqlConnectionBuilder.ToString());
         }

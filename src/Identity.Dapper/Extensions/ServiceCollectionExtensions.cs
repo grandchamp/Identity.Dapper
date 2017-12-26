@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 
 namespace Identity.Dapper
 {
@@ -34,7 +35,7 @@ namespace Identity.Dapper
             return services;
         }
 
-        public static IdentityBuilder AddDapperIdentityFor<T>(this IdentityBuilder builder) 
+        public static IdentityBuilder AddDapperIdentityFor<T>(this IdentityBuilder builder)
             where T : SqlConfiguration
         {
             builder.Services.AddSingleton<SqlConfiguration, T>();
@@ -137,8 +138,41 @@ namespace Identity.Dapper
         public static IServiceCollection ConfigureDapperConnectionProvider<T>(this IServiceCollection services, IConfigurationSection configuration)
             where T : class, IConnectionProvider
         {
-            services.Configure<ConnectionProviderOptions>(configuration);
-
+            if (configuration.Key.Equals("DapperIdentity"))
+            {
+                services.Configure<ConnectionProviderOptions>(configuration);
+            }
+            else if (configuration.Key.Equals("ConnectionStrings"))
+            {
+                var defaultConnection = configuration.GetValue<string>("DefaultConnection");
+                if (!string.IsNullOrEmpty(defaultConnection))
+                {
+                    services.Configure<ConnectionProviderOptions>(x =>
+                    {
+                        x.ConnectionString = defaultConnection;
+                    });
+                }
+                else
+                {
+                    var children = configuration.GetChildren();
+                    if (children.Any())
+                    {
+                        services.Configure<ConnectionProviderOptions>(x =>
+                        {
+                            x.ConnectionString = configuration.GetChildren().First().Value;
+                        });
+                    }
+                    else
+                    {
+                        throw new Exception("There's no DapperIdentity nor ConnectionStrings section with a connection string configured. Please provide one of them.");
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("There's no DapperIdentity nor ConnectionStrings section with a connection string configured. Please provide one of them.");
+            }
+          
             services.AddScoped<IConnectionProvider, T>();
 
             return services;
