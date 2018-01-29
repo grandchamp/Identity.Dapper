@@ -36,8 +36,6 @@ namespace Identity.Dapper.Stores
         where TUserLogin : DapperIdentityUserLogin<TKey>
         where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
-        private DbConnection _connection;
-
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConnectionProvider _connectionProvider;
         private readonly ILogger<DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>> _log;
@@ -54,22 +52,6 @@ namespace Identity.Dapper.Stores
             _log = log;
             _unitOfWork = uow;
             _dapperIdentityOptions = dapperIdOpts;
-        }
-
-        private async Task CreateTransactionIfNotExistsAsync(CancellationToken cancellationToken)
-        {
-            if (!_dapperIdentityOptions.UseTransactionalBehavior)
-            {
-                _connection = _connectionProvider.Create();
-                await _connection.OpenAsync(cancellationToken);
-            }
-            else
-            {
-                _connection = _unitOfWork.CreateOrGetConnection();
-
-                if (_connection.State == System.Data.ConnectionState.Closed)
-                    await _connection.OpenAsync(cancellationToken);
-            }
         }
 
         public Task SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) =>
@@ -117,7 +99,6 @@ namespace Identity.Dapper.Stores
         public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -135,7 +116,6 @@ namespace Identity.Dapper.Stores
         public async Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -153,7 +133,6 @@ namespace Identity.Dapper.Stores
         public async Task AddToRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -171,7 +150,6 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -205,7 +183,6 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -603,7 +580,6 @@ namespace Identity.Dapper.Stores
         public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -624,7 +600,6 @@ namespace Identity.Dapper.Stores
         public async Task RemoveFromRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -645,7 +620,6 @@ namespace Identity.Dapper.Stores
         public async Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -674,7 +648,6 @@ namespace Identity.Dapper.Stores
         public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -855,7 +828,6 @@ namespace Identity.Dapper.Stores
         public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await CreateTransactionIfNotExistsAsync(cancellationToken);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
