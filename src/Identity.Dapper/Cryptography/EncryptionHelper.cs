@@ -67,7 +67,7 @@ namespace Identity.Dapper.Cryptography
         private string EncryptInput(string input)
         {
             var key = System.Text.Encoding.UTF8.GetBytes(_aesKeys.Value.Key);
-            var iv = System.Text.Encoding.ASCII.GetBytes(_aesKeys.Value.IV);
+            var iv = System.Text.Encoding.UTF8.GetBytes(_aesKeys.Value.IV);
 
             using (var aes = Aes.Create())
             {
@@ -96,7 +96,7 @@ namespace Identity.Dapper.Cryptography
         private string DecryptInput(string input)
         {
             var fullCipher = Convert.FromBase64String(input);
-            var iv = System.Text.Encoding.ASCII.GetBytes(_aesKeys.Value.IV);
+            var iv = System.Text.Encoding.UTF8.GetBytes(_aesKeys.Value.IV);
             var cipher = new byte[fullCipher.Length - iv.Length];
 
             Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, fullCipher.Length - iv.Length);
