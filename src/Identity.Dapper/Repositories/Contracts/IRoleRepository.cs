@@ -18,7 +18,7 @@ namespace Identity.Dapper.Repositories.Contracts
         Task<bool> UpdateAsync(TRole role, CancellationToken cancellationToken);
         Task<TRole> GetByIdAsync(TKey id);
         Task<TRole> GetByNameAsync(string roleName);
-        Task<IList<TRoleClaim>> GetClaimsByRole(TRole role, CancellationToken cancellationToken);
+        Task<IEnumerable<TRoleClaim>> GetClaimsByRole(TRole role, CancellationToken cancellationToken);
         Task<bool> InsertClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken);
         Task<bool> RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken);
     }

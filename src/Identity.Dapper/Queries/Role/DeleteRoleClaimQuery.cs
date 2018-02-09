@@ -27,7 +27,7 @@ namespace Identity.Dapper.Queries.Role
                                                                  {
                                                                      "RoleId",
                                                                      "ClaimValue",
-                                                                     "%ClaimType"
+                                                                     "ClaimType"
                                                                  });
 
             return query;

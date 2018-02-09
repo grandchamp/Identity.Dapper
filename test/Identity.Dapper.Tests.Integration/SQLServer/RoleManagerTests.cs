@@ -198,11 +198,10 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
         [Fact, TestPriority(518)]
         public async Task CanAddRoleClaim()
         {
-            var role1 = await _roleManager.FindByNameAsync("test3");
-            var role2 = await _roleManager.FindByNameAsync("test5");
+            var role = await _roleManager.FindByNameAsync("test3");
 
-            var result1 = await _roleManager.AddClaimAsync(role1, new Claim("testtype1", "testvalue1"));
-            var result2 = await _roleManager.AddClaimAsync(role2, new Claim("testtype2", "testvalue2"));
+            var result1 = await _roleManager.AddClaimAsync(role, new Claim("testtype1", "testvalue1"));
+            var result2 = await _roleManager.AddClaimAsync(role, new Claim("testtype2", "testvalue2"));
 
             Assert.True(result1.Succeeded);
             Assert.True(result2.Succeeded);

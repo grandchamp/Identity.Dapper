@@ -118,20 +118,20 @@ namespace Identity.Dapper.Repositories
             }
         }
 
-        public async Task<IList<TRoleClaim>> GetClaimsByRole(TRole role, CancellationToken cancellationToken)
+        public async Task<IEnumerable<TRoleClaim>> GetClaimsByRole(TRole role, CancellationToken cancellationToken)
         {
             try
             {
-                var selectFunction = new Func<DbConnection, Task<IList<TRoleClaim>>>(async x =>
+                var selectFunction = new Func<DbConnection, Task<IEnumerable<TRoleClaim>>>(async x =>
                 {
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("RoleId", role.Id);
 
                     var query = _queryFactory.GetQuery<GetClaimsByRoleQuery>();
 
-                    return await x.QueryFirstOrDefaultAsync<IList<TRoleClaim>>(sql: query,
-                                                                               param: dynamicParameters,
-                                                                               transaction: _unitOfWork.Transaction);
+                    return await x.QueryAsync<TRoleClaim>(sql: query,
+                                                          param: dynamicParameters,
+                                                          transaction: _unitOfWork.Transaction);
                 });
 
                 DbConnection conn = null;
@@ -203,11 +203,12 @@ namespace Identity.Dapper.Repositories
             {
                 var insertFunction = new Func<DbConnection, Task<bool>>(async x =>
                 {
-                    var dynamicParameters = new DynamicParameters(role);
-
                     var roleClaim = Activator.CreateInstance<TRoleClaim>();
                     roleClaim.ClaimType = claim.Type;
                     roleClaim.ClaimValue = claim.Value;
+                    roleClaim.RoleId = role.Id;
+
+                    var dynamicParameters = new DynamicParameters(roleClaim);
 
                     var query = _queryFactory.GetInsertQuery<InsertRoleClaimQuery, TRoleClaim>(roleClaim);
 
