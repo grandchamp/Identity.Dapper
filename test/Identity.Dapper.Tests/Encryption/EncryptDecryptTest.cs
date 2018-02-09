@@ -22,8 +22,8 @@ namespace Identity.Dapper.Tests.Encryption
 
             var aesKeys = new AESKeys
             {
-                Key = _key,
-                IV = _iv
+                Key = EncryptionHelper.Base64Encode(_key),
+                IV = EncryptionHelper.Base64Encode(_iv)
             };
             _mockKeys.Setup(x => x.Value).Returns(aesKeys);
         }

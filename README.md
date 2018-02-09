@@ -11,10 +11,18 @@ To configure the DBMS connection, you can add a **DapperIdentity** and a **Dappe
     "Password": "123"
 },
 "DapperIdentityCryptography": {
-    "Key": "base64 32 bits key",
-    "IV": "base64 16 bits key"
+    "Key": "Base64 32 bytes key",
+    "IV": "Base64 16 bytes key"
 }
 ```
+
+**Example:** 
+Key: "E546C8DF278CD5931069B522E695D4F2" (32 Bytes)
+Base64 Encoded Key: "RTU0NkM4REYyNzhDRDU5MzEwNjlCNTIyRTY5NUQ0RjI="
+
+IV: "SomeReallyCoolIV" (16 Bytes)
+Base64 Encoded IV: "U29tZVJlYWxseUNvb2xJVg=="
+
 
 Alternatively, you can use **ConnectionStrings** default section:
 
@@ -30,8 +38,8 @@ dotnet user-secrets set DapperIdentity:ConnectionString "Connection string of yo
 dotnet user-secrets set DapperIdentity:Password "123"
 dotnet user-secrets set DapperIdentity:Username "user"
 
-dotnet user-secrets set DapperIdentityCryptography:Key "base64 32 bits key"
-dotnet user-secrets set DapperIdentityCryptography:IV "base64 16 bits key"
+dotnet user-secrets set DapperIdentityCryptography:Key "base64 32 bytes key"
+dotnet user-secrets set DapperIdentityCryptography:IV "base64 16 bytes key"
 ```
 
 The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and IV provided.
