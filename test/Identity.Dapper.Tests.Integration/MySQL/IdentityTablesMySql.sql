@@ -49,6 +49,13 @@ CREATE TABLE `identityuserrole` (
     REFERENCES `identityuser` (`Id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
+
+CREATE TABLE `identityroleclaim` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `RoleId` INT NOT NULL,
+  `ClaimType` VARCHAR(256) NOT NULL,
+  `ClaimValue` VARCHAR(256) NULL,
+  PRIMARY KEY (`Id`));
 	
 ALTER TABLE `identitylogin` 
 ADD INDEX `FK_IdentityLogin_IdentityUser_idx` (`UserId` ASC);
@@ -65,5 +72,14 @@ ALTER TABLE `identityuserclaim`
 ADD CONSTRAINT `FK_IdentityUserClaim_IdentityUser`
   FOREIGN KEY (`UserId`)
   REFERENCES `identityuser` (`Id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+ALTER TABLE `identityroleclaim` 
+ADD INDEX `FK_IdentityRoleClaim_IdentityRole_idx` (`RoleId` ASC);
+ALTER TABLE `identityroleclaim` 
+ADD CONSTRAINT `FK_IdentityRoleClaim_IdentityRole`
+  FOREIGN KEY (`RoleId`)
+  REFERENCES `identityrole` (`Id`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
