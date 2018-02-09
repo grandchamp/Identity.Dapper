@@ -12,9 +12,8 @@ namespace Identity.Dapper.Tests.Encryption
         private readonly string _key = "E546C8DF278CD5931069B522E695D4F2";  // 32 bytes key for AES256
         private readonly string _iv = "SomeReallyCoolIV";                   // 16 bytes vector for AES256
 
-        private Mock<ILogger<EncryptionHelper>> _mockLogger;
-        private Mock<IOptions<AESKeys>> _mockKeys;
-
+        private readonly Mock<ILogger<EncryptionHelper>> _mockLogger;
+        private readonly Mock<IOptions<AESKeys>> _mockKeys;
         public EncryptDecryptTest()
         {
             _mockLogger = new Mock<ILogger<EncryptionHelper>>();
@@ -34,12 +33,30 @@ namespace Identity.Dapper.Tests.Encryption
             const string textToEncrypt = "I hope I come out whole!";
             var eh = new EncryptionHelper(_mockKeys.Object, _mockLogger.Object);
 
-            string encrypted = eh.EncryptAES256(textToEncrypt);
-            string decrypted = eh.TryDecryptAES256(encrypted);
+            var encrypted = eh.EncryptAES256(textToEncrypt);
+            var decrypted = eh.TryDecryptAES256(encrypted);
 
             Assert.NotEqual(encrypted, decrypted);
             Assert.Equal(textToEncrypt, decrypted);
         }
 
+        [Fact]
+        public void InvalidKeyAndIvReturnSameInput()
+        {
+            const string textToEncrypt = "I hope I come out whole!";
+            var aesKeys = new AESKeys
+            {
+                Key = "",
+                IV = ""
+            };
+
+            _mockKeys.Setup(x => x.Value)
+                     .Returns(aesKeys);
+
+            var eh = new EncryptionHelper(_mockKeys.Object, _mockLogger.Object);
+            var probablyEncrypted = eh.EncryptAES256(textToEncrypt);
+
+            Assert.Equal(textToEncrypt, probablyEncrypted);
+        }
     }
 }

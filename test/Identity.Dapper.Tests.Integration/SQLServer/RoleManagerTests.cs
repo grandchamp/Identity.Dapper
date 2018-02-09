@@ -1,5 +1,7 @@
 ﻿using Identity.Dapper.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -191,6 +193,45 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
             var user2 = await _userManager.FindByLoginAsync("mylogin", "mylogin");
 
             Assert.Collection(user2.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(518)]
+        public async Task CanAddRoleClaim()
+        {
+            var role1 = await _roleManager.FindByNameAsync("test3");
+            var role2 = await _roleManager.FindByNameAsync("test5");
+
+            var result1 = await _roleManager.AddClaimAsync(role1, new Claim("testtype1", "testvalue1"));
+            var result2 = await _roleManager.AddClaimAsync(role2, new Claim("testtype2", "testvalue2"));
+
+            Assert.True(result1.Succeeded);
+            Assert.True(result2.Succeeded);
+        }
+
+        [Fact, TestPriority(519)]
+        public async Task CanListRoleClaim()
+        {
+            var role = await _roleManager.FindByNameAsync("test3");
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            Assert.NotEmpty(claims);
+            Assert.Equal(2, claims.Count);
+        }
+
+        [Fact, TestPriority(520)]
+        public async Task CanRemoveRoleClaim()
+        {
+            var role = await _roleManager.FindByNameAsync("test3");
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            var result = await _roleManager.RemoveClaimAsync(role, claims.First());
+
+            claims = await _roleManager.GetClaimsAsync(role);
+
+            Assert.True(result.Succeeded);
+            Assert.Equal(1, claims.Count);
         }
     }
 }

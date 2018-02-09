@@ -35,11 +35,15 @@ namespace Identity.Dapper.MySQL.Models
             RemoveUserFromRoleQuery = "DELETE FROM %SCHEMA%.%USERROLETABLE% WHERE `UserId` = %USERID% AND `RoleId` = (SELECT `Id` FROM %SCHEMA%.%ROLETABLE% WHERE `Name` = %ROLENAME%)";
             RemoveLoginForUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE `UserId` = %USERID% AND `LoginProvider` = %LOGINPROVIDER% AND `ProviderKey` = %PROVIDERKEY%";
             UpdateClaimForUserQuery = "UPDATE %SCHEMA%.%TABLENAME% SET `ClaimType` = %NEWCLAIMTYPE%, `ClaimValue` = %NEWCLAIMVALUE% WHERE `UserId` = %USERID% AND `ClaimType` = %CLAIMTYPE% AND `ClaimValue` = %CLAIMVALUE%";
+            SelectClaimByRoleQuery = "SELECT %SCHEMA%.%ROLECLAIMTABLE%.* FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%ROLECLAIMTABLE% WHERE `RoleId` = %ROLEID% AND %SCHEMA%.%ROLECLAIMTABLE%.`RoleId` = %SCHEMA%.%ROLETABLE%.`Id`";
+            InsertRoleClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
+            DeleteRoleClaimQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE `RoleId` = %ROLEID% AND `ClaimType` = %CLAIMTYPE% AND `ClaimValue` = %CLAIMVALUE%";
             RoleTable = "`identityrole`";
             UserTable = "`identityuser`";
             UserClaimTable = "`identityuserclaim`";
             UserRoleTable = "`identityuserrole`";
             UserLoginTable = "`identitylogin`";
+            RoleClaimTable = "`identityroleclaim`";
         }
     }
 }

@@ -15,6 +15,7 @@
         public string UserClaimTable { get; set; }
         public string UserLoginTable { get; set; }
         public string UserRoleTable { get; set; }
+        public string RoleClaimTable { get; set; }
         #endregion
 
         #region Role Queries
@@ -23,6 +24,9 @@
         public string UpdateRoleQuery { get; set; }
         public string SelectRoleByNameQuery { get; set; }
         public string SelectRoleByIdQuery { get; set; }
+        public string SelectClaimByRoleQuery { get; set; }
+        public string InsertRoleClaimQuery { get; set; }
+        public string DeleteRoleClaimQuery { get; set; }
         #endregion
 
         #region User Queries
