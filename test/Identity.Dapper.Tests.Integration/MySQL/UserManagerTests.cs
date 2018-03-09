@@ -389,5 +389,25 @@ namespace Identity.Dapper.Tests.Integration.MySQL
 
             Assert.True(result.Succeeded);
         }
+
+        //Fixes https://github.com/grandchamp/Identity.Dapper/issues/72
+        [Fact, TestPriority(30)]
+        public async Task FindByLoginAsyncReturnsUser()
+        {
+            var result = await _userManager.CreateAsync(new DapperIdentityUser
+            {
+                UserName = "test",
+                Email = "test@test.com"
+            });
+
+            var user = await _userManager.FindByEmailAsync("test@test.com");
+
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("test", "test2", "test3"));
+
+            var loginInfo = await _userManager.FindByLoginAsync("test", "test2");
+
+            Assert.NotNull(loginInfo);
+            Assert.NotEqual(0, loginInfo.Id);
+        }
     }
 }

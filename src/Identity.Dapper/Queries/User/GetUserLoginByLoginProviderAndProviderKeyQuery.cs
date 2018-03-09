@@ -19,7 +19,7 @@ namespace Identity.Dapper.Queries.User
 
         public string GetQuery<TEntity>(TEntity entity)
         {
-            var userProperties = entity.GetColumns(_sqlConfiguration, ignoreIdProperty: true, ignoreProperties: new string[] { "ConcurrencyStamp" });
+            var userProperties = entity.GetColumns(_sqlConfiguration, ignoreIdProperty: false, ignoreProperties: new string[] { "ConcurrencyStamp" }, forInsert: false);
 
             var query = _sqlConfiguration.GetUserLoginByLoginProviderAndProviderKeyQuery
                                          .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
