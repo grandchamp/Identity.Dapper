@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Identity.Dapper
 {
     public static class DbConnectionExtensions
     {
-        public static Task WaitForConnectionOpen(this DbConnection conn, string connString)
+        public static Task WaitForConnectionOpenAsync(this DbConnection conn, string connString)
         {
             var tcs = new TaskCompletionSource<bool>();
 
@@ -26,7 +24,7 @@ namespace Identity.Dapper
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }

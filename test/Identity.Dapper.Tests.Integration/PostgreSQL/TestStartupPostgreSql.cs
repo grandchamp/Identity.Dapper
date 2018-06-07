@@ -1,6 +1,8 @@
 ﻿using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.PostgreSQL;
+using Identity.Dapper.PostgreSQL.Connections;
+using Identity.Dapper.PostgreSQL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +49,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
             })
-                    .AddDapperIdentity<PostgreSqlConfiguration>()
+                    .AddDapperIdentityFor<PostgreSqlConfiguration>()
                     .AddDefaultTokenProviders();
 
             // Add application services.

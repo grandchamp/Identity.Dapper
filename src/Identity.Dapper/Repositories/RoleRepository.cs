@@ -1,15 +1,16 @@
 ﻿using Dapper;
 using Identity.Dapper.Connections;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Factories.Contracts;
 using Identity.Dapper.Models;
+using Identity.Dapper.Queries.Role;
 using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,15 +27,17 @@ namespace Identity.Dapper.Repositories
         private readonly ILogger<RoleRepository<TRole, TKey, TUserRole, TRoleClaim>> _log;
         private readonly SqlConfiguration _sqlConfiguration;
         private readonly IUnitOfWork _unitOfWork;
-        public RoleRepository(IConnectionProvider connProv, ILogger<RoleRepository<TRole, TKey, TUserRole, TRoleClaim>> log, SqlConfiguration sqlConf, IUnitOfWork uow)
+        private readonly IQueryFactory _queryFactory;
+        public RoleRepository(IConnectionProvider connectionProvider, ILogger<RoleRepository<TRole, TKey, TUserRole, TRoleClaim>> log, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
         {
-            _connectionProvider = connProv;
+            _connectionProvider = connectionProvider;
             _log = log;
-            _sqlConfiguration = sqlConf;
-            _unitOfWork = uow;
+            _sqlConfiguration = sqlConfiguration;
+            _unitOfWork = unitOfWork;
+            _queryFactory = queryFactory;
         }
 
-        public async Task<TRole> GetById(TKey id)
+        public async Task<TRole> GetByIdAsync(TKey id)
         {
             try
             {
@@ -43,12 +46,7 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
-                    var query = _sqlConfiguration.SelectRoleByIdQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.RoleTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%ID%" },
-                                                                         new string[] { "Id" });
+                    var query = _queryFactory.GetQuery<SelectRoleByIdQuery>();
 
                     return await x.QueryFirstOrDefaultAsync<TRole>(sql: query,
                                                                    param: dynamicParameters,
@@ -73,13 +71,13 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
-                return null;
+                throw;
             }
         }
 
-        public async Task<TRole> GetByName(string roleName)
+        public async Task<TRole> GetByNameAsync(string roleName)
         {
             try
             {
@@ -88,16 +86,52 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Name", roleName);
 
-                    var query = _sqlConfiguration.SelectRoleByNameQuery
-                                                 .ReplaceQueryParameters(_sqlConfiguration.SchemaName,
-                                                                         _sqlConfiguration.RoleTable,
-                                                                         _sqlConfiguration.ParameterNotation,
-                                                                         new string[] { "%NAME%" },
-                                                                         new string[] { "Name" });
+                    var query = _queryFactory.GetQuery<SelectRoleByNameQuery>();
 
                     return await x.QueryFirstOrDefaultAsync<TRole>(sql: query,
                                                                    param: dynamicParameters,
                                                                    transaction: _unitOfWork.Transaction);
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync();
+
+                        return await selectFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+
+                    return await selectFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, ex.Message);
+
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<TRoleClaim>> GetClaimsByRole(TRole role, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var selectFunction = new Func<DbConnection, Task<IEnumerable<TRoleClaim>>>(async x =>
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("RoleId", role.Id);
+
+                    var query = _queryFactory.GetQuery<GetClaimsByRoleQuery>();
+
+                    return await x.QueryAsync<TRoleClaim>(sql: query,
+                                                          param: dynamicParameters,
+                                                          transaction: _unitOfWork.Transaction);
                 });
 
                 DbConnection conn = null;
@@ -118,47 +152,21 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
+                _log.LogError(ex, ex.Message);
 
-                return null;
+                throw;
             }
         }
 
-        public async Task<bool> Insert(TRole role, CancellationToken cancellationToken)
+        public async Task<bool> InsertAsync(TRole role, CancellationToken cancellationToken)
         {
             try
             {
                 var insertFunction = new Func<DbConnection, Task<bool>>(async x =>
                 {
-                    var columnsBuilder = new StringBuilder();
                     var dynamicParameters = new DynamicParameters(role);
 
-                    var roleProperties = role.GetType()
-                                           .GetPublicPropertiesNames(y => !y.Name.Equals("Id"));
-
-                    if (_sqlConfiguration.UseQuotationMarks)
-                        roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
-                    else
-                        roleProperties = roleProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
-
-
-                    var valuesArray = new List<string>(roleProperties.Count());
-
-                    if (!role.Id.Equals(default(TKey)))
-                    {
-                        columnsBuilder.Append(string.Concat(_sqlConfiguration.TableFieldNotation, "Id", _sqlConfiguration.TableFieldNotation));
-
-                        valuesArray.Add($"{_sqlConfiguration.ParameterNotation}Id, ");
-                    }
-
-                    columnsBuilder.Append(string.Join(",", roleProperties));
-                    valuesArray = valuesArray.InsertQueryValuesFragment(_sqlConfiguration.ParameterNotation, roleProperties);
-
-                    var query = _sqlConfiguration.InsertRoleQuery
-                                                 .ReplaceInsertQueryParameters(_sqlConfiguration.SchemaName,
-                                                                               _sqlConfiguration.RoleTable,
-                                                                               columnsBuilder.ToString(),
-                                                                               string.Join(", ", valuesArray));
+                    var query = _queryFactory.GetInsertQuery<InsertRoleQuery, TRole>(role);
 
                     var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -183,12 +191,57 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
-                return false;
+                _log.LogError(ex, ex.Message);
+
+                throw;
             }
         }
 
-        public async Task<bool> Remove(TKey id, CancellationToken cancellationToken)
+        public async Task<bool> InsertClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var insertFunction = new Func<DbConnection, Task<bool>>(async x =>
+                {
+                    var roleClaim = Activator.CreateInstance<TRoleClaim>();
+                    roleClaim.ClaimType = claim.Type;
+                    roleClaim.ClaimValue = claim.Value;
+                    roleClaim.RoleId = role.Id;
+
+                    var dynamicParameters = new DynamicParameters(roleClaim);
+
+                    var query = _queryFactory.GetInsertQuery<InsertRoleClaimQuery, TRoleClaim>(roleClaim);
+
+                    var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+                    return result > 0;
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await insertFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await insertFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, ex.Message);
+
+                throw;
+            }
+        }
+
+        public async Task<bool> RemoveAsync(TKey id, CancellationToken cancellationToken)
         {
             try
             {
@@ -197,10 +250,7 @@ namespace Identity.Dapper.Repositories
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("Id", id);
 
-                    var query = _sqlConfiguration.DeleteRoleQuery
-                                                 .ReplaceDeleteQueryParameters(_sqlConfiguration.SchemaName,
-                                                                               _sqlConfiguration.RoleTable,
-                                                                               $"{_sqlConfiguration.ParameterNotation}Id");
+                    var query = _queryFactory.GetDeleteQuery<DeleteRoleQuery>();
 
                     var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -225,12 +275,55 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
-                return false;
+                _log.LogError(ex, ex.Message);
+
+                throw;
             }
         }
 
-        public async Task<bool> Update(TRole role, CancellationToken cancellationToken)
+        public async Task<bool> RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var removeFunction = new Func<DbConnection, Task<bool>>(async x =>
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("RoleId", role.Id);
+                    dynamicParameters.Add("ClaimType", claim.Type);
+                    dynamicParameters.Add("ClaimValue", claim.Value);
+
+                    var query = _queryFactory.GetDeleteQuery<DeleteRoleClaimQuery>();
+
+                    var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+
+                    return result > 0;
+                });
+
+                DbConnection conn = null;
+                if (_unitOfWork?.Connection == null)
+                {
+                    using (conn = _connectionProvider.Create())
+                    {
+                        await conn.OpenAsync(cancellationToken);
+
+                        return await removeFunction(conn);
+                    }
+                }
+                else
+                {
+                    conn = _unitOfWork.CreateOrGetConnection();
+                    return await removeFunction(conn);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, ex.Message);
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateAsync(TRole role, CancellationToken cancellationToken)
         {
             try
             {
@@ -238,21 +331,7 @@ namespace Identity.Dapper.Repositories
                 {
                     var dynamicParameters = new DynamicParameters(role);
 
-                    var roleProperties = role.GetType()
-                                             .GetPublicPropertiesNames(y => !y.Name.Equals("Id"));
-
-                    if (_sqlConfiguration.UseQuotationMarks)
-                        roleProperties = roleProperties.Select(y => string.Concat("\"", y, "\""));
-                    else
-                        roleProperties = roleProperties.Select(y => string.Concat(_sqlConfiguration.TableFieldNotation, y, _sqlConfiguration.TableFieldNotation));
-
-                    var setFragment = roleProperties.UpdateQuerySetFragment(_sqlConfiguration.ParameterNotation);
-
-                    var query = _sqlConfiguration.UpdateRoleQuery
-                                                 .ReplaceUpdateQueryParameters(_sqlConfiguration.SchemaName,
-                                                                               _sqlConfiguration.RoleTable,
-                                                                               setFragment,
-                                                                               $"{_sqlConfiguration.ParameterNotation}Id");
+                    var query = _queryFactory.GetUpdateQuery<UpdateRoleQuery, TRole>(role);
 
                     var result = await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
 
@@ -276,8 +355,9 @@ namespace Identity.Dapper.Repositories
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message, ex);
-                return false;
+                _log.LogError(ex, ex.Message);
+
+                throw;
             }
         }
     }

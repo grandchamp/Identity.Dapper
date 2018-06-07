@@ -7,8 +7,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceDeleteQueryParametersTest()
         {
-            var query = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
-            var expectedQuery = "DELETE FROM dbo.IdentityUser WHERE Id = @Id";
+            const string query = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
+            const string expectedQuery = "DELETE FROM dbo.IdentityUser WHERE Id = @Id";
 
             Assert.Equal(expectedQuery,
                          query.ReplaceDeleteQueryParameters("dbo",

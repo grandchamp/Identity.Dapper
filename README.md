@@ -11,8 +11,23 @@ To configure the DBMS connection, you can add a **DapperIdentity** and a **Dappe
     "Password": "123"
 },
 "DapperIdentityCryptography": {
-    "Key": "base64 32 bits key",
-    "IV": "base64 16 bits key"
+    "Key": "Base64 32 bytes key",
+    "IV": "Base64 16 bytes key"
+}
+```
+
+**Example:**  
+Key: "E546C8DF278CD5931069B522E695D4F2" (32 Bytes)  
+Base64 Encoded Key: "RTU0NkM4REYyNzhDRDU5MzEwNjlCNTIyRTY5NUQ0RjI="
+
+IV: "SomeReallyCoolIV" (16 Bytes)  
+Base64 Encoded IV: "U29tZVJlYWxseUNvb2xJVg=="
+
+Alternatively, you can use **ConnectionStrings** default section:
+
+```
+"ConnectionStrings": {
+    "DefaultConnection": "Connection string of your database"
 }
 ```
 
@@ -22,22 +37,29 @@ dotnet user-secrets set DapperIdentity:ConnectionString "Connection string of yo
 dotnet user-secrets set DapperIdentity:Password "123"
 dotnet user-secrets set DapperIdentity:Username "user"
 
-dotnet user-secrets set DapperIdentityCryptography:Key "base64 32 bits key"
-dotnet user-secrets set DapperIdentityCryptography:IV "base64 16 bits key"
+dotnet user-secrets set DapperIdentityCryptography:Key "Base64 32 bytes key"
+dotnet user-secrets set DapperIdentityCryptography:IV "Base64 16 bytes key"
 ```
 
 The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and IV provided.
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
 ```
-services.ConfigureDapperXXXConnectionProvider(Configuration.GetSection("DapperIdentity"))
+services.ConfigureDapperConnectionProvider<T>(Configuration.GetSection("DapperIdentity"))
         .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
 services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
-        .AddDapperIdentityForXXX()
+        .AddDapperIdentityFor<T>()
         .AddDefaultTokenProviders();
 ```
-All **XXX** are replaced by your DBMS.
+
+or 
+
+```
+services.ConfigureDapperConnectionProvider<T>(Configuration.GetSection("ConnectionStrings"))
+```
+
+Where ***T*** for the method ```ConfigureDapperConnectionProvider``` is ```DBMSNameConnectionProvider``` (eg: ```SqlServerConnectionProvider```) and ***T*** for the method ```AddDapperIdentityFor``` is ```DBMSNameConfiguration``` (eg: ```SqlServerConfiguration```).
 
 If you want to use Transactions to all methods of Identity, you'll have to add `.ConfigureDapperIdentityOptions(new DapperIdentityOptions { UseTransactionalBehavior = true })` below `ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));`
 
@@ -62,15 +84,13 @@ Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support 
 Specify the <TKey>
 ```
 services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
-        .AddDapperIdentityForXXX<Guid>();
+        .AddDapperIdentityFor<T, Guid>();
 ```
 
 ## Changing the default schema (SqlServer)
-Pass a SqlServerConfiguration()
-```
-services.AddDapperIdentityForSqlServer(new CustomSqlServerConfiguration())
-```
-Extend the Identity.Dapper.SqlServer.Models.SqlServerConfiguration
+
+Pass a custom class that inherits from ```SqlServerConfiguration``` (or other)
+
 ```
 public class CustomSqlServerConfiguration : SqlServerConfiguration
 {
@@ -79,4 +99,9 @@ public class CustomSqlServerConfiguration : SqlServerConfiguration
         base.SchemaName = "[customSchema]";
     }
 }
+```
+
+And add it with
+```
+services.AddDapperIdentityFor<CustomSqlServerConfiguration>()
 ```

@@ -13,7 +13,7 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
     //There's a little problem with IClassFixture that on EVERY test, the constructor of the class is called (and if implements IDisposable, the Dispose() is called too)
     //So, there's no safe way to clean data of the database.
     //As a workaround, every time you run this test, execute restart.sh to reset all data on Docker container
-    [Collection("PostgreSQL")]
+    [Collection(nameof(PostgreSQL))]
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
     public class UserManagerTestsPostgreSql : IClassFixture<PostgreDatabaseFixture>
     {
@@ -388,6 +388,26 @@ namespace Identity.Dapper.Tests.Integration.PostgreSQL
             var result = await _userManager.DeleteAsync(user);
 
             Assert.True(result.Succeeded);
+        }
+
+        //Fixes https://github.com/grandchamp/Identity.Dapper/issues/72
+        [Fact, TestPriority(229)]
+        public async Task FindByLoginAsyncReturnsUser()
+        {
+            var result = await _userManager.CreateAsync(new DapperIdentityUser
+            {
+                UserName = "test",
+                Email = "test@test.com"
+            });
+
+            var user = await _userManager.FindByEmailAsync("test@test.com");
+
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("test", "test2", "test3"));
+
+            var loginInfo = await _userManager.FindByLoginAsync("test", "test2");
+
+            Assert.NotNull(loginInfo);
+            Assert.NotEqual(0, loginInfo.Id);
         }
     }
 }

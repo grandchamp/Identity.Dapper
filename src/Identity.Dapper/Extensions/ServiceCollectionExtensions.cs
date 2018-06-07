@@ -1,8 +1,11 @@
-﻿using System;
-using Identity.Dapper.Connections;
+﻿using Identity.Dapper.Connections;
 using Identity.Dapper.Cryptography;
 using Identity.Dapper.Entities;
+using Identity.Dapper.Factories;
+using Identity.Dapper.Factories.Contracts;
 using Identity.Dapper.Models;
+using Identity.Dapper.Queries;
+using Identity.Dapper.Queries.Contracts;
 using Identity.Dapper.Repositories;
 using Identity.Dapper.Repositories.Contracts;
 using Identity.Dapper.Stores;
@@ -10,6 +13,8 @@ using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 
 namespace Identity.Dapper
 {
@@ -30,31 +35,73 @@ namespace Identity.Dapper
             return services;
         }
 
-        public static IdentityBuilder AddDapperIdentity<TSqlConfiguration>(this IdentityBuilder builder)
+        public static IdentityBuilder AddDapperIdentityFor<T>(this IdentityBuilder builder)
+            where T : SqlConfiguration
         {
-            builder.Services.AddSingleton(typeof(SqlConfiguration), typeof(TSqlConfiguration));
+            builder.Services.AddSingleton<SqlConfiguration, T>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+            AddQueries(builder);
 
             AddStores(builder.Services, builder.UserType, builder.RoleType);
 
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentity<TSqlConfiguration, TKey>(this IdentityBuilder builder)
+        public static IdentityBuilder AddDapperIdentityFor<T>(this IdentityBuilder builder, T configurationOverride)
+            where T : SqlConfiguration
         {
-            builder.Services.AddSingleton(typeof(SqlConfiguration), typeof(TSqlConfiguration));
+            builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
+            AddStores(builder.Services, builder.UserType, builder.RoleType);
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityFor<T, TKey>(this IdentityBuilder builder)
+            where T : SqlConfiguration
+        {
+            builder.Services.AddSingleton<SqlConfiguration, T>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
 
             return builder;
         }
 
-        public static IdentityBuilder AddDapperIdentity<TSqlConfiguration, TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
+        public static IdentityBuilder AddDapperIdentityFor<T, TKey>(this IdentityBuilder builder, T configurationOverride)
+            where T : SqlConfiguration
         {
-            builder.Services.AddSingleton(typeof(SqlConfiguration), typeof(TSqlConfiguration));
+            builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
+            AddQueries(builder);
+            AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey));
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityFor<T, TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder)
+            where T : SqlConfiguration
+        {
+            builder.Services.AddSingleton<SqlConfiguration, T>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            AddQueries(builder);
+            AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
+
+            return builder;
+        }
+
+        public static IdentityBuilder AddDapperIdentityFor<T, TKey, TUserRole, TRoleClaim>(this IdentityBuilder builder, T configurationOverride)
+            where T : SqlConfiguration
+        {
+            builder.Services.AddSingleton<SqlConfiguration>(configurationOverride);
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+            AddQueries(builder);
             AddStores(builder.Services, builder.UserType, builder.RoleType, typeof(TKey), typeof(TUserRole), typeof(TRoleClaim));
 
             return builder;
@@ -88,13 +135,53 @@ namespace Identity.Dapper
             services.AddScoped(typeof(IRoleStore<>).MakeGenericType(roleType), roleStoreType);
         }
 
-        public static IServiceCollection ConfigureDapperConnectionProvider<TConnectionProvider>(this IServiceCollection services, IConfigurationSection configuration) where TConnectionProvider : IConnectionProvider
+        public static IServiceCollection ConfigureDapperConnectionProvider<T>(this IServiceCollection services, IConfigurationSection configuration)
+            where T : class, IConnectionProvider
         {
-            services.Configure<ConnectionProviderOptions>(configuration);
-
-            services.AddScoped(typeof(IConnectionProvider), typeof(TConnectionProvider));
+            if (configuration.Key.Equals("DapperIdentity"))
+            {
+                services.Configure<ConnectionProviderOptions>(configuration);
+            }
+            else if (configuration.Key.Equals("ConnectionStrings"))
+            {
+                var defaultConnection = configuration.GetValue<string>("DefaultConnection");
+                if (!string.IsNullOrEmpty(defaultConnection))
+                {
+                    services.Configure<ConnectionProviderOptions>(x =>
+                    {
+                        x.ConnectionString = defaultConnection;
+                    });
+                }
+                else
+                {
+                    var children = configuration.GetChildren();
+                    if (children.Any())
+                    {
+                        services.Configure<ConnectionProviderOptions>(x =>
+                        {
+                            x.ConnectionString = configuration.GetChildren().First().Value;
+                        });
+                    }
+                    else
+                    {
+                        throw new Exception("There's no DapperIdentity nor ConnectionStrings section with a connection string configured. Please provide one of them.");
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("There's no DapperIdentity nor ConnectionStrings section with a connection string configured. Please provide one of them.");
+            }
+          
+            services.AddScoped<IConnectionProvider, T>();
 
             return services;
+        }
+
+        private static void AddQueries(IdentityBuilder builder)
+        {
+            builder.Services.AddSingleton<IQueryList, QueryList>();
+            builder.Services.AddSingleton<IQueryFactory, QueryFactory>();
         }
     }
 }

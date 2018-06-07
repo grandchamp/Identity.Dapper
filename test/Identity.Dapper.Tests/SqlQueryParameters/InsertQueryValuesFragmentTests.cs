@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Identity.Dapper.Tests.SqlQueryParameters
@@ -11,11 +9,13 @@ namespace Identity.Dapper.Tests.SqlQueryParameters
         [Fact]
         public void InsertQueryValuesFragmentTest()
         {
-            var values = new List<string>();
-            values.Add("\"A\"");
-            values.Add("\"B\"");
-            values.Add("\"C\"");
-            values.Add("\"D\"");
+            var values = new List<string>
+            {
+                "\"A\"",
+                "\"B\"",
+                "\"C\"",
+                "\"D\""
+            };
 
             var expected = new string[]
             {

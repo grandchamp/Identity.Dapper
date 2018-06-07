@@ -297,7 +297,7 @@ namespace Identity.Dapper.Samples.Web.Controllers
         public IActionResult LinkLogin(string provider)
         {
             // Request a redirect to the external login provider to link a login for the current user
-            var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
+            var redirectUrl = Url.Action(nameof(LinkLoginCallback), "Manage");
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
             return new ChallengeResult(provider, properties);
         }

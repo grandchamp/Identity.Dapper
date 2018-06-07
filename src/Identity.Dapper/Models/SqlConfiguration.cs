@@ -2,12 +2,12 @@
 {
     public abstract class SqlConfiguration
     {
-        public SqlConfiguration() { }
+        protected SqlConfiguration() { }
 
         public string SchemaName { get; set; }
         public string ParameterNotation { get; set; }
-        public bool UseQuotationMarks { get; set; }
-        public string TableFieldNotation { get; set; }
+        public string TableColumnStartNotation { get; set; }
+        public string TableColumnEndNotation { get; set; }
 
         #region Table Names
         public string RoleTable { get; set; }
@@ -15,6 +15,7 @@
         public string UserClaimTable { get; set; }
         public string UserLoginTable { get; set; }
         public string UserRoleTable { get; set; }
+        public string RoleClaimTable { get; set; }
         #endregion
 
         #region Role Queries
@@ -23,6 +24,9 @@
         public string UpdateRoleQuery { get; set; }
         public string SelectRoleByNameQuery { get; set; }
         public string SelectRoleByIdQuery { get; set; }
+        public string SelectClaimByRoleQuery { get; set; }
+        public string InsertRoleClaimQuery { get; set; }
+        public string DeleteRoleClaimQuery { get; set; }
         #endregion
 
         #region User Queries

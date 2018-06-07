@@ -1,6 +1,8 @@
 ﻿using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.SqlServer;
+using Identity.Dapper.SqlServer.Connections;
+using Identity.Dapper.SqlServer.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +49,7 @@ namespace Identity.Dapper.Tests.Integration.SQLServer
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
             })
-                    .AddDapperIdentity<SqlServerConfiguration>()
+                    .AddDapperIdentityFor<SqlServerConfiguration>()
                     .AddDefaultTokenProviders();
 
             // Add application services.

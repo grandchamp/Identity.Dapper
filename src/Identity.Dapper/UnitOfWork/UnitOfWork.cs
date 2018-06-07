@@ -1,10 +1,6 @@
-﻿using Identity.Dapper.UnitOfWork.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Identity.Dapper.Connections;
+using Identity.Dapper.UnitOfWork.Contracts;
 using System.Data.Common;
-using Identity.Dapper.Connections;
 using System.Threading;
 
 namespace Identity.Dapper.UnitOfWork

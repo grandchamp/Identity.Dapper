@@ -1,15 +1,13 @@
 ﻿using Identity.Dapper.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Identity.Dapper.Tests.Integration.MySQL
 {
-    [Collection("MySQL")]
+    [Collection(nameof(MySQL))]
     [TestCaseOrderer(TestCollectionOrderer.TypeName, TestCollectionOrderer.AssemblyName)]
     public class RoleManagerTestsMySql : IClassFixture<MySqlDatabaseFixture>
     {
@@ -30,10 +28,12 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             var result = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test" });
             var result2 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test2" });
             var result3 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test3" });
+            var result4 = await _roleManager.CreateAsync(new DapperIdentityRole { Name = "test5" });
 
             Assert.True(result.Succeeded);
             Assert.True(result2.Succeeded);
             Assert.True(result3.Succeeded);
+            Assert.True(result4.Succeeded);
         }
 
         [Fact, TestPriority(101)]
@@ -102,7 +102,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
         {
             var user = await _userManager.FindByNameAsync("testrole");
 
-            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3" });
+            var result = await _userManager.AddToRolesAsync(user, new[] { "test2", "test3", "test5" });
 
             Assert.True(result.Succeeded);
         }
@@ -114,7 +114,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
 
             var result = await _userManager.GetRolesAsync(user);
 
-            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3"));
+            Assert.Contains(result, x => x.Equals("TESTMODIFIED") || x.Equals("TEST2") || x.Equals("TEST3") || x.Equals("TEST5"));
         }
 
         [Fact, TestPriority(109)]
@@ -153,6 +153,84 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             var result = await _userManager.RemoveFromRolesAsync(user, new[] { "test2", "test3" });
 
             Assert.True(result.Succeeded);
+        }
+
+        [Fact, TestPriority(113)]
+        public async Task FindByEmailReturnRoles()
+        {
+            var user = await _userManager.FindByEmailAsync("test@test.com");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(114)]
+        public async Task FindByNameReturnRoles()
+        {
+            var user = await _userManager.FindByNameAsync("testrole");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(115)]
+        public async Task FindByIdReturnRoles()
+        {
+            var user = await _userManager.FindByIdAsync("1");
+
+            Assert.Collection(user.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(116)]
+        public async Task FindByLoginReturnRoles()
+        {
+            await _userManager.CreateAsync(new DapperIdentityUser { UserName = "testrole2", Email = "test2@test.com" }, "123456");
+
+            var user = await _userManager.FindByNameAsync("testrole2");
+
+            await _userManager.AddToRoleAsync(user, "test5");
+
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("mylogin", "mylogin", "mylogin"));
+
+            var user2 = await _userManager.FindByLoginAsync("mylogin", "mylogin");
+
+            Assert.Collection(user2.Roles, x => x.RoleId.Equals(5));
+        }
+
+        [Fact, TestPriority(117)]
+        public async Task CanAddRoleClaim()
+        {
+            var role = await _roleManager.FindByNameAsync("test3");
+
+            var result1 = await _roleManager.AddClaimAsync(role, new Claim("testtype1", "testvalue1"));
+            var result2 = await _roleManager.AddClaimAsync(role, new Claim("testtype2", "testvalue2"));
+
+            Assert.True(result1.Succeeded);
+            Assert.True(result2.Succeeded);
+        }
+
+        [Fact, TestPriority(118)]
+        public async Task CanListRoleClaim()
+        {
+            var role = await _roleManager.FindByNameAsync("test3");
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            Assert.NotEmpty(claims);
+            Assert.Equal(2, claims.Count);
+        }
+
+        [Fact, TestPriority(119)]
+        public async Task CanRemoveRoleClaim()
+        {
+            var role = await _roleManager.FindByNameAsync("test3");
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            var result = await _roleManager.RemoveClaimAsync(role, claims.First());
+
+            claims = await _roleManager.GetClaimsAsync(role);
+
+            Assert.True(result.Succeeded);
+            Assert.Equal(1, claims.Count);
         }
     }
 }

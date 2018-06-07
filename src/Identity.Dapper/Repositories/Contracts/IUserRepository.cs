@@ -1,8 +1,6 @@
 ﻿using Identity.Dapper.Entities;
-using Identity.Dapper.UnitOfWork.Contracts;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,29 +16,29 @@ namespace Identity.Dapper.Repositories.Contracts
         where TUserLogin : DapperIdentityUserLogin<TKey>
         where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
     {
-        Task<TKey> Insert(TUser user, CancellationToken cancellationToken);
-        Task<bool> Remove(TKey id, CancellationToken cancellationToken);
-        Task<bool> Update(TUser user, CancellationToken cancellationToken);
-        Task<TUser> GetById(TKey id);
-        Task<TUser> GetByUserName(string userName);
-        Task<TUser> GetByEmail(string email);
-        Task<IEnumerable<TUser>> GetAll();
-        Task<TUser> GetByUserLogin(string loginProvider, string providerKey);
+        Task<TKey> InsertAsync(TUser user, CancellationToken cancellationToken);
+        Task<bool> RemoveAsync(TKey id, CancellationToken cancellationToken);
+        Task<bool> UpdateAsync(TUser user, CancellationToken cancellationToken);
+        Task<TUser> GetByIdAsync(TKey id);
+        Task<TUser> GetByUserNameAsync(string userName);
+        Task<TUser> GetByEmailAsync(string email);
+        Task<IEnumerable<TUser>> GetAllAsync();
+        Task<TUser> GetByUserLoginAsync(string loginProvider, string providerKey);
 
-        Task<bool> InsertClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken);
-        Task<bool> InsertLoginInfo(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken);
-        Task<bool> AddToRole(TKey id, string roleName, CancellationToken cancellationToken);
+        Task<bool> InsertClaimsAsync(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken);
+        Task<bool> InsertLoginInfoAsync(TKey id, Microsoft.AspNetCore.Identity.UserLoginInfo loginInfo, CancellationToken cancellationToken);
+        Task<bool> AddToRoleAsync(TKey id, string roleName, CancellationToken cancellationToken);
 
-        Task<IList<Claim>> GetClaimsByUserId(TKey id);
-        Task<IList<string>> GetRolesByUserId(TKey id);
-        Task<IList<Microsoft.AspNetCore.Identity.UserLoginInfo>> GetUserLoginInfoById(TKey id);
-        Task<IList<TUser>> GetUsersByClaim(Claim claim);
-        Task<IList<TUser>> GetUsersInRole(string roleName);
-        Task<bool> IsInRole(TKey id, string roleName);
+        Task<IList<Claim>> GetClaimsByUserIdAsync(TKey id);
+        Task<IList<string>> GetRolesByUserIdAsync(TKey id);
+        Task<IList<Microsoft.AspNetCore.Identity.UserLoginInfo>> GetUserLoginInfoByIdAsync(TKey id);
+        Task<IList<TUser>> GetUsersByClaimAsync(Claim claim);
+        Task<IList<TUser>> GetUsersInRoleAsync(string roleName);
+        Task<bool> IsInRoleAsync(TKey id, string roleName);
 
-        Task<bool> RemoveClaims(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken);
-        Task<bool> RemoveFromRole(TKey id, string roleName, CancellationToken cancellationToken);
-        Task<bool> RemoveLogin(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken);
-        Task<bool> UpdateClaim(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken);
+        Task<bool> RemoveClaimsAsync(TKey id, IEnumerable<Claim> claims, CancellationToken cancellationToken);
+        Task<bool> RemoveFromRoleAsync(TKey id, string roleName, CancellationToken cancellationToken);
+        Task<bool> RemoveLoginAsync(TKey id, string loginProvider, string providerKey, CancellationToken cancellationToken);
+        Task<bool> UpdateClaimAsync(TKey id, Claim oldClaim, Claim newClaim, CancellationToken cancellationToken);
     }
 }

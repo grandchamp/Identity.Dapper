@@ -7,8 +7,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceQueryParametersSingleParameter()
         {
-            var query = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
-            var expectedQuery = "SELECT * FROM dbo.IdentityRole WHERE Id = @Id";
+            const string query = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
+            const string expectedQuery = "SELECT * FROM dbo.IdentityRole WHERE Id = @Id";
 
             Assert.Equal(expectedQuery,
                          query.ReplaceQueryParameters("dbo",
@@ -21,8 +21,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceQueryParametersMultipleParameters()
         {
-            var query = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID% AND LoginProvider = %LOGINPROVIDER% AND ProviderKey = %PROVIDERKEY%";
-            var expectedQuery = "DELETE FROM dbo.IdentityUserLogin WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND ProviderKey = @ProviderKey";
+            const string query = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID% AND LoginProvider = %LOGINPROVIDER% AND ProviderKey = %PROVIDERKEY%";
+            const string expectedQuery = "DELETE FROM dbo.IdentityUserLogin WHERE UserId = @UserId AND LoginProvider = @LoginProvider AND ProviderKey = @ProviderKey";
 
             Assert.Equal(expectedQuery,
                          query.ReplaceQueryParameters("dbo",
@@ -44,8 +44,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceQueryParametersWithOthersParametersSingle()
         {
-            var query = "SELECT Name FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE UserId = %ID%";
-            var expectedQuery = "SELECT Name FROM dbo.IdentityRole, dbo.IdentityUserRole WHERE UserId = @Id";
+            const string query = "SELECT Name FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%USERROLETABLE% WHERE UserId = %ID%";
+            const string expectedQuery = "SELECT Name FROM dbo.IdentityRole, dbo.IdentityUserRole WHERE UserId = @Id";
 
             Assert.Equal(expectedQuery,
                          query.ReplaceQueryParameters("dbo",
@@ -71,8 +71,8 @@ namespace Identity.Dapper.Tests
         [Fact]
         public void ReplaceQueryParametersWithOthersParametersMultiple()
         {
-            var query = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERCLAIMTABLE% WHERE ClaimValue = %CLAIMVALUE% AND ClaimType = %CLAIMTYPE%";
-            var expectedQuery = "SELECT Filter FROM dbo.IdentityUser, dbo.IdentityUserClaim WHERE ClaimValue = @ClaimValue AND ClaimType = @ClaimType";
+            const string query = "SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERCLAIMTABLE% WHERE ClaimValue = %CLAIMVALUE% AND ClaimType = %CLAIMTYPE%";
+            const string expectedQuery = "SELECT Filter FROM dbo.IdentityUser, dbo.IdentityUserClaim WHERE ClaimValue = @ClaimValue AND ClaimType = @ClaimType";
 
             Assert.Equal(expectedQuery,
                          query.ReplaceQueryParameters("dbo",

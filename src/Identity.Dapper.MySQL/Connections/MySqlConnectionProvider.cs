@@ -1,13 +1,10 @@
 ﻿using Identity.Dapper.Connections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Data.Common;
+using Identity.Dapper.Cryptography;
 using Identity.Dapper.Models;
 using Microsoft.Extensions.Options;
-using Identity.Dapper.Cryptography;
 using MySql.Data.MySqlClient;
+using System;
+using System.Data.Common;
 
 namespace Identity.Dapper.MySQL.Connections
 {
@@ -29,15 +26,15 @@ namespace Identity.Dapper.MySQL.Connections
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.ConnectionString))
                 throw new ArgumentNullException("There's no DapperIdentity:ConnectionString configured. Please, register the value.");
 
-            if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.Password))
-                throw new ArgumentNullException("There's no DapperIdentity:Password configured. Please, register the value.");
-
-            if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username))
-                throw new ArgumentNullException("There's no DapperIdentity:Username configured. Please, register the value.");
-
-            var mySqlConnectionBuilder = new MySqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString);
-            mySqlConnectionBuilder.Password = _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password);
-            mySqlConnectionBuilder.UserID = _connectionProviderOptions.Value.Username;
+            var mySqlConnectionBuilder = new MySqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString)
+            {
+                Password = string.IsNullOrEmpty(_connectionProviderOptions.Value?.Password)
+                                                    ? string.Empty
+                                                    : _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password),
+                UserID = string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username)
+                                                    ? string.Empty
+                                                    : _connectionProviderOptions.Value.Username
+            };
 
             return new MySqlConnection(mySqlConnectionBuilder.ToString());
         }

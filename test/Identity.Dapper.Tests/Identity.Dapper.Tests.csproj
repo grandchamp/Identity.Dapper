@@ -9,18 +9,20 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>0.5.0-alpha</Version>
+    <Version>0.6.0-alpha</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Identity.Dapper.MySQL\Identity.Dapper.MySQL.csproj" />
+    <ProjectReference Include="..\..\src\Identity.Dapper.PostgreSQL\Identity.Dapper.PostgreSQL.csproj" />
     <ProjectReference Include="..\..\src\Identity.Dapper.SqlServer\Identity.Dapper.SqlServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="Moq" Version="4.7.63" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta3-build3705" />
-    <PackageReference Include="xunit" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="Moq" Version="4.8.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>
 
 </Project>

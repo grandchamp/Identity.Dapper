@@ -18,9 +18,8 @@ namespace Identity.Dapper.Tests.Integration
 
             foreach (TTestCase testCase in testCases)
             {
-                IAttributeInfo attribute = testCase.TestMethod.Method.
-                GetCustomAttributes((typeof(TestPriorityAttribute)
-                .AssemblyQualifiedName)).FirstOrDefault();
+                var attribute = testCase.TestMethod.Method.GetCustomAttributes((typeof(TestPriorityAttribute).AssemblyQualifiedName))
+                                                          .FirstOrDefault();
 
                 var priority = attribute.GetNamedArgument<int>("Priority");
                 sortedMethods.Add(priority, testCase);
@@ -30,7 +29,7 @@ namespace Identity.Dapper.Tests.Integration
         }
     }
 
-    public class TestPriorityAttribute : Attribute
+    public sealed class TestPriorityAttribute : Attribute
     {
         public int Priority { get; set; }
         public TestPriorityAttribute(int Priority)

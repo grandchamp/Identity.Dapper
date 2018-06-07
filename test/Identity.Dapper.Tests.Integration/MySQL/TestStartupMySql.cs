@@ -1,6 +1,8 @@
 ﻿using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.MySQL;
+using Identity.Dapper.MySQL.Connections;
+using Identity.Dapper.MySQL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +49,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
             })
-                    .AddDapperIdentity<MySqlConfiguration>()
+                    .AddDapperIdentityFor<MySqlConfiguration>()
                     .AddDefaultTokenProviders();
 
             // Add application services.
