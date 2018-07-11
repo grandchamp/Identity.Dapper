@@ -28,10 +28,10 @@ namespace Identity.Dapper
 
             if (idProperty != null && !ignoreIdProperty)
             {
-                var defaultIdTypeValue = Activator.CreateInstance(idProperty.PropertyType);
+                var defaultIdTypeValue = idProperty.PropertyType == typeof(string) ? string.Empty : Activator.CreateInstance(idProperty.PropertyType);
                 var idPropertyValue = idProperty.GetValue(entity, null);
 
-                roleProperties = !idPropertyValue.Equals(defaultIdTypeValue) 
+                roleProperties = !idPropertyValue.Equals(defaultIdTypeValue)
                                     ? entity.GetType()
                                             .GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y))
                                     : entity.GetType()

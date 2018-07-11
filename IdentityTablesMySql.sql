@@ -31,7 +31,7 @@ CREATE TABLE `identityuserclaim` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `UserId` INT NOT NULL,
   `ClaimType` VARCHAR(256) NOT NULL,
-  `ClaimValue` VARCHAR(256) NULL,
+  `ClaimValue` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`Id`));
 
 CREATE TABLE `identityuserrole` (

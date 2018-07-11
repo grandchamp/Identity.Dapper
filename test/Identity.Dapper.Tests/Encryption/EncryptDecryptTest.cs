@@ -34,8 +34,8 @@ namespace Identity.Dapper.Tests.Encryption
             const string textToEncrypt = "I hope I come out whole!";
             var eh = new EncryptionHelper(_mockKeys.Object, _mockLogger.Object);
 
-            string encrypted = eh.EncryptAES256(textToEncrypt);
-            string decrypted = eh.TryDecryptAES256(encrypted);
+            var encrypted = eh.EncryptAES256(textToEncrypt);
+            var decrypted = eh.TryDecryptAES256(encrypted);
 
             Assert.NotEqual(encrypted, decrypted);
             Assert.Equal(textToEncrypt, decrypted);
