@@ -1,4 +1,5 @@
-﻿using Identity.Dapper.Connections;
+﻿using Identity.Dapper.Claims;
+using Identity.Dapper.Connections;
 using Identity.Dapper.Cryptography;
 using Identity.Dapper.Entities;
 using Identity.Dapper.Factories;
@@ -14,7 +15,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security.Claims;
 
 namespace Identity.Dapper
 {
@@ -107,6 +111,15 @@ namespace Identity.Dapper
             return builder;
         }
 
+        public static IdentityBuilder ConfigureClaimsMapping<T>(this IdentityBuilder builder, Func<IPropertyMapper<T>, IPropertyMapper<T>> configuration)
+            where T : DapperIdentityUser
+        {
+            builder.Services.AddSingleton(provider => configuration?.Invoke(new PropertyMapper<T>()));
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<T>, IdentityDapperUserClaimsPrincipalFactory<T>>();
+
+            return builder;
+        }
+
         private static void AddStores(IServiceCollection services, Type userType, Type roleType, Type keyType = null, Type userRoleType = null, Type roleClaimType = null, Type userClaimType = null, Type userLoginType = null)
         {
             Type userStoreType;
@@ -172,7 +185,7 @@ namespace Identity.Dapper
             {
                 throw new Exception("There's no DapperIdentity nor ConnectionStrings section with a connection string configured. Please provide one of them.");
             }
-          
+
             services.AddScoped<IConnectionProvider, T>();
 
             return services;

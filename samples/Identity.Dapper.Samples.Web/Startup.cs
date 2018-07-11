@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace Identity.Dapper.Samples.Web
 {
@@ -68,7 +69,8 @@ namespace Identity.Dapper.Samples.Web
                     .AddDapperIdentityFor<PostgreSqlConfiguration>()
                     //.AddDapperIdentityFor<SqlServerConfiguration>()
                     //.AddDapperIdentityFor<MySqlConfiguration>()
-                    .AddDefaultTokenProviders();
+                    .AddDefaultTokenProviders()
+                    .ConfigureClaimsMapping<CustomUser>(configuration => configuration.MapFrom(x => x.Address).To(ClaimTypes.StreetAddress));
 
             services.AddMvc();
 
