@@ -35,11 +35,15 @@ namespace Identity.Dapper.PostgreSQL.Models
             RemoveUserFromRoleQuery = "DELETE FROM %SCHEMA%.%USERROLETABLE% USING %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%USERROLETABLE%.\"RoleId\" = %SCHEMA%.%ROLETABLE%.\"Id\" AND %SCHEMA%.%USERROLETABLE%.\"UserId\" = %USERID% AND UPPER(%SCHEMA%.%ROLETABLE%.\"Name\") = %ROLENAME%";
             RemoveLoginForUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE \"UserId\" = %USERID% AND \"LoginProvider\" = %LOGINPROVIDER% AND \"ProviderKey\" = %PROVIDERKEY%";
             UpdateClaimForUserQuery = "UPDATE %SCHEMA%.%TABLENAME% SET \"ClaimType\" = %NEWCLAIMTYPE%, \"ClaimValue\" = %NEWCLAIMVALUE% WHERE \"UserId\" = %USERID% AND \"ClaimType\" = %CLAIMTYPE% AND \"ClaimValue\" = %CLAIMVALUE%";
+            SelectClaimByRoleQuery = "SELECT %SCHEMA%.%ROLECLAIMTABLE%.* FROM %SCHEMA%.%ROLETABLE%, %SCHEMA%.%ROLECLAIMTABLE% WHERE \"RoleId\" = %ROLEID% AND %SCHEMA%.%ROLECLAIMTABLE%.\"RoleId\" = %SCHEMA%.%ROLETABLE%.\"Id\"";
+            InsertRoleClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
+            DeleteRoleClaimQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE \"RoleId\" = %ROLEID% AND \"ClaimType\" = %CLAIMTYPE% AND \"ClaimValue\" = %CLAIMVALUE%";
             RoleTable = "\"IdentityRole\"";
             UserTable = "\"IdentityUser\"";
             UserClaimTable = "\"IdentityUserClaim\"";
             UserRoleTable = "\"IdentityUserRole\"";
             UserLoginTable = "\"IdentityLogin\"";
+            RoleClaimTable = "\"IdentityRoleClaim\"";
         }
     }
 }

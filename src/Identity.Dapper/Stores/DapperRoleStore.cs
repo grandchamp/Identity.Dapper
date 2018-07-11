@@ -6,15 +6,18 @@ using Identity.Dapper.UnitOfWork.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Identity.Dapper.Stores
 {
     public class DapperRoleStore<TRole, TKey, TUserRole, TRoleClaim>
-        : IRoleStore<TRole>
+        : IRoleStore<TRole>, IRoleClaimStore<TRole>
         where TRole : DapperIdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
         where TUserRole : DapperIdentityUserRole<TKey>
@@ -57,8 +60,8 @@ namespace Identity.Dapper.Stores
         }
 
         public Task SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) =>
-            !_dapperIdentityOptions.UseTransactionalBehavior 
-                        ? Task.CompletedTask 
+            !_dapperIdentityOptions.UseTransactionalBehavior
+                        ? Task.CompletedTask
                         : CommitTransactionAsync(cancellationToken);
 
         private Task CommitTransactionAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -271,6 +274,65 @@ namespace Identity.Dapper.Stores
                 {
                     new IdentityError{ Description = ex.Message }
                 });
+            }
+        }
+
+        public async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
+
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+
+            try
+            {
+                var result = await _roleRepository.GetClaimsByRole(role, cancellationToken);
+
+                return result?.Select(roleClaim => new Claim(roleClaim.ClaimType, roleClaim.ClaimValue))
+                              .ToList();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.Message, ex);
+
+                return null;
+            }
+        }
+
+        public async Task AddClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
+
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+
+            try
+            {
+                var result = await _roleRepository.InsertClaimAsync(role, claim, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.Message, ex);
+            }
+        }
+
+        public async Task RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await CreateTransactionIfNotExistsAsync(cancellationToken);
+
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+
+            try
+            {
+                var result = await _roleRepository.RemoveClaimAsync(role, claim, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.Message, ex);
             }
         }
     }

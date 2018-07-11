@@ -83,3 +83,18 @@ CREATE TABLE dbo."IdentityUserRole"
 WITH (
   OIDS=FALSE
 );
+
+CREATE TABLE dbo."IdentityRoleClaim"
+(
+  "Id" serial NOT NULL,
+  "RoleId" integer NOT NULL,
+  "ClaimType" character varying(256) NOT NULL,
+  "ClaimValue" character varying(256),
+  CONSTRAINT "IdentityRoleClaim_pkey" PRIMARY KEY ("Id"),
+  CONSTRAINT "IdentityRoleClaim_RoleId_fkey" FOREIGN KEY ("RoleId")
+      REFERENCES dbo."IdentityRole" ("Id") MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);

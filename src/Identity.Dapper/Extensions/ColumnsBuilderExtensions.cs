@@ -19,7 +19,7 @@ namespace Identity.Dapper
             return columnsBuilder.ToString();
         }
 
-        public static IEnumerable<string> GetColumns<TEntity>(this TEntity entity, SqlConfiguration sqlConfiguration, bool ignoreIdProperty = false, IEnumerable<string> ignoreProperties = null)
+        public static IEnumerable<string> GetColumns<TEntity>(this TEntity entity, SqlConfiguration sqlConfiguration, bool ignoreIdProperty = false, IEnumerable<string> ignoreProperties = null, bool forInsert = true)
         {
             ignoreProperties = ignoreProperties ?? Enumerable.Empty<string>();
 
@@ -34,9 +34,12 @@ namespace Identity.Dapper
                 roleProperties = !idPropertyValue.Equals(defaultIdTypeValue)
                                     ? entity.GetType()
                                             .GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y))
-                                    : entity.GetType()
-                                            .GetPublicPropertiesNames(y => !y.Name.Equals("Id")
-                                                                           && !ignoreProperties.Any(x => x == y.Name));
+                                    : forInsert 
+                                        ? entity.GetType()
+                                                .GetPublicPropertiesNames(y => !y.Name.Equals("Id")
+                                                                               && !ignoreProperties.Any(x => x == y.Name))
+                                        : entity.GetType()
+                                                .GetPublicPropertiesNames(x => !ignoreProperties.Any(y => x.Name == y));
             }
             else
             {
