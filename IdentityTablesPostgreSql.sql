@@ -56,7 +56,7 @@ CREATE TABLE dbo."IdentityUserClaim"
   "Id" serial NOT NULL,
   "UserId" integer NOT NULL,
   "ClaimType" character varying(256) NOT NULL,
-  "ClaimValue" character varying(256),
+  "ClaimValue" character varying(256) NOT NULL,
   CONSTRAINT "IdentityUserClaim_pkey" PRIMARY KEY ("Id"),
   CONSTRAINT "IdentityUserClaim_UserId_fkey" FOREIGN KEY ("UserId")
       REFERENCES dbo."IdentityUser" ("Id") MATCH SIMPLE

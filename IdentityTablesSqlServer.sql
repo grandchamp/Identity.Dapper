@@ -80,7 +80,7 @@ CREATE TABLE [IdentityUserClaim](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[UserId] [int] NOT NULL,
 	[ClaimType] [varchar](256) NOT NULL,
-	[ClaimValue] [varchar](256) NULL,
+	[ClaimValue] [varchar](256) NOT NULL,
  CONSTRAINT [PK_IdentityUserClaim] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
