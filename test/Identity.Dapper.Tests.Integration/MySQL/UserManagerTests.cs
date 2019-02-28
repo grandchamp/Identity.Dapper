@@ -1,9 +1,7 @@
 ﻿using Identity.Dapper.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -408,6 +406,34 @@ namespace Identity.Dapper.Tests.Integration.MySQL
 
             Assert.NotNull(loginInfo);
             Assert.NotEqual(0, loginInfo.Id);
+        }
+
+        [Fact, TestPriority(31)]
+        public async Task UserLockoutDateIsCorrect()
+        {
+            var result = await _userManager.CreateAsync(new DapperIdentityUser
+            {
+                UserName = "testlockout",
+                Email = "testlockout@test.com",
+                LockoutEnabled = true
+            });
+
+            var user = await _userManager.FindByNameAsync("testlockout");
+
+            for (int i = 0; i < 5; i++)
+                await _userManager.AccessFailedAsync(user);
+
+            user = await _userManager.FindByNameAsync("testlockout");
+
+            var diff = user.LockoutEnd.Value - DateTimeOffset.Now;
+
+            // give it 10 seconds 
+            var maxAcceptable = TimeSpan.FromMinutes(5);
+            var minAcceptable = maxAcceptable - TimeSpan.FromSeconds(10);
+
+            await _userManager.DeleteAsync(user);
+
+            Assert.True( diff <= maxAcceptable && diff >= minAcceptable);
         }
     }
 }
