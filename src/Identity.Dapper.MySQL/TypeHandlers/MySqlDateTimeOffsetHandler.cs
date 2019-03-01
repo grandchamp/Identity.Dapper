@@ -19,7 +19,7 @@ namespace Identity.Dapper.MySQL.TypeHandlers
         public override void SetValue(IDbDataParameter parameter, DateTimeOffset? value)
         {
             parameter.DbType = DbType.DateTime;
-            parameter.Value = !value.HasValue ? DBNull.Value : parameter.Value = value.Value.UtcDateTime;
+            parameter.Value = value.HasValue ? value.Value.UtcDateTime : (object)DBNull.Value;
         }
     }
 }
