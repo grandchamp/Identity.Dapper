@@ -423,13 +423,14 @@ namespace Identity.Dapper.Tests.Integration.MySQL
             for (int i = 0; i < 5; i++)
                 await _userManager.AccessFailedAsync(user);
 
-            user = await _userManager.FindByNameAsync("testlockout");
-
-            var diff = user.LockoutEnd.Value - DateTimeOffset.Now;
+            user = await _userManager.FindByNameAsync("testlockout");                                    
 
             // give it 10 seconds 
             var maxAcceptable = TimeSpan.FromMinutes(5);
             var minAcceptable = maxAcceptable - TimeSpan.FromSeconds(10);
+
+            // take an extra second to account for precision lost errors
+            var diff = user.LockoutEnd.Value - DateTimeOffset.Now - TimeSpan.FromSeconds(1);
 
             await _userManager.DeleteAsync(user);
 
