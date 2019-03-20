@@ -14,10 +14,10 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>0.8.3-alpha</Version>
+    <Version>0.8.4-alpha</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://github.com/grandchamp/Identity.Dapper/blob/master/LICENSE</PackageLicenseUrl>
-    <AssemblyVersion>0.8.2.0</AssemblyVersion>
+    <AssemblyVersion>0.8.4.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

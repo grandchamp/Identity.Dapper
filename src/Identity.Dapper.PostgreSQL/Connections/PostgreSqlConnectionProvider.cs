@@ -26,17 +26,23 @@ namespace Identity.Dapper.PostgreSQL.Connections
             if (string.IsNullOrEmpty(_connectionProviderOptions.Value?.ConnectionString))
                 throw new ArgumentNullException("There's no DapperIdentity:ConnectionString configured. Please, register the value.");
 
-            var pSqlConnectionBuilder = new NpgsqlConnectionStringBuilder(_connectionProviderOptions.Value.ConnectionString)
-            {
-                Password = string.IsNullOrEmpty(_connectionProviderOptions.Value?.Password)
-                                                    ? string.Empty
-                                                    : _encryptionHelper.TryDecryptAES256(_connectionProviderOptions.Value.Password),
-                Username = string.IsNullOrEmpty(_connectionProviderOptions.Value?.Username)
-                                                    ? string.Empty
-                                                    : _connectionProviderOptions.Value.Username
-            };
+            var connectionString = _connectionProviderOptions.Value.ConnectionString;
+            var username = _connectionProviderOptions.Value?.Username;
+            var password = _connectionProviderOptions.Value?.Password;
 
-            return new NpgsqlConnection(pSqlConnectionBuilder.ToString());
+            // if both a username and password were provided, update the connection string with them
+            // otherwise, leave the connection string that was configured alone
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            {
+                var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+                {
+                    Password = _encryptionHelper.TryDecryptAES256(password),
+                    Username = username
+                };
+                connectionString = connectionStringBuilder.ToString();
+            }
+
+            return new NpgsqlConnection(connectionString);
         }
     }
 }
