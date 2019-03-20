@@ -34,7 +34,7 @@ namespace Identity.Dapper.MySQL.Connections
             // otherwise, leave the connection string that was configured alone
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
-                var connectionStringBuilder = new MySqlConnectionStringBuilder
+                var connectionStringBuilder = new MySqlConnectionStringBuilder(connectionString)
                 {
                     Password = _encryptionHelper.TryDecryptAES256(password),
                     UserID = username

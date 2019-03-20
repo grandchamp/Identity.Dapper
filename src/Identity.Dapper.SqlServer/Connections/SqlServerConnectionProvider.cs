@@ -33,7 +33,7 @@ namespace Identity.Dapper.SqlServer.Connections
             // if both a username and password were provided, update the connection string with them
             // otherwise, leave the connection string that was configured alone
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password)) {
-                var connectionStringBuilder = new SqlConnectionStringBuilder
+                var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString)
                 {
                     Password = _encryptionHelper.TryDecryptAES256(password),
                     UserID = username

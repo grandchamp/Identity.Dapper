@@ -34,7 +34,7 @@ namespace Identity.Dapper.PostgreSQL.Connections
             // otherwise, leave the connection string that was configured alone
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
-                var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+                var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
                 {
                     Password = _encryptionHelper.TryDecryptAES256(password),
                     Username = username
