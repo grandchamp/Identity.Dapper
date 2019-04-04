@@ -224,6 +224,7 @@ namespace Identity.Dapper.Stores
 
                 return null;
             }
+
         }
 
         public async Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
@@ -235,10 +236,10 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                TKey key;
+                var key = default(TKey);
 
                 var converter = TypeDescriptor.GetConverter(typeof(TKey));
-                if (converter != null && converter.CanConvertTo(typeof(TKey)) && converter.CanConvertFrom(typeof(string)))
+                if (converter != null && converter.CanConvertFrom(typeof(string)))
                 {
                     key = (TKey)converter.ConvertFromInvariantString(userId);
                 }
