@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
 using System.Security.Claims;
@@ -234,7 +235,19 @@ namespace Identity.Dapper.Stores
 
             try
             {
-                var result = await _userRepository.GetByIdAsync((TKey)Convert.ChangeType(userId, typeof(TKey)));
+                TKey key;
+
+                var converter = TypeDescriptor.GetConverter(typeof(TKey));
+                if (converter != null && converter.CanConvertTo(typeof(TKey)) && converter.CanConvertFrom(typeof(string)))
+                {
+                    key = (TKey)converter.ConvertFromInvariantString(userId);
+                }
+                else
+                {
+                    key = (TKey)Convert.ChangeType(userId, typeof(TKey));
+                }
+
+                var result = await _userRepository.GetByIdAsync(key);
 
                 return result;
             }
