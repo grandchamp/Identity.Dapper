@@ -4,7 +4,7 @@
 Find the corresponding NuGet package for your DBMS (Eg: Identity.Dapper.SqlServer).
 
 To configure the DBMS connection, you can add a **DapperIdentity** and a **DapperIdentityCryptography** section to your configuration file like this:
-```
+```JSON
 "DapperIdentity": {
     "ConnectionString": "Connection string of your database",
     "Username": "user",
@@ -25,7 +25,7 @@ Base64 Encoded IV: "U29tZVJlYWxseUNvb2xJVg=="
 
 Alternatively, you can use **ConnectionStrings** default section:
 
-```
+```JSON
 "ConnectionStrings": {
     "DefaultConnection": "Connection string of your database"
 }
@@ -44,7 +44,7 @@ dotnet user-secrets set DapperIdentityCryptography:IV "Base64 16 bytes key"
 The **DapperIdentity:Password** can be encrypted with AES256 using the KEY and IV provided.
 
 On **Startup.cs** file, go to **ConfigureServices** and add the following lines:
-```
+```csharp
 services.ConfigureDapperConnectionProvider<T>(Configuration.GetSection("DapperIdentity"))
         .ConfigureDapperIdentityCryptography(Configuration.GetSection("DapperIdentityCryptography"));
 
@@ -55,7 +55,7 @@ services.AddIdentity<DapperIdentityUser, DapperIdentityRole<int>>()
 
 or 
 
-```
+```csharp
 services.ConfigureDapperConnectionProvider<T>(Configuration.GetSection("ConnectionStrings"))
 ```
 
@@ -65,7 +65,7 @@ If you want to use Transactions to all methods of Identity, you'll have to add `
 
 And inside your controller, you'll have to insert on constructor a `DapperUserStore<TUser, TKey, TUserRole, TRoleClaim, TUserClaim, TUserLogin, TRole>` variable, like this:
 
-```
+```csharp
 private readonly DapperUserStore<CustomUser, int, DapperIdentityUserRole<int>, DapperIdentityRoleClaim<int>, DapperIdentityUserClaim<int>, DapperIdentityUserLogin<int>, CustomRole> _dapperStore;
 
 ...
@@ -82,7 +82,7 @@ Currently, only SQL Server, PostgreSQL and MySQL are supported. We plan support 
 
 ## Using Guid as Entity key
 Specify the <TKey>
-```
+```csharp
 services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
         .AddDapperIdentityFor<T, Guid>();
 ```
@@ -91,7 +91,7 @@ services.AddIdentity<DapperIdentityUser<Guid>, DapperIdentityRole<Guid>>()
 
 Pass a custom class that inherits from ```SqlServerConfiguration``` (or other)
 
-```
+```csharp
 public class CustomSqlServerConfiguration : SqlServerConfiguration
 {
     public CustomSqlServerConfiguration()
@@ -102,6 +102,6 @@ public class CustomSqlServerConfiguration : SqlServerConfiguration
 ```
 
 And add it with
-```
+```csharp
 services.AddDapperIdentityFor<CustomSqlServerConfiguration>()
 ```
