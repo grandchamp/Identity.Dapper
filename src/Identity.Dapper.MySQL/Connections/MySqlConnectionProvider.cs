@@ -2,7 +2,7 @@
 using Identity.Dapper.Cryptography;
 using Identity.Dapper.Models;
 using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Data.Common;
 
