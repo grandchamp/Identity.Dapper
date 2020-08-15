@@ -1,5 +1,7 @@
 # Identity.Dapper
+
 [![Build Status](https://travis-ci.org/grandchamp/Identity.Dapper.svg?branch=master)](https://travis-ci.org/grandchamp/Identity.Dapper)
+[![NuGet](https://img.shields.io/nuget/v/Identity.Dapper.svg?style=flat)](https://www.nuget.org/packages/Identity.Dapper/)
 
 Find the corresponding NuGet package for your DBMS (Eg: Identity.Dapper.SqlServer).
 
