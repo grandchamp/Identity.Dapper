@@ -11,7 +11,6 @@ namespace Identity.Dapper.Tests.ConnectionProviders
     public class MySqlConnectionProviderTest
     {
         private readonly string _key = "E546C8DF278CD5931069B522E695D4F2";  // 32 bytes key for AES256
-        private readonly string _iv = "SomeReallyCoolIV";                   // 16 bytes vector for AES256
 
         private readonly Mock<ILogger<EncryptionHelper>> _mockLogger;
         private readonly Mock<IOptions<AESKeys>> _mockKeys;
@@ -25,7 +24,6 @@ namespace Identity.Dapper.Tests.ConnectionProviders
             var aesKeys = new AESKeys
             {
                 Key = EncryptionHelper.Base64Encode(_key),
-                IV = EncryptionHelper.Base64Encode(_iv)
             };
             _mockKeys.Setup(x => x.Value).Returns(aesKeys);
             _encryptionHelper = new EncryptionHelper(_mockKeys.Object, _mockLogger.Object);
