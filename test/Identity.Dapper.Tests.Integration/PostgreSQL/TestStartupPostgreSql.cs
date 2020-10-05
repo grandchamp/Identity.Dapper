@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Identity.Dapper.PostgreSQL.Models;
+using Identity.Dapper.PostgreSQL.Connections;
 
 namespace Identity.Dapper.Tests.Integration.PostgreSQL
 {

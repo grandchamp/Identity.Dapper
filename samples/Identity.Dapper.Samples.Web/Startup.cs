@@ -1,4 +1,5 @@
-﻿using Identity.Dapper.Entities;
+﻿using System;
+using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
 using Identity.Dapper.MySQL;
 using Identity.Dapper.MySQL.Connections;
