@@ -1,6 +1,5 @@
 ﻿using Identity.Dapper.Entities;
 using Identity.Dapper.Models;
-using Identity.Dapper.MySQL;
 using Identity.Dapper.MySQL.Connections;
 using Identity.Dapper.MySQL.Models;
 using Microsoft.AspNetCore.Builder;
@@ -10,10 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Identity.Dapper.MySQL.Connections;
-using Identity.Dapper.MySQL.Models;
 
 namespace Identity.Dapper.Tests.Integration.MySQL
 {
@@ -48,6 +43,7 @@ namespace Identity.Dapper.Tests.Integration.MySQL
                 x.Password.RequireLowercase = false;
                 x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
+                x.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             })
                     .AddDapperIdentityFor<MySqlConfiguration>()
                     .AddDefaultTokenProviders();
